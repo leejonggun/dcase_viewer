@@ -61,31 +61,34 @@ function createNodeFromJson(json) {
 
 function createNode() {
 	var topNode = new Node(0, "TopGoal", "Goal",
-			"ウェブショッピングデモ<br>" +
-			"システムはDEOSプロセスにより運用され，ODSを満たしている");
-	var str = new Node(1, "Strategy", "Strategy", "DEOSプロセスによって議論する");
-	topNode.addChild(new Node(2, "Context", "Context",
-		"サービス用件:<br>" +
-		"・アクセス数の定格は2500件/分<br>" +
-		"・応答時間は1件あたり3秒以内<br>" +
-		"・一回の障害あたりの復旧時間は5分以内"
-		));
-	topNode.addChild(new Node(2, "Context2", "Context", "現在のシステムの運用状態"));
-	topNode.addChild(new Node(2, "Context2", "Context", "Risk分析の結果<br>・アクセス数の増大<br>応答遅延"));
+			"Connected");
+	var str = new Node(1, "Strategy", "Strategy", "Avoid Error Messages");
+	topNode.addChild(new Node(2, "Context", "Context", "Network Cable is connected. Checked by Connection.ds"));
 	topNode.addChild(str);
-	str.addChild(new Node(1, "SubGoal 1", "Goal", "description"));
-	str.children[0].addChild(new Node(1, "test", "Context", "description"));
-	str.addChild(new Node(1, "SubGoal 2", "Goal", "description"));
-	str.addChild(new Node(1, "SubGoal 3", "Goal", "description"));
-	str.addChild(new Node(1, "SubGoal 4", "Goal", "description"));
-	str.children[2].addChild(new Node(1, "SubGoal 1.1", "Goal", "description"));
-	str.children[2].addChild(new Node(1, "SubGoal 1.2", "Goal", "description"));
-	str.children[2].addChild(new Node(1, "SubGoal 1.3", "Goal", "description"));
-	str.children[2].addChild(new Node(1, "SubGoal 1.3", "Goal", "description"));
-	str.children[2].addChild(new Node(1, "SubGoal 1.4", "Goal", "description"));
-	str.children[1].addChild(new Node(1, "Evidence", "Evidence", "description"));
-	str.children[1].children[0].state = "error";
-	str.children[2].addChild(new Node(1, "SubGoalContext", "Context", "description"));
+	str.addChild(new Node(1, "SubGoal 1", "Goal", "Request Timed Out"));//Server doesn't allow ping or cable is cut. IP Address is incorrect.
+	str.addChild(new Node(1, "SubGoal 2", "Goal", "Unknown Host"));
+	str.addChild(new Node(1, "SubGoal 3", "Goal", "Destination Host Unreachable"));
+	str.addChild(new Node(1, "SubGoal 4", "Goal", "Destination Net Unreachable"));
+	str.addChild(new Node(1, "SubGoal 5", "Goal", "Operation not Permitted"));
+	str.addChild(new Node(1, "SubGoal 6", "Goal", "Time to live exceed"));
+	str.children[0].addChild(new Node(1, "Strategy", "Strategy", "firewall settings"));
+	str.children[0].children[0].addChild(new Node(1, "SubGoal", "Goal", "Client drops all packet INPUT"));
+	str.children[0].children[0].addChild(new Node(1, "SubGoal", "Goal", "Client's icmp-reply acceptable"));
+	str.children[0].children[0].children[0].addChild(new Node(1, "Evidence", "Evidence", "firewall_input.ds"));
+	str.children[0].children[0].children[1].addChild(new Node(1, "Evidence", "Evidence", "firewall_input.ds"));
+	str.children[1].addChild(new Node(2, "SubGoalContext", "Context", "Given HostName as intended. Checked by GivenHost_Check.ds"));
+//	str.children[1].addChild(new Node(1, "Strategy", "Strategy", "name resolution Success"));
+//	str.children[1].children[0].addChild(new Node(1, "SubGoal", "Goal", "DNS is set properly"));
+//	str.children[1].children[0].addChild(new Node(1, "SubGoal", "Goal", "DNS is on"));
+	str.children[1].addChild(new Node(1, "Evidence", "Evidence", "Nslookup.ds"));
+//	str.children[1].children[0].state = "error";
+//	str.children[2].addChild(new Node(1, "SubGoal 3.1", "Goal", "Host is not found"));//Host Unreachable. Host part of IP Address is wrong.
+//	str.children[2].addChild(new Node(1, "SubGoalContext", "Context", "Given IP Address as intended. Checked by GivenIP_Check.ds"));
+	str.children[4].addChild(new Node(1, "Strategy", "Strategy", "firewall settings"));
+	str.children[4].children[0].addChild(new Node(1, "SubGoal", "Goal", "Client drops all packet OUTPUT"));
+	str.children[4].children[0].addChild(new Node(1, "SubGoal", "Goal", "Host's icmp-request acceptable"));
+	str.children[4].children[0].children[0].addChild(new Node(1, "Evidence", "Evidence", "firewall_output.ds"));
+	str.children[4].children[0].children[1].addChild(new Node(1, "Evidence", "Evidence", "firewall_output.ds"));
 	return topNode;
 }
 
