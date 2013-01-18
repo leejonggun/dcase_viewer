@@ -61,34 +61,45 @@ function createNodeFromJson(json) {
 
 function createNode() {
 	var topNode = new Node(0, "TopGoal", "Goal",
-			"Connected");
-	var str = new Node(1, "Strategy", "Strategy", "Avoid Error Messages");
-	topNode.addChild(new Node(2, "Context", "Context", "Network Cable is connected. Checked by Connection.ds"));
+			"ネットワークに繋がっている <br>pingが通る");
+	var str = new Node(1, "Strategy", "Strategy", "要因場所により分類");
+	topNode.addChild(new Node(2, "Context", "Context", "IP Address<br>Hostname<br>OS Ver"));
 	topNode.addChild(str);
-	str.addChild(new Node(1, "SubGoal 1", "Goal", "Request Timed Out"));//Server doesn't allow ping or cable is cut. IP Address is incorrect.
-	str.addChild(new Node(1, "SubGoal 2", "Goal", "Unknown Host"));
-	str.addChild(new Node(1, "SubGoal 3", "Goal", "Destination Host Unreachable"));
-	str.addChild(new Node(1, "SubGoal 4", "Goal", "Destination Net Unreachable"));
-	str.addChild(new Node(1, "SubGoal 5", "Goal", "Operation not Permitted"));
-	str.addChild(new Node(1, "SubGoal 6", "Goal", "Time to live exceed"));
-	str.children[0].addChild(new Node(1, "Strategy", "Strategy", "firewall settings"));
-	str.children[0].children[0].addChild(new Node(1, "SubGoal", "Goal", "Client drops all packet INPUT"));
-	str.children[0].children[0].addChild(new Node(1, "SubGoal", "Goal", "Client's icmp-reply acceptable"));
-	str.children[0].children[0].children[0].addChild(new Node(1, "Evidence", "Evidence", "firewall_input.ds"));
-	str.children[0].children[0].children[1].addChild(new Node(1, "Evidence", "Evidence", "firewall_input.ds"));
-	str.children[1].addChild(new Node(2, "SubGoalContext", "Context", "Given HostName as intended. Checked by GivenHost_Check.ds"));
-//	str.children[1].addChild(new Node(1, "Strategy", "Strategy", "name resolution Success"));
-//	str.children[1].children[0].addChild(new Node(1, "SubGoal", "Goal", "DNS is set properly"));
-//	str.children[1].children[0].addChild(new Node(1, "SubGoal", "Goal", "DNS is on"));
-	str.children[1].addChild(new Node(1, "Evidence", "Evidence", "Nslookup.ds"));
-//	str.children[1].children[0].state = "error";
-//	str.children[2].addChild(new Node(1, "SubGoal 3.1", "Goal", "Host is not found"));//Host Unreachable. Host part of IP Address is wrong.
-//	str.children[2].addChild(new Node(1, "SubGoalContext", "Context", "Given IP Address as intended. Checked by GivenIP_Check.ds"));
-	str.children[4].addChild(new Node(1, "Strategy", "Strategy", "firewall settings"));
-	str.children[4].children[0].addChild(new Node(1, "SubGoal", "Goal", "Client drops all packet OUTPUT"));
-	str.children[4].children[0].addChild(new Node(1, "SubGoal", "Goal", "Host's icmp-request acceptable"));
-	str.children[4].children[0].children[0].addChild(new Node(1, "Evidence", "Evidence", "firewall_output.ds"));
-	str.children[4].children[0].children[1].addChild(new Node(1, "Evidence", "Evidence", "firewall_output.ds"));
+
+	str.addChild(new Node(1, "SubGoal 1", "Goal", "PCからパケットが出ている"));
+	str.children[0].addChild(new Node(1, "Strategy1", "Strategy", "物理的な配線の問題"));
+	str.children[0].addChild(new Node(1, "Strategy2", "Strategy", "firewallの設定を考慮する"));
+	str.children[0].addChild(new Node(1, "Strategy3", "Strategy", "名前解決"));
+	str.children[0].addChild(new Node(1, "Strategy4", "Strategy", "ルーティングテーブル設定"));
+	str.children[0].children[0].addChild(new Node(1, "SubGoal", "Goal", "NICが無効にされていない"));
+	str.children[0].children[0].children[0].addChild(new Node(1, "Evidence", "Evidence", "Connection.ds"));
+	str.children[0].children[1].addChild(new Node(1, "SubGoal", "Goal", "Firewall設定でパケットを破棄していない"));
+	str.children[0].children[1].children[0].addChild(new Node(1, "Evidence", "Evidence", "Firewall_output.ds, Firewall_input.ds"));
+	str.children[0].children[2].addChild(new Node(1, "SubGoal", "Goal", "DNSから返答がある"));
+	str.children[0].children[2].children[0].addChild(new Node(1, "Evidence", "Evidence", "CheckDNS.ds, Ping_to_DNS.ds"));
+	str.children[0].children[2].addChild(new Node(1, "SubGoal", "Goal", "DNSに問い合わせ、IP Addressを取得できる"));
+	str.children[0].children[2].children[1].addChild(new Node(1, "Evidence", "Evidence", "Nslookup.ds"));
+	str.children[0].children[3].addChild(new Node(1, "SubGoal", "Goal", "ルーティングテーブルにIP Addressが登録されている"));
+	str.children[0].children[3].children[0].addChild(new Node(1, "Evidence", "Evidence", "Routing_directly.ds"));
+	str.children[0].children[3].addChild(new Node(1, "SubGoal", "Goal", "ルーティングテーブルにデフォルトゲートウェイが登録されている"));
+	str.children[0].children[3].children[1].addChild(new Node(1, "Evidence", "Evidence", "Routing_default.ds"));
+//	str.children[0].children[4].addChild(new Node(1, "SubGoal", "Goal", "Time to Live exceeded"));
+
+	str.addChild(new Node(1, "SubGoal 2", "Goal", "PCからRouterまでパケットが届く"));
+	str.children[1].addChild(new Node(1, "Strategy1", "Strategy", "ゲートウェイの認識"));
+	str.children[1].children[0].addChild(new Node(1, "SubGoal", "Goal", "Ping_to_gateway.ds"));
+	str.children[1].addChild(new Node(1, "Strategy2", "Strategy", "ルーティングの設定"));
+	str.children[1].children[1].addChild(new Node(1, "SubGoal", "Goal", "ルータのルーティングテーブルの設定が正しい(人による確認)"));
+	str.children[1].children[1].children[0].addChild(new Node(1, "Evidence", "Evidence", "Undeveloped"));
+//	str.children[0].children[0].children[0].addChild(new Node(1, "Evidence", "Evidence",
+//																				"Firewall_input.ds<br>Retry.ds"));
+	str.addChild(new Node(1, "SubGoal 3", "Goal", "RouterからHostまでパケットが届く"));
+//	str.children[0].children[0].children[1].addChild(new Node(1, "Evidence", "Evidence", "Firewall_output.ds"));
+//	str.children[0].children[0].children[2].addChild(new Node(1, "Evidence", "Evidence", "Host_unreachable.ds"));
+//	str.children[0].children[0].children[3].addChild(new Node(1, "Evidence", "Evidence", "Router.ds"));
+//	str.children[0].children[0].children[4].addChild(new Node(1, "Evidence", "Evidence", "TTL.ds"));
+//	str.children[1].children[0].children[0].addChild(new Node(1, "Evidence", "Evidence", "Nslookup.ds"));
+//	str.children[1].children[0].children[1].addChild(new Node(1, "Evidence", "Evidence", "Connection.ds"));
 	return topNode;
 }
 
