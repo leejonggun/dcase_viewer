@@ -84,43 +84,68 @@ function createNodeFromJson2(json) {
 
 function createSampleNode() {
 	var strategy_children = [
-		{ name: "SubGoal 1", type: "Goal", desc: "Phsical layerは正常である",
+		{ name: "SubGoal 1", type: "Goal", desc: "Network Interface layerは正常である",
 		children: [
 					{ name: "Context 1.1", type: "Context", desc: "@IP Address:192.168.59.101" },
 					{ name: "Strategy", type: "Strategy", desc: "接続方式により議論" ,
 					children: [
-								{ name: "SubGoal 1.1", type: "Goal",  desc: "イーサネットで接続している" ,
+								{ name: "Context 1.1", type: "Context", desc: "@接続方法:イーサネット、無線LAN" },
+								{ name: "SubGoal 1.1(or)", type: "Goal",  desc: "イーサネットで接続している" ,
 								children: [
 											{ name: "Strategy", type: "Strategy", desc: "PCや周辺機器の状態により判断" ,
 											children: [
-															{ name: "SubGoal 1.1.1", type: "Goal",  desc: "PCに繋がっているLANケーブルが途切れていない" },
-															{ name: "SubGoal 1.1.2", type: "Goal",  desc: "イーサネットカードが認識されている" ,
-															children: [
-																			{ name: "Evidence", type: "Evidence", dexc: "CheckNIC.ds" }
-																				] }
-																] }
-													] },
-								{ name: "SubGoal 1.2", type: "Goal",  desc: "無線LANで接続している" ,
-										children: [
-													{ name: "Strategy", type: "Strategy", desc: "PCや周辺機器の状態により判断" ,
+														{ name: "SubGoal 1.1.1", type: "Goal",  desc: "PCに繋がっているネットワークケーブルが途切れていない" },
+														{ name: "SubGoal 1.1.2", type: "Goal",  desc: "ハブが壊れていない" },
+														{ name: "SubGoal 1.1.3", type: "Goal",  desc: "イーサネットカードが認識されている" ,
 														children: [
-																	{ name: "SubGoal 1.1.1", type: "Goal",  desc: "電波信号が十分に強い" },
-																	{ name: "SubGoal 1.1.2", type: "Goal",  desc: "電波干渉がない" },
-																	{ name: "SubGoal 1.1.3", type: "Goal",  desc: "無線LANカードが認識されている" ,
-																	children: [
-																				{ name: "Evidence", type: "Evidence", dexc: "CheckNIC.ds" }
-																						] }
-																			] }
-															] }
-											] }
-							] },
-		{ name: "SubGoal 2", type: "Goal", desc: "Data Link layerは正常である",
-			children: [
-						{ name: "Context 2.1", type: "Context",  desc: "@IP Address:192.168.59.101" },
-						{ name: "SubGoal 2.1", type: "Goal",  desc: "PCでイーサネットが有効になっている" },
-						{ name: "SubGoal 2.1", type: "Goal",  desc: "PCで無線LANが有効になっている" }
-					  ]
+																	{ name: "Evidence", type: "Evidence", desc: "CheckNIC.ds" }
+																			]
+														}
+																]
+											}
+													]
+								},
+								{ name: "SubGoal 1.2(or)", type: "Goal",  desc: "無線LANで接続している" ,
+								children: [
+											{ name: "Strategy", type: "Strategy", desc: "PCや周辺機器の状態により判断" ,
+											children: [
+														{ name: "SubGoal 1.2.1", type: "Goal",  desc: "電波信号が十分に強い" },
+														{ name: "SubGoal 1.2.2", type: "Goal",  desc: "電波干渉がない" },
+														{ name: "SubGoal 1.2.3", type: "Goal",  desc: "無線LANカードが認識されている" ,
+														children: [
+																	{ name: "Evidence", type: "Evidence", desc: "CheckNIC.ds" }
+																			]
+														}
+																]
+											}
+													]
+								}
+										]
+					}
+							]
 		},
+
+		{ name: "SubGoal 2", type: "Goal", desc: "Data Link layerは正常である",
+		children: [
+					{ name: "Context 2.1", type: "Context",  desc: "@IP Address:192.168.59.101" },
+					{ name: "Strategy", type: "Strategy",  desc: "接続方式により議論" ,
+					children: [
+								{ name: "Context 2.1", type: "Context",  desc: "@接続方法:イーサネット、無線LAN" },
+								{ name: "SubGoal 2.1", type: "Goal",  desc: "PCでイーサネットインターフェースが有効になっている" ,
+								children: [
+											{ name: "Evidence 2.1", type: "Evidence", desc: "Connection.ds" }
+													]
+								},
+								{ name: "SubGoal 2.2", type: "Goal",  desc: "PCで無線LANインターフェースが有効になっている" ,
+								children: [
+											{ name: "Evidence 2.1", type: "Evidence", desc: "Connection.ds" }
+													]
+								}
+										]
+					}
+							]
+		},
+
 		{ name: "SubGoal 3", type: "Goal", desc: "Network layerは正常である",
 			children: [
 						{ name: "Evidence 3.1", type: "Evidence", desc: "RoutingDirectly.ds" },
@@ -157,7 +182,7 @@ function createSampleNode() {
 			},
 			{ name: "Dynamic Context", type: "Context", desc: "@Destination:192.168.59.102" },
 			{
-				name: "Strategy", type: "Strategy", desc: "レイヤーレベルで議論",
+				name: "Strategy", type: "Strategy", desc: "レイヤーレベルで議論",//TCP/IPの階層でアプリケーション層(アプリケーション、プレゼンテーション、セッション)、トランスポート層(トランスポート)、インターネット層(インターネット)、ネットワークインターフェイス層(データリンク、物理)に分ける
 				children: strategy_children
 			}
 		]
