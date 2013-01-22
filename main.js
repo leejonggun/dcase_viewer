@@ -61,7 +61,7 @@ function createNodeFromJson(json) {
 
 function createNode() {
 	var topNode = new Node(0, "TopGoal", "Goal",
-			"通信可能である<br>pingが通る");
+			"pingが通る");
 	var str = new Node(1, "Strategy", "Strategy", "要因場所により分類");
 	topNode.addChild(new Node(2, "Static Context", "Context", "@IP:192.68.59.94<br>@OS:ubuntu12.04LTS 64bit"));
 	topNode.addChild(new Node(2, "Dinamic Context", "Context", "@Hostname:www.google.com"));
