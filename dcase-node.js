@@ -84,12 +84,11 @@ function createNodeFromJson2(json) {
 
 function createSampleNode() {
 	var strategy_children = [
-		{ name: "SubGoal 1", type: "Goal", desc: "Network Interface layerは正常である",
+		{ name: "SubGoal 1", type: "Goal", desc: "Link layerは正常である",
 		children: [
-					{ name: "Context 1.1", type: "Context", desc: "@IP Address:192.168.59.101" },
+					{ name: "Context 1.1", type: "Context", desc: "@接続方法:イーサネット、無線LAN" },
 					{ name: "Strategy", type: "Strategy", desc: "接続方式により議論" ,
 					children: [
-								{ name: "Context 1.1", type: "Context", desc: "@接続方法:イーサネット、無線LAN" },
 								{ name: "SubGoal 1.1(or)", type: "Goal",  desc: "イーサネットで接続している" ,
 								children: [
 											{ name: "Strategy", type: "Strategy", desc: "PCや周辺機器の状態により判断" ,
@@ -99,6 +98,11 @@ function createSampleNode() {
 														{ name: "SubGoal 1.1.3", type: "Goal",  desc: "イーサネットカードが認識されている" ,
 														children: [
 																	{ name: "Evidence", type: "Evidence", desc: "CheckNIC.ds" }
+																			]
+														},
+														{ name: "SubGoal 1.1.4", type: "Goal",  desc: "PCでイーサネットインターフェースが有効になっている" ,
+														children: [
+																	{ name: "Evidence", type: "Evidence", desc: "Connection.ds" }
 																			]
 														}
 																]
@@ -115,6 +119,11 @@ function createSampleNode() {
 														children: [
 																	{ name: "Evidence", type: "Evidence", desc: "CheckNIC.ds" }
 																			]
+														},
+														{ name: "SubGoal 2.2", type: "Goal",  desc: "PCで無線LANインターフェースが有効になっている" ,
+														children: [
+																	{ name: "Evidence 2.1", type: "Evidence", desc: "Connection.ds" }
+																			]
 														}
 																]
 											}
@@ -125,52 +134,73 @@ function createSampleNode() {
 							]
 		},
 
-		{ name: "SubGoal 2", type: "Goal", desc: "Data Link layerは正常である",
+//		{ name: "SubGoal 2", type: "Goal", desc: "Data Link layerは正常である",
+//		children: [
+//					{ name: "Context 2.1", type: "Context",  desc: "@IP Address:192.168.59.101" },
+//					{ name: "Strategy", type: "Strategy",  desc: "接続方式により議論" ,
+//					children: [
+//								{ name: "Context 2.1", type: "Context",  desc: "@接続方法:イーサネット、無線LAN" },
+//								{ name: "SubGoal 2.1", type: "Goal",  desc: "PCでイーサネットインターフェースが有効になっている" ,
+//								children: [
+//											{ name: "Evidence 2.1", type: "Evidence", desc: "Connection.ds" }
+//													]
+//								},
+//								{ name: "SubGoal 2.2", type: "Goal",  desc: "PCで無線LANインターフェースが有効になっている" ,
+//								children: [
+//											{ name: "Evidence 2.1", type: "Evidence", desc: "Connection.ds" }
+//													]
+//								}
+//										]
+//					}
+//							]
+//		},
+
+			//パケットを送信元から宛先まで届ける全工程を担っている。
+			//仮想的なパケット交換ネットワークを構築、ホストとホスト間の通信を実現。ICMP(Internet Control Message Protocol)等もここ。つまり、pingによるチェックはここまで。
+			//同じネットワーク媒体上に接続されているコンピュータ間同士だけではなく、異なるネットワーク媒体上に接続されているコンピュータの間でも通信を行えるようにする。(IP)アドレス付け。(ゲートウェイ内外の)ルーティングプロトコル。
+		{ name: "SubGoal 2", type: "Goal", desc: "Internet layerは正常である",
 		children: [
-					{ name: "Context 2.1", type: "Context",  desc: "@IP Address:192.168.59.101" },
-					{ name: "Strategy", type: "Strategy",  desc: "接続方式により議論" ,
-					children: [
-								{ name: "Context 2.1", type: "Context",  desc: "@接続方法:イーサネット、無線LAN" },
-								{ name: "SubGoal 2.1", type: "Goal",  desc: "PCでイーサネットインターフェースが有効になっている" ,
-								children: [
-											{ name: "Evidence 2.1", type: "Evidence", desc: "Connection.ds" }
-													]
-								},
-								{ name: "SubGoal 2.2", type: "Goal",  desc: "PCで無線LANインターフェースが有効になっている" ,
-								children: [
-											{ name: "Evidence 2.1", type: "Evidence", desc: "Connection.ds" }
-													]
-								}
-										]
-					}
+						{ name: "Context 1.1", type: "Context", desc: "@IP Address:192.168.59.101" },
+						{ name: "Strategy", type: "Strategy", desc: "Internet layerの持つ役割を基に議論" ,
+						children: [
+									{ name: "SubGoal 2.1", type: "Goal", desc: "IP Addressが割り当てられている" },
+									{ name: "SubGoal 2.2", type: "Goal", desc: "ルーティングができる" },
+									{ name: "SubGoal 2.3", type: "Goal", desc: "firewall設定によりパケット情報が破棄されない" },
+									{ name: "SubGoal 2.4", type: "Goal", desc: "pingが通る" }
+											]
+						}
+//					{ name: "Evidence 2.1", type: "Evidence", desc: "CheckIPAddress.ds" },
+//					{ name: "Evidence 2.5", type: "Evidence", desc: "FirewallIPOutput.ds" },//IP Level
+//					{ name: "Evidence 2.6", type: "Evidence", desc: "FirewallIPInput.ds" }//IP Level
+//					{ name: "Evidence 2.2", type: "Evidence", desc: "RoutingDirectly.ds" },
+//					{ name: "Evidence 2.3", type: "Evidence", desc: "RoutingDirectly.ds" },
+//					{ name: "Evidence 2.4", type: "Evidence", desc: "Ping.ds" },
 							]
 		},
 
-		{ name: "SubGoal 3", type: "Goal", desc: "Network layerは正常である",
-			children: [
-						{ name: "Evidence 3.1", type: "Evidence", desc: "RoutingDirectly.ds" },
-					  ]
-		},
+//データ伝送の信頼性を保証するための機能を物理的ネットワークから独立して提供。つまり、「仮想的な回線」を提供。データが正しく相手にまで届いたかどうかを確認し、問題があれば、データの再送信などを行う。(TCP,UDPなどがここ)
+//任意のサイズのデータを送るために、データの分割と再構築を行う。アプリケーションにパケットを渡すときにPort番号で識別している
 		{ name: "SubGoal 4", type: "Goal", desc: "Transport layerは正常である",
 			children: [
-						{ name: "Evidence 3.1", type: "Evidence", desc: "RoutingDefault.ds" },
+						{ name: "Evidence 3.1", type: "Evidence", desc: "FirewallPortOutput.ds" },// TCP/UDP Port
+						{ name: "Evidence 3.2", type: "Evidence", desc: "FirewallPortInput.ds" }// TCP/UDP Port
 					  ]
 		},
-		{ name: "SubGoal 5", type: "Goal", desc: "Session layerは正常である",
-			children: [
-						{ name: "Evidence2.1", type: "Evidence", desc: "FirewallOutput.ds" }
-					  ]
-		},
-		{ name: "SubGoal 6", type: "Goal", desc: "Presentation layerは正常である",
-			children: [
-						{ name: "Evidence2.1", type: "Evidence", desc: "FirewallInput.ds" }
-					  ]
-		},
-		{ name: "SubGoal 7", type: "Goal", desc: "Application layerは正常である",
+		{ name: "SubGoal 5", type: "Goal", desc: "Application layerは正常である",
 			children: [
 						{ name: "Evidence 2.1", type: "Evidence", desc: "Nslookup.ds" }
 					  ]
 		}
+//		{ name: "SubGoal 6", type: "Goal", desc: "Presentation layerは正常である",
+//			children: [
+//						{ name: "Evidence2.1", type: "Evidence", desc: "FirewallInput.ds" }
+//					  ]
+//		},
+//		{ name: "SubGoal 7", type: "Goal", desc: "Application layerは正常である",
+//			children: [
+//						{ name: "Evidence 2.1", type: "Evidence", desc: "Nslookup.ds" }
+//					  ]
+//		}
 	];
 	return createNodeFromJson2({
 		name: "TopGoal", type: "Goal",
