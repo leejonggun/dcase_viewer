@@ -85,35 +85,35 @@ function createNodeFromJson2(json) {
 function createSampleNode() {
 	var strategy_children = [
 		{ name: "SubGoal 1", type: "Goal", desc: "Phsical layerは正常である",
-			children: [
-						{ name: "Context 1.1", type: "Context", desc: "@IP Address:192.168.59.101" },
-						{ name: "Strategy", type: "Strategy", desc: "接続方式により議論" ,
-						  children: [
-									  { name: "SubGoal 1.1", type: "Goal",  desc: "イーサネットで接続している" ,
+		children: [
+					{ name: "Context 1.1", type: "Context", desc: "@IP Address:192.168.59.101" },
+					{ name: "Strategy", type: "Strategy", desc: "接続方式により議論" ,
+					children: [
+								{ name: "SubGoal 1.1", type: "Goal",  desc: "イーサネットで接続している" ,
+								children: [
+											{ name: "Strategy", type: "Strategy", desc: "PCや周辺機器の状態により判断" ,
+											children: [
+															{ name: "SubGoal 1.1.1", type: "Goal",  desc: "PCに繋がっているLANケーブルが途切れていない" },
+															{ name: "SubGoal 1.1.2", type: "Goal",  desc: "イーサネットカードが認識されている" ,
+															children: [
+																			{ name: "Evidence", type: "Evidence", dexc: "CheckNIC.ds" }
+																				] }
+																] }
+													] },
+								{ name: "SubGoal 1.2", type: "Goal",  desc: "無線LANで接続している" ,
 										children: [
 													{ name: "Strategy", type: "Strategy", desc: "PCや周辺機器の状態により判断" ,
-													  children: [
-																  { name: "SubGoal 1.1.1", type: "Goal",  desc: "PCに繋がっているLANケーブルが途切れていない" },
-																  { name: "SubGoal 1.1.2", type: "Goal",  desc: "イーサネットカードが認識されている" ,
+														children: [
+																	{ name: "SubGoal 1.1.1", type: "Goal",  desc: "電波信号が十分に強い" },
+																	{ name: "SubGoal 1.1.2", type: "Goal",  desc: "電波干渉がない" },
+																	{ name: "SubGoal 1.1.3", type: "Goal",  desc: "無線LANカードが認識されている" ,
 																	children: [
 																				{ name: "Evidence", type: "Evidence", dexc: "CheckNIC.ds" }
-																			  ] }
-																] }
-												  ] },
-									  { name: "SubGoal 1.2", type: "Goal",  desc: "無線LANで接続している" ,
-										children: [
-													{ name: "Strategy", type: "Strategy", desc: "PCや周辺機器の状態により判断" ,
-													  children: [
-																  { name: "SubGoal 1.1.1", type: "Goal",  desc: "電波信号が十分に強い" },
-																  { name: "SubGoal 1.1.2", type: "Goal",  desc: "電波干渉がない" },
-																  { name: "SubGoal 1.1.3", type: "Goal",  desc: "無線LANカードが認識されている" ,
-																	children: [
-																				{ name: "Evidence", type: "Evidence", dexc: "CheckNIC.ds" }
-																			  ] }
-																] }
-												  ] }
-									] }
-					  ] },
+																						] }
+																			] }
+															] }
+											] }
+							] },
 		{ name: "SubGoal 2", type: "Goal", desc: "Data Link layerは正常である",
 			children: [
 						{ name: "Context 2.1", type: "Context",  desc: "@IP Address:192.168.59.101" },
