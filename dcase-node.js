@@ -84,44 +84,63 @@ function createNodeFromJson2(json) {
 
 function createSampleNode() {
 	var strategy_children = [
-		{
-			name: "SubGoal 1", type: "Goal", desc: "description",
-			children: [ { name: "test", type: "Context", desc: "description" } ]
-		},
-		{
-			name: "SubGoal 2", type: "Goal", desc: "description",
-			children: [ { name: "Evidence 2", type: "Evidence", desc: "description" } ]
-		},
-		{
-			name: "SubGoal 3", type: "Goal", desc: "description",
+		{ name: "SubGoal 1", type: "Goal", desc: "Phsical layerは正常である",
 			children: [
-				{ name: "Context 3.1", type: "Context", desc: "description" },
-				{ name: "SubGoal 3.1", type: "Goal", desc: "description" },
-				{ name: "SubGoal 3.2", type: "Goal", desc: "description", 
-					children: [ { name: "Evidence 3.2", type: "Evidence", desc: "" } ] },
-				{ name: "SubGoal 3.3", type: "Goal", desc: "description" },
-				{ name: "SubGoal 3.3", type: "Goal", desc: "description" },
-			]
+						{ name: "Context 1.1", type: "Context", desc: "@IP Address:192.168.59.101" },
+						{ name: "Strategy", type: "Strategy", desc: "PC、周辺機器の状態により議論" ,
+						  children: [
+									  { name: "SubGoal 1.1", type: "Goal",  desc: "NICが認識されている" },
+									  { name: "SubGoal 1.2", type: "Goal",  desc: "LANケーブルが途切れていない" },
+									  { name: "SubGoal 1.3", type: "Goal",  desc: "電波信号が十分に強い" },
+									  { name: "SubGoal 1.3", type: "Goal",  desc: "電波干渉が" }
+									]
+						}
+					  ]
 		},
-		{ name: "SubGoal 4", type: "Goal", desc: "description" }
+		{ name: "SubGoal 2", type: "Goal", desc: "Data Link layerは正常である",
+			children: [
+						{ name: "Context 2.1", type: "Goal",  desc: "nothing" },
+						{ name: "SubGoal 2.1", type: "Goal",  desc: "PCでイーサネットが有効になっている" },
+						{ name: "SubGoal 2.1", type: "Goal",  desc: "PCで無線LANが有効になっている" }
+					  ]
+		},
+		{ name: "SubGoal 3", type: "Goal", desc: "Network layerは正常である",
+			children: [
+						{ name: "Evidence 3.1", type: "Evidence", desc: "RoutingDirectly.ds" },
+					  ]
+		},
+		{ name: "SubGoal 4", type: "Goal", desc: "Transport layerは正常である",
+			children: [
+						{ name: "Evidence 3.1", type: "Evidence", desc: "RoutingDefault.ds" },
+					  ]
+		},
+		{ name: "SubGoal 5", type: "Goal", desc: "Session layerは正常である",
+			children: [
+						{ name: "Evidence2.1", type: "Evidence", desc: "FirewallOutput.ds" }
+					  ]
+		},
+		{ name: "SubGoal 6", type: "Goal", desc: "Presentation layerは正常である",
+			children: [
+						{ name: "Evidence2.1", type: "Evidence", desc: "FirewallInput.ds" }
+					  ]
+		},
+		{ name: "SubGoal 7", type: "Goal", desc: "Application layerは正常である",
+			children: [
+						{ name: "Evidence 2.1", type: "Evidence", desc: "Nslookup.ds" }
+					  ]
+		}
 	];
 	return createNodeFromJson2({
 		name: "TopGoal", type: "Goal",
-		desc: "ウェブショッピングデモ<br>" +
-					"システムはDEOSプロセスにより運用され，ODSを満たしている",
+		desc: "通信可能である<br>pingが通る",
 		children: [
 			{
-				name: "Context",
-				type: "Context",
-				desc: "サービス用件:<br>" +
-							"・アクセス数の定格は2500件/分<br>" +
-							"・応答時間は1件あたり3秒以内<br>" +
-							"・一回の障害あたりの復旧時間は5分以内"
+			  name: "Static Context", type: "Context", desc: "@IP:192.168.59.100<br>@OS:ubuntu12.04LTS 64bit<br>"+
+			  "@Net Topology:ring<br>@IP Address list:192.168.59.101~106<br>@Hostname list:...<br>OS list:..."
 			},
-			{ name: "Context2", type: "Context", desc: "現在のシステムの運用状態" },
-			{ name: "Context2", type: "Context", desc: "Risk分析の結果<br>・アクセス数の増大<br>応答遅延" },
+			{ name: "Dynamic Context", type: "Context", desc: "@Destination:192.168.59.102" },
 			{
-				name: "Strategy", type: "Strategy", desc: "DEOSプロセスによって議論する",
+				name: "Strategy", type: "Strategy", desc: "レイヤーレベルで議論",
 				children: strategy_children
 			}
 		]
