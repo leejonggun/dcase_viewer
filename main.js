@@ -5,134 +5,23 @@ var X_MARGIN = 30;
 var Y_MARGIN = 100;
 var SCALE_MIN = 0.1;
 var SCALE_MAX = 6.0;
+var SVG_NS = "http://www.w3.org/2000/svg";
 
 //-------------------------------------
 // global
-var shiftX = 0;
-var shiftY = 0;
-var dragX = 0;
-var dragY = 0;
-var scale = 1.0;
-var moving = false;
 
-//-------------------------------------
-function createNodeFromURL(url) {
-	var a = $.ajax({
-		type: "GET",
-		url : url,
-		async: false,
-		dataType: "json",
-	});
-	return createNodeFromJson(JSON.parse(a.responseText));
-}
+var DCaseViewer = function(root, opts) {
+	root.className = "viewer-root";
+	this.root = root;
 
-function createNodeFromJson(json) {
-	console.log(json);
-	var nodes = [];
-	for(var i=0; i<json.nodes.length; i++) {
-		var c = json.nodes[i];
-		nodes[c.name] = c;
-	}
-	function createRec(l, node) {
-		for(var i=0; i<l.children.length; i++) {
-			var child = l.children[i];
-			var n = nodes[child.name];
-			var newNode = new Node(0, n.name, n.DBNodeType, n.description);
-			node.addChild(newNode);
-			createRec(child, newNode);
-		}
-	}
-	var n = nodes[json.links.name];
-	var topNode = new Node(0, n.name, n.DBNodeType, n.description);
-	createRec(json.links, topNode);
-	return topNode;
-}
-
-//function createBinNode(n) {
-//	if(n > 0) {
-//		var node = new Node(0, "Goal", "Goal", "description");
-//		node.addChild(createBinNode(n-1));
-//		node.addChild(createBinNode(n-1));
-//		return node;
-//	} else {
-//		return new Node(0, "Goal", "Goal", "description");
-//	}
-//}
-
-function createNode() {
-	var topNode = new Node(0, "TopGoal", "Goal",
-			"ネットワークに繋がっている <br>pingが通る");
-	var str = new Node(1, "Strategy", "Strategy", "要因場所により分類");
-	topNode.addChild(new Node(2, "Context", "Context", "IP Address<br>Hostname<br>OS Ver"));
-	topNode.addChild(str);
-
-	str.addChild(new Node(1, "SubGoal 1", "Goal", "PCからパケットを送信&受信可能である"));
-	str.children[0].addChild(new Node(1, "Strategy1", "Strategy", "物理的な配線の問題"));
-	str.children[0].addChild(new Node(1, "Strategy2", "Strategy", "firewallの設定を考慮する"));
-	str.children[0].addChild(new Node(1, "Strategy3", "Strategy", "名前解決"));
-	str.children[0].addChild(new Node(1, "Strategy4", "Strategy", "ルーティングテーブル設定"));
-	str.children[0].children[0].addChild(new Node(1, "SubGoal1", "Goal", "NICが有効になっている"));
-	str.children[0].children[0].children[0].addChild(new Node(1, "Evidence", "Evidence", "Connection.ds"));
-	str.children[0].children[1].addChild(new Node(1, "SubGoal1", "Goal", "Firewall設定で送信するパケットを破棄していない"));
-	str.children[0].children[1].children[0].addChild(new Node(1, "Evidence", "Evidence", "Firewall_output.ds"));
-	str.children[0].children[1].addChild(new Node(1, "SubGoal2", "Goal", "Firewall設定で受信するパケットを破棄していない"));
-	str.children[0].children[1].children[1].addChild(new Node(1, "Evidence", "Evidence", "Firewall_input.ds"));
-	str.children[0].children[2].addChild(new Node(1, "SubGoal1", "Goal", "DNSが設定されている"));
-	str.children[0].children[2].children[0].addChild(new Node(1, "Evidence", "Evidence", "CheckDNS.ds"));
-	str.children[0].children[2].addChild(new Node(1, "SubGoal2", "Goal", "DNSから返答がある"));
-	str.children[0].children[2].children[1].addChild(new Node(1, "Evidence", "Evidence", "Ping_to_DNS.ds"));
-	str.children[0].children[2].addChild(new Node(1, "SubGoal3", "Goal", "DNSに問い合わせ、IP Addressを取得できる"));
-	str.children[0].children[2].children[2].addChild(new Node(1, "Evidence", "Evidence", "Nslookup.ds"));
-	str.children[0].children[3].addChild(new Node(1, "SubGoal1", "Goal", "ルーティングテーブルにIP Addressが登録されている"));
-	str.children[0].children[3].children[0].addChild(new Node(1, "Evidence", "Evidence", "Routing_directly.ds"));
-	str.children[0].children[3].addChild(new Node(1, "SubGoal2", "Goal", "ルーティングテーブルにデフォルトゲートウェイが登録されている"));
-	str.children[0].children[3].children[1].addChild(new Node(1, "Evidence", "Evidence", "Routing_default.ds"));
-
-	str.addChild(new Node(1, "SubGoal 2", "Goal", "PCとRouter間でパケットのやり取りが可能である"));
-	str.children[1].addChild(new Node(1, "Strategy1", "Strategy", "ゲートウェイの動作確認"));
-	str.children[1].children[0].addChild(new Node(1, "SubGoal1", "Goal", "ゲートウェイが認識されている"));
-	str.children[1].children[0].children[0].addChild(new Node(1, "Evidence", "Evidence", "Recognition_gateway.ds"));
-	str.children[1].children[0].addChild(new Node(1, "SubGoal2", "Goal", "ゲートウェイから返答がある"));
-	str.children[1].children[0].children[1].addChild(new Node(1, "Evidence", "Evidence", "Ping_to_gateway.ds"));
-	str.children[1].addChild(new Node(1, "Strategy2", "Strategy", "ルーティングの設定"));
-	str.children[1].children[1].addChild(new Node(1, "SubGoal1", "Goal", "ルータのルーティングテーブルの設定が正しい(人による確認が必要)"));
-	str.children[1].children[1].children[0].addChild(new Node(1, "Evidence", "Evidence", "設定を確認済み"));
-
-	str.addChild(new Node(1, "SubGoal 4", "Goal", "Host側のRouterとHost間でパケットのやり取りが可能である"));
-	str.children[2].addChild(new Node(1, "Strategy1", "Strategy", "ルータの設定を考慮する"));
-	str.children[2].children[0].addChild(new Node(1, "SubGoal1", "Goal", "経路の各ルータのルーティング設定が正しい"));
-	str.children[2].children[0].children[0].addChild(new Node(1, "Evidence", "Evidence", "Undeveloped"));
-	str.children[2].children[0].addChild(new Node(1, "SubGoal2", "Goal", "Host側のルータが稼動している"));
-	str.children[2].children[0].children[1].addChild(new Node(1, "Evidence", "Evidence", "担当者に確認済み"));
-	str.children[2].children[0].addChild(new Node(1, "SubGoal3", "Goal", "Host側のルータのルーティング設定が正しい"));
-	str.children[2].children[0].children[2].addChild(new Node(1, "Evidence", "Evidence", "Undeveloped"));
-	str.children[2].addChild(new Node(1, "Strategy2", "Strategy", "Hostの状態を確認する"));
-	str.children[2].children[1].addChild(new Node(1, "SubGoal1", "Goal", "Hostが稼動している"));
-	str.children[2].children[1].children[0].addChild(new Node(1, "Evidence", "Evidence", "担当者に確認済み"));
-	str.children[2].children[1].addChild(new Node(1, "SubGoal2", "Goal", "Hostがネットワークに繋がっている"));
-	str.children[2].children[1].children[1].addChild(new Node(1, "Evidence", "Evidence", "担当者に確認済み"));
-	str.children[2].children[1].addChild(new Node(1, "SubGoal3", "Goal", "Hostのルーティング設定が正しい"));
-	str.children[2].children[1].children[2].addChild(new Node(1, "Evidence", "Evidence", "Undeveloped"));
-	str.children[2].children[1].addChild(new Node(1, "SubGoal4", "Goal", "Hostのfirewall設定が正しい"));
-	str.children[2].children[1].children[3].addChild(new Node(1, "Evidence", "Evidence", "Undeveloped"));
-//	str.children[2].children[0].children[3].addChild(new Node(1, "", "", ""));
-//	str.children[2].children[0].children[4].addChild(new Node(1, "", "", ""));
-//	str.children[2].children[0].children[0].addChild(new Node(1, "", "", ""));
-//	str.children[2].children[0].children[1].addChild(new Node(1, "", "", ""));
-	return topNode;
-}
-
-function createDCaseViewer(url) {
-	var root = document.getElementById("viewer-root");
-
-	var svgroot = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-	svgroot.id = "svgroot";
-	svgroot.style.position = "absolute";
-	svgroot.style.left = 0;
-	svgroot.style.top  = 0;
-	svgroot.style.width  = "100%";
-	svgroot.style.height = "100%";
-	root.appendChild(svgroot);
+	this.svgroot = document.createElementNS(SVG_NS, "svg");
+	this.svgroot.id = "svgroot";
+	this.svgroot.style.position = "absolute";
+	this.svgroot.style.left = 0;
+	this.svgroot.style.top  = 0;
+	this.svgroot.style.width  = "100%";
+	this.svgroot.style.height = "100%";
+	root.appendChild(this.svgroot);
 
 	//var D = document.createElement("div");//for debug
 	//D.style.left = 0;
@@ -140,16 +29,68 @@ function createDCaseViewer(url) {
 	//D.innerHTML = "";
 	//document.body.appendChild(D);
 
-	var node = typeof url === "undefined" ?
-			createNode() : createNodeFromURL(url);
-	View.prototype.repaintAll = function(ms) {
-		node.view.updateLocation((shiftX + dragX) / scale, (shiftY + dragY) / scale);
-		node.view.animateSec(ms);
-	}
-	shiftX = ($(root).width() - node.view.updateLocation(0, 0).x * scale)/2;
-	shiftY = 20;
-	node.view.repaintAll(0);
+	this.moving = false;
+	this.dragX = 0;
+	this.dragY = 0;
+	this.scale = 1.0;
+	this.drag_flag = true;
 
-	setEventHandler(node.view);
+	this.rootview = this.createView(opts.node);
+	this.shiftX = ($(root).width() - this.rootview.updateLocation(0, 0).x * this.scale)/2;
+	this.shiftY = 20;
+	this.repaintAll(0);
+	this.addEventHandler();
+}
+
+DCaseViewer.prototype.createView = function(node) {
+	var v = new View(this, node);
+	for(var i=0; i<node.children.length; i++) {
+		v.addChild(this.createView(node.children[i]));
+	}
+	for(var i=0; i<node.contexts.length; i++) {
+		v.addChild(this.createView(node.contexts[i]));
+	}
+	return v;
+}
+
+DCaseViewer.prototype.createDiv = function(className) {
+	var obj = document.createElement("div");
+	obj.className = className;
+	this.root.appendChild(obj);
+	return obj;
+}
+
+DCaseViewer.prototype.createSvg = function(name) {
+	var obj = document.createElementNS(SVG_NS, name);
+	this.svgroot.appendChild(obj);
+	return obj;
+}
+
+DCaseViewer.prototype.repaintAll = function(ms) {
+	var self = this;
+	var rootview = self.rootview;
+	rootview.updateLocation(
+			(self.shiftX + self.dragX) / self.scale, (self.shiftY + self.dragY) / self.scale);
+	if(ms == 0) {
+		rootview.move();
+		return;
+	}
+	self.moving = true;
+	var begin = new Date();
+	var id = setInterval(function() {
+		var time = new Date() - begin;
+		var r = time / ms;
+		if(r < 1.0) {
+			rootview.animate(r);
+		} else {
+			clearInterval(id);
+			rootview.move();
+			self.moving = false;
+		}
+	}, 1000/60);
+}
+
+DCaseViewer.prototype.setDragLock = function(b) {
+	this.drag_flag = b;
 }
 
