@@ -163,10 +163,60 @@ function createSampleNode() {
 						{ name: "Context 1.1", type: "Context", desc: "@IP Address:192.168.59.101" },
 						{ name: "Strategy", type: "Strategy", desc: "Internet layerの持つ役割を基に議論" ,
 						children: [
-									{ name: "SubGoal 2.1", type: "Goal", desc: "IP Addressが割り当てられている" },
-									{ name: "SubGoal 2.2", type: "Goal", desc: "ルーティングができる" },
-									{ name: "SubGoal 2.3", type: "Goal", desc: "firewall設定によりパケット情報が破棄されない" },
-									{ name: "SubGoal 2.4", type: "Goal", desc: "pingが通る" }
+									{ name: "SubGoal 2.1", type: "Goal", desc: "IP Addressが割り当てられている" ,//IP AddressがLAN外かLAN内か?
+									children: [
+												{ name: "Evidence 2.1", type: "Evidence", desc: "CheckIPAddress.ds" }
+														]
+									},
+									{ name: "SubGoal 2.2", type: "Goal", desc: "ルーティングができる" ,
+									children: [
+												{ name: "Strategy", type: "Strategy", desc: "ルーティングのされ方で議論" ,
+												children: [
+															{ name: "SubGoal 2.2.1", type: "Goal", desc: "直接ルーティングできる" ,
+															children: [
+																		{ name: "Evidence 2.2.1", type: "Evidence", desc: "RoutingDirectly.ds" }
+																				]
+															},
+															{ name: "SubGoal 2.2.2", type: "Goal", desc: "ゲートウェイを通してルーティングできる" ,
+															children: [
+																		{ name: "Evidence 2.2.1", type: "Evidence", desc: "RoutingDefault.ds" }
+																				]
+															}
+																	]
+												}
+														]
+									},
+									{ name: "SubGoal 2.3", type: "Goal", desc: "firewall設定によりIP Addressレベルでパケット情報が破棄されない" ,
+									children: [
+												{ name: "Strategy", type: "Strategy", desc: "INPUT, FORWARD, OUTPUT別に確認する" ,
+												children: [
+															{ name: "SubGoal 2.3.1", type: "Goal", desc: "INPUTチェーンではパケットを受け入れている" ,
+															children: [
+																		{ name: "Evidence", type: "Evidence", desc: "FirewallIPInput.ds" }
+																				]
+															},
+															{ name: "SubGoal 2.3.2", type: "Goal", desc: "FORWARDチェーンではパケットを受け入れている" ,
+															children: [
+																		{ name: "Evidence", type: "Evidence", desc: "FirewallIPForward.ds" }
+																				]
+															},
+															{ name: "SubGoal 2.3.3", type: "Goal", desc: "OUTPUTチェーンではパケットを受け入れている" ,
+															children: [
+																		{ name: "Evidence", type: "Evidence", desc: "FirewallIPOutput.ds" }
+																				]
+															}
+																	]
+												
+												}
+														]
+									},
+									{ name: "SubGoal 2.4", type: "Goal", desc: "pingが通る" ,
+										children: [
+													{ name: "Context 1.1", type: "Context", desc: "@IP Address:192.168.59.101" },
+													{ name: "Evidence", type: "Evidence", desc: "Ping.ds" }
+															]
+									
+									}
 											]
 						}
 //					{ name: "Evidence 2.1", type: "Evidence", desc: "CheckIPAddress.ds" },
@@ -204,7 +254,7 @@ function createSampleNode() {
 	];
 	return createNodeFromJson2({
 		name: "TopGoal", type: "Goal",
-		desc: "通信可能である<br>pingが通る",
+		desc: "通信可能である",
 		children: [
 			{
 			  name: "Static Context", type: "Context", desc: "@IP:192.168.59.100<br>@OS:ubuntu12.04LTS 64bit<br>"+
