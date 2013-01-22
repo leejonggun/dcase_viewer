@@ -61,31 +61,67 @@ function createNodeFromJson(json) {
 
 function createNode() {
 	var topNode = new Node(0, "TopGoal", "Goal",
-			"ウェブショッピングデモ<br>" +
-			"システムはDEOSプロセスにより運用され，ODSを満たしている");
-	var str = new Node(1, "Strategy", "Strategy", "DEOSプロセスによって議論する");
-	topNode.addChild(new Node(2, "Context", "Context",
-		"サービス用件:<br>" +
-		"・アクセス数の定格は2500件/分<br>" +
-		"・応答時間は1件あたり3秒以内<br>" +
-		"・一回の障害あたりの復旧時間は5分以内"
-		));
-	topNode.addChild(new Node(2, "Context2", "Context", "現在のシステムの運用状態"));
-	topNode.addChild(new Node(2, "Context2", "Context", "Risk分析の結果<br>・アクセス数の増大<br>応答遅延"));
+			"通信可能である<br>pingが通る");
+	var str = new Node(1, "Strategy", "Strategy", "要因場所により分類");
+	topNode.addChild(new Node(2, "Static Context", "Context", "@IP:192.68.59.94<br>@OS:ubuntu12.04LTS 64bit"));
+	topNode.addChild(new Node(2, "Dinamic Context", "Context", "@Hostname:www.google.com"));
 	topNode.addChild(str);
-	str.addChild(new Node(1, "SubGoal 1", "Goal", "description"));
-	str.children[0].addChild(new Node(1, "test", "Context", "description"));
-	str.addChild(new Node(1, "SubGoal 2", "Goal", "description"));
-	str.addChild(new Node(1, "SubGoal 3", "Goal", "description"));
-	str.addChild(new Node(1, "SubGoal 4", "Goal", "description"));
-	str.children[2].addChild(new Node(1, "SubGoal 1.1", "Goal", "description"));
-	str.children[2].addChild(new Node(1, "SubGoal 1.2", "Goal", "description"));
-	str.children[2].addChild(new Node(1, "SubGoal 1.3", "Goal", "description"));
-	str.children[2].addChild(new Node(1, "SubGoal 1.3", "Goal", "description"));
-	str.children[2].addChild(new Node(1, "SubGoal 1.4", "Goal", "description"));
-	str.children[1].addChild(new Node(1, "Evidence", "Evidence", "description"));
-	str.children[1].children[0].state = "error";
-	str.children[2].addChild(new Node(1, "SubGoalContext", "Context", "description"));
+
+	str.addChild(new Node(1, "SubGoal 1", "Goal", "PCからパケットを送信&受信可能である"));
+	str.children[0].addChild(new Node(1, "Strategy1", "Strategy", "物理的な問題"));
+	str.children[0].addChild(new Node(1, "Strategy2", "Strategy", "firewallの設定を考慮する"));
+	str.children[0].addChild(new Node(1, "Strategy3", "Strategy", "名前解決"));
+	str.children[0].addChild(new Node(1, "Strategy4", "Strategy", "ルーティングテーブル設定"));
+	str.children[0].children[0].addChild(new Node(1, "SubGoal1", "Goal", "NICが認識されている"));
+	str.children[0].children[0].children[0].addChild(new Node(1, "Evidence", "Evidence", "CheckNIC.ds"));
+	str.children[0].children[0].addChild(new Node(1, "SubGoal1", "Goal", "ネットワークインターフェースが有効になっている"));
+	str.children[0].children[0].children[1].addChild(new Node(1, "Evidence", "Evidence", "Connection.ds"));
+	str.children[0].children[1].addChild(new Node(1, "SubGoal1", "Goal", "Firewall設定で送信するパケットを破棄していない"));
+	str.children[0].children[1].children[0].addChild(new Node(1, "Evidence", "Evidence", "FirewallOutput.ds"));
+	str.children[0].children[1].addChild(new Node(1, "SubGoal2", "Goal", "Firewall設定で受信するパケットを破棄していない"));
+	str.children[0].children[1].children[1].addChild(new Node(1, "Evidence", "Evidence", "FirewallInput.ds"));
+	str.children[0].children[2].addChild(new Node(1, "SubGoal1", "Goal", "DNSが設定されている"));
+	str.children[0].children[2].children[0].addChild(new Node(1, "Evidence", "Evidence", "CheckDNS.ds"));
+	str.children[0].children[2].addChild(new Node(1, "SubGoal2", "Goal", "DNSから返答がある"));
+	str.children[0].children[2].children[1].addChild(new Node(1, "Evidence", "Evidence", "PingDNS.ds"));
+	str.children[0].children[2].addChild(new Node(1, "SubGoal3", "Goal", "DNSに問い合わせ、IP Addressを取得できる"));
+	str.children[0].children[2].children[2].addChild(new Node(1, "Evidence", "Evidence", "Nslookup.ds"));
+	str.children[0].children[3].addChild(new Node(1, "SubGoal1", "Goal", "ルーティングテーブルにIP Addressが登録されている"));
+	str.children[0].children[3].children[0].addChild(new Node(1, "Evidence", "Evidence", "RoutingDirectly.ds"));
+	str.children[0].children[3].addChild(new Node(1, "SubGoal2", "Goal", "ルーティングテーブルにデフォルトゲートウェイが登録されている"));
+	str.children[0].children[3].children[1].addChild(new Node(1, "Evidence", "Evidence", "RoutingDefault.ds"));
+
+	str.addChild(new Node(1, "SubGoal 2", "Goal", "PCとRouter間でパケットのやり取りが可能である"));
+	str.children[1].addChild(new Node(1, "Strategy1", "Strategy", "ゲートウェイの動作確認"));
+	str.children[1].children[0].addChild(new Node(1, "SubGoal1", "Goal", "ゲートウェイが認識されている"));
+	str.children[1].children[0].children[0].addChild(new Node(1, "Evidence", "Evidence", "RecognitionGW.ds"));
+	str.children[1].children[0].addChild(new Node(1, "SubGoal2", "Goal", "ゲートウェイから返答がある"));
+	str.children[1].children[0].children[1].addChild(new Node(1, "Evidence", "Evidence", "PingGW.ds"));
+	str.children[1].addChild(new Node(1, "Strategy2", "Strategy", "ルーティングの設定"));
+	str.children[1].children[1].addChild(new Node(1, "SubGoal1", "Goal", "ルータのルーティングテーブルの設定が正しい(人による確認が必要)"));
+	str.children[1].children[1].children[0].addChild(new Node(1, "Evidence", "Evidence", "設定を確認済み"));
+
+	str.addChild(new Node(1, "SubGoal 4", "Goal", "Host側のRouterとHost間でパケットのやり取りが可能である"));
+	str.children[2].addChild(new Node(1, "Strategy1", "Strategy", "ルータの設定を考慮する"));
+	str.children[2].children[0].addChild(new Node(1, "SubGoal1", "Goal", "経路の各ルータのルーティング設定が正しい"));
+	str.children[2].children[0].children[0].addChild(new Node(1, "Evidence", "Evidence", "Undeveloped"));
+	str.children[2].children[0].addChild(new Node(1, "SubGoal2", "Goal", "Host側のルータが稼動している"));
+	str.children[2].children[0].children[1].addChild(new Node(1, "Evidence", "Evidence", "担当者に確認済み"));
+	str.children[2].children[0].addChild(new Node(1, "SubGoal3", "Goal", "Host側のルータのルーティング設定が正しい"));
+	str.children[2].children[0].children[2].addChild(new Node(1, "Evidence", "Evidence", "Undeveloped"));
+	str.children[2].addChild(new Node(1, "Strategy2", "Strategy", "Hostの状態を確認する"));
+	str.children[2].children[1].addChild(new Node(1, "SubGoal1", "Goal", "Hostが稼動している"));
+	str.children[2].children[1].children[0].addChild(new Node(1, "Evidence", "Evidence", "担当者に確認済み"));
+	str.children[2].children[1].addChild(new Node(1, "SubGoal2", "Goal", "Hostがネットワークに繋がっている"));
+	str.children[2].children[1].children[1].addChild(new Node(1, "Evidence", "Evidence", "担当者に確認済み"));
+	str.children[2].children[1].addChild(new Node(1, "SubGoal3", "Goal", "Hostのルーティング設定が正しい"));
+	str.children[2].children[1].children[2].addChild(new Node(1, "Evidence", "Evidence", "Undeveloped"));
+	str.children[2].children[1].addChild(new Node(1, "SubGoal4", "Goal", "Hostのfirewall設定が正しい"));
+	str.children[2].children[1].children[3].addChild(new Node(1, "Evidence", "Evidence", "Undeveloped"));
+//	str.children[2].children[0].children[3].addChild(new Node(1, "", "", ""));
+//	str.children[2].children[0].children[4].addChild(new Node(1, "", "", ""));
+//	str.children[2].children[0].children[0].addChild(new Node(1, "", "", ""));
+//	str.children[2].children[0].children[1].addChild(new Node(1, "", "", ""));
 	return topNode;
 }
 
