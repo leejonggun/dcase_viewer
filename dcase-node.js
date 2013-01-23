@@ -86,9 +86,9 @@ function createSampleNode() {
 	var strategy_children = [
 		{ name: "SubGoal 1", type: "Goal", desc: "Link layerは正常である",
 		children: [
-			{ name: "Context 1.1", type: "Context", desc: "@接続方法:イーサネット、無線LAN" },
 			{ name: "Strategy", type: "Strategy", desc: "接続方式により議論" ,
 			children: [
+				{ name: "Context 1.1", type: "Context", desc: "@接続方法:イーサネット、無線LAN" },
 				{ name: "SubGoal 1.1(or)", type: "Goal",  desc: "イーサネットで接続している" ,
 				children: [
 					{ name: "Strategy", type: "Strategy", desc: "PCや周辺機器の状態により判断" ,
@@ -209,10 +209,10 @@ function createSampleNode() {
 //任意のサイズのデータを送るために、データの分割と再構築を行う。アプリケーションにパケットを渡すときにPort番号で識別している
 		{ name: "SubGoal 4", type: "Goal", desc: "Transport layerは正常である",
 			children: [
-				{ name: "Context 4.1", type: "Context", desc: "@プロトコル:TCP, UDP" },
 				{ name: "Strategy", type: "Strategy", desc: "プロトコルにより判断する" ,
 				children: [
-					{ name: "SubGoal 4.1", type: "Goal", desc: "TCPについて議論" ,// TCP/UDP Port,再送制御、順序制御、フロー制御、輻輳制御
+					{ name: "Context 4.1", type: "Context", desc: "@プロトコル:TCP, UDP" },
+					{ name: "SubGoal 4.1", type: "Goal", desc: "TCPについて議論(or)" ,// TCP/UDP Port,再送制御、順序制御、フロー制御、輻輳制御
 					children: [
 						{ name: "Strategy", type: "Strategy", desc: "firewall設定を考慮する" ,
 						children: [
@@ -237,7 +237,7 @@ function createSampleNode() {
 										]
 					},
 
-					{ name: "SubGoal 4.2", type: "Goal", desc: "UDPについて議論" ,// TCP/UDP Port
+					{ name: "SubGoal 4.2", type: "Goal", desc: "UDPについて議論(or)" ,// TCP/UDP Port
 					children: [
 						{ name: "Strategy", type: "Strategy", desc: "firewall設定を考慮する" ,
 						children: [
@@ -269,13 +269,16 @@ function createSampleNode() {
 //Presentation layer->ネットワークに流れるデータの意味を統一。コードの変換以外にデータの暗号化や、データの圧縮なども
 		{ name: "SubGoal 5", type: "Goal", desc: "Application layerは正常である",
 		children: [
-			{ name: "Strategy", type: "Strategy", desc: "(アプリケーション層で議論する)" ,
+			{ name: "Context 5.1", type: "Context", desc: "@IP Address:192.168.59.101<br>@Hostname list:...<br>@Destination:192.168.59.102" },
+			{ name: "Strategy", type: "Strategy", desc: "サービスの種類で議論する" ,
 			children: [
 				{ name: "SubGoal 5.1", type: "Goal", desc: "名前解決できる" ,
 				children: [
 					{ name: "Evidence 5.1", type: "Evidence", desc: "Nslookup.ds" }
 									]
-				}
+				},
+				{ name: "SubGoal 5.2", type: "Goal", desc: "電子メール" },
+				{ name: "SubGoal 5.3", type: "Goal", desc: "ワールドワイドウェブ" }
 								]
 			}
 							]
