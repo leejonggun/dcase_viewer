@@ -278,18 +278,19 @@ function createSampleNode() {
 			{ name: "Strategy", type: "Strategy", desc: "サービスの種類で議論する" ,
 			children: [
 				{ name: "Context 5.1", type: "Context", desc: "@Service:File Transfer, Send Message, Web, Telnet" },
-				{ name: "SubGoal 5.1", type: "Goal", desc: "電子メール(SMTP)の取り扱いが可能" },
-				{ name: "SubGoal 5.2", type: "Goal", desc: "ワールドワイドウェブ(HTTP)の取り扱いが可能" },
-				{ name: "SubGoal 5.3", type: "Goal", desc: "ファイル転送(FTP)の取り扱いが可能" ,
+				{ name: "SubGoal 5.1", type: "Goal", desc: "電子メール(SMTP)の取り扱いが可能(or)" },
+				{ name: "SubGoal 5.2", type: "Goal", desc: "ワールドワイドウェブ(HTTP)の取り扱いが可能(or)" },
+				{ name: "SubGoal 5.3", type: "Goal", desc: "ファイル転送(FTP)の取り扱いが可能(or)" ,
 				children: [
-					{ name: "Strategy", type: "Strategy", desc: "サービスの特性を踏まえ議論" ,
+					{ name: "Strategy", type: "Strategy", desc: "サービスの特性を踏まえて議論" ,
 					children: [
-						{ name: "SubGoal 5.3.1", type: "Goal", desc: "" }
+						{ name: "SubGoal 5.3.1", type: "Goal", desc: "コントロールコネクションが成功する" }
+						{ name: "SubGoal 5.3.2", type: "Goal", desc: "データコネクションが成功する" }
 										]
 						}
 									]
 				},
-				{ name: "SubGoal 5.4", type: "Goal", desc: "Telnetが可能" }
+				{ name: "SubGoal 5.4", type: "Goal", desc: "Telnetが可能(or)" }
 								]
 			}
 							]
