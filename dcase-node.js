@@ -266,19 +266,30 @@ function createSampleNode() {
 								]
 		},
 
-//Presentation layer->ネットワークに流れるデータの意味を統一。コードの変換以外にデータの暗号化や、データの圧縮なども
+//Presentation layer->ネットワークに流れるデータの意味を統一。コードの変換以外にデータの暗号化や、データの圧縮なども。TCP/IP layerのApplication layer。
 		{ name: "SubGoal 5", type: "Goal", desc: "Application layerは正常である",
 		children: [
 			{ name: "Context 5.1", type: "Context", desc: "@IP Address:192.168.59.101<br>@Hostname list:...<br>@Destination:192.168.59.102" },
+			{ name: "SubGoal 5.1", type: "Goal", desc: "名前解決できる" ,
+			children: [
+				{ name: "Evidence 5.1", type: "Evidence", desc: "Nslookup.ds" }
+								]
+			},
 			{ name: "Strategy", type: "Strategy", desc: "サービスの種類で議論する" ,
 			children: [
-				{ name: "SubGoal 5.1", type: "Goal", desc: "名前解決できる" ,
+				{ name: "Context 5.1", type: "Context", desc: "@Service:File Transfer, Send Message, Web, Telnet" },
+				{ name: "SubGoal 5.1", type: "Goal", desc: "電子メール(SMTP)の取り扱いが可能" },
+				{ name: "SubGoal 5.2", type: "Goal", desc: "ワールドワイドウェブ(HTTP)の取り扱いが可能" },
+				{ name: "SubGoal 5.3", type: "Goal", desc: "ファイル転送(FTP)の取り扱いが可能" ,
 				children: [
-					{ name: "Evidence 5.1", type: "Evidence", desc: "Nslookup.ds" }
+					{ name: "Strategy", type: "Strategy", desc: "サービスの特性を踏まえ議論" ,
+					children: [
+						{ name: "SubGoal 5.3.1", type: "Goal", desc: "" }
+										]
+						}
 									]
 				},
-				{ name: "SubGoal 5.2", type: "Goal", desc: "電子メール" },
-				{ name: "SubGoal 5.3", type: "Goal", desc: "ワールドワイドウェブ" }
+				{ name: "SubGoal 5.4", type: "Goal", desc: "Telnetが可能" }
 								]
 			}
 							]
@@ -288,8 +299,7 @@ function createSampleNode() {
 		name: "TopGoal", type: "Goal",
 		desc: "通信可能である",
 		children: [
-			{
-			  name: "Static Context", type: "Context", desc: "@IP:192.168.59.100<br>@OS:ubuntu12.04LTS 64bit<br>"+
+			{ name: "Static Context", type: "Context", desc: "@Service:FTP<br>@IP:192.168.59.100<br>@OS:ubuntu12.04LTS 64bit<br>"+
 			  "@Net Topology:ring<br>@IP Address list:192.168.59.101~106<br>@Hostname list:...<br>OS list:..."
 			},
 			{ name: "Dynamic Context", type: "Context", desc: "@Destination:192.168.59.102" },
