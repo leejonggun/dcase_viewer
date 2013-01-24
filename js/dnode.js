@@ -169,7 +169,7 @@ function createSampleNode() {
 							{ name: "Evidence 2.2.1", type: "Evidence", desc: "RoutingDefault.ds" }
 											]
 							},
-//						{ name: "SubGoal 2.2.3", type: "Goal", desc: "経路の各ルータが(ルーティングできる)パケットを破棄しない" }
+						{ name: "SubGoal 2.2.3", type: "Goal", desc: "ルータが壊れていない" }
 										]
 					}
 									]
@@ -286,7 +286,7 @@ function createSampleNode() {
 //				{ name: "Context 5.1", type: "Context", desc: "@Service:File Transfer, Send Message, Web, Telnet" },
 //				{ name: "SubGoal 5.1", type: "Goal", desc: "電子メール(SMTP)の送受信が可能(or)" },
 //				{ name: "SubGoal 5.2", type: "Goal", desc: "ワールドワイドウェブ(HTTP)の閲覧が可能(or)" },
-				{ name: "SubGoal 5.3", type: "Goal", desc: "ファイル転送(FTP)が可能(or)" ,
+				{ name: "SubGoal 5.3", type: "Goal", desc: "ファイル転送が可能" ,
 				children: [
 //					{ name: "Context", type: "Context", desc: "@Port:20,21" },
 					{ name: "Strategy", type: "Strategy", desc: "サービスの特性を踏まえて議論" ,
@@ -306,13 +306,13 @@ function createSampleNode() {
 						children: [
 //							{ name: "Context", type: "Context", desc: "@Port:20" },
 							{ name: "SubGoal 5.3.2.1", type: "Goal", desc: "firewallによりパケットを破棄していない" },
-							{ name: "Strategy", type: "Strategy", desc: "通信方式により議論" ,
-							children: [
-								{ name: "Context", type: "Context", desc: "@Mode:アクティブモード、パッシブモード" },
+//							{ name: "Strategy", type: "Strategy", desc: "通信方式により議論" ,
+//							children: [
+//								{ name: "Context", type: "Context", desc: "@Mode:アクティブモード、パッシブモード" },
 								{ name: "SubGoal 5.3.2.2", type: "Goal", desc: "アクティブモードで通信できる" },
-								{ name: "SubGoal 5.3.2.3", type: "Goal", desc: "パッシブモードで通信できる" },
-												]
-							},
+//								{ name: "SubGoal 5.3.2.3", type: "Goal", desc: "パッシブモードで通信できる" },
+//												]
+//							},
 											]
 						}
 										]
