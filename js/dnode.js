@@ -90,17 +90,25 @@ function createNodeFromJson2(json) {
 
 function createSampleNode() {
 	var strategy_children = [
-		{ name: "SubGoal 1", type: "Goal", desc: "Link layerは正常である",
+		{ name: "SubGoal 1", type: "Goal", desc: "ネットワークアクセスは正常である",
 		children: [
-			{ name: "Strategy", type: "Strategy", desc: "接続方式により議論" ,
-			children: [
+//			{ name: "Strategy", type: "Strategy", desc: "接続方式により議論" ,
+//			children: [
 //				{ name: "Context 1.1", type: "Context", desc: "@接続方法:イーサネット、無線LAN" },
 //				{ name: "SubGoal 1.1(or)", type: "Goal",  desc: "イーサネットで接続している" ,
 //				children: [
 					{ name: "Strategy", type: "Strategy", desc: "PCや周辺機器の状態により判断" ,
 					children: [
-						{ name: "SubGoal 1.1.1", type: "Goal",  desc: "PCに繋がっているネットワークケーブルが途切れていない" },
-						{ name: "SubGoal 1.1.2", type: "Goal",  desc: "ハブが壊れていない" },
+						{ name: "SubGoal 1.1.1", type: "Goal",  desc: "PCに繋がっているネットワークケーブルが途切れていない" ,
+						children: [
+							{ name: "Evidence", type: "Evidence", desc: "人による確認" }
+											]
+						},
+						{ name: "SubGoal 1.1.2", type: "Goal",  desc: "ハブが壊れていない" ,
+						children: [
+							{ name: "Evidence", type: "Evidence", desc: "人による確認" }
+											]
+						},
 						{ name: "SubGoal 1.1.3", type: "Goal",  desc: "イーサネットカードが認識されている" ,
 						children: [
 							{ name: "Evidence", type: "Evidence", desc: "CheckNIC.ds" }
@@ -110,8 +118,8 @@ function createSampleNode() {
 						children: [
 							{ name: "Evidence", type: "Evidence", desc: "Connection.ds" }
 											]
-						}
-										]
+//						}
+//										]
 //					}
 //									]
 				},
@@ -144,7 +152,7 @@ function createSampleNode() {
 			//パケットを送信元から宛先まで届ける全工程を担っている。
 			//仮想的なパケット交換ネットワークを構築、ホストとホスト間の通信を実現。ICMP(Internet Control Message Protocol)等もここ。つまり、pingによるチェックはここまで。
 			//同じネットワーク媒体上に接続されているコンピュータ間同士だけではなく、異なるネットワーク媒体上に接続されているコンピュータの間でも通信を行えるようにする。(IP)アドレス付け。(ゲートウェイ内外の)ルーティングプロトコル。
-		{ name: "SubGoal 2", type: "Goal", desc: "Internet layerは正常である",
+		{ name: "SubGoal 2", type: "Goal", desc: "インターネット層は正常である",
 		children: [
 //			{ name: "Context 1.1", type: "Context", desc: "@IP Address:192.168.59.101" },
 			{ name: "Strategy", type: "Strategy", desc: "Internet layerの持つ役割を基に議論" ,
@@ -166,10 +174,14 @@ function createSampleNode() {
 						},
 						{ name: "SubGoal 2.2.2", type: "Goal", desc: "ゲートウェイを通してルーティングできる" ,
 						children: [
-							{ name: "Evidence 2.2.1", type: "Evidence", desc: "RoutingDefault.ds" }
+							{ name: "Evidence 2.2.2", type: "Evidence", desc: "RoutingDefault.ds" }
 											]
 							},
-						{ name: "SubGoal 2.2.3", type: "Goal", desc: "ルータが壊れていない" }
+						{ name: "SubGoal 2.2.3", type: "Goal", desc: "ルータが壊れていない" ,
+						children: [
+							{ name: "Evidence", type: "Evidence", desc: "人による確認" }
+											]
+						},
 										]
 					}
 									]
@@ -213,7 +225,7 @@ function createSampleNode() {
 
 //データ伝送の信頼性を保証するための機能を物理的ネットワークから独立して提供。つまり、「仮想的な回線」を提供。データが正しく相手にまで届いたかどうかを確認し、問題があれば、データの再送信などを行う。(TCP,UDPなどがここ)
 //任意のサイズのデータを送るために、データの分割と再構築を行う。アプリケーションにパケットを渡すときにPort番号で識別している
-		{ name: "SubGoal 4", type: "Goal", desc: "Transport layerは正常である",
+		{ name: "SubGoal 4", type: "Goal", desc: "トランスポート層は正常である",
 			children: [
 //				{ name: "Strategy", type: "Strategy", desc: "プロトコルにより判断する" ,
 //				children: [
@@ -237,7 +249,11 @@ function createSampleNode() {
 								{ name: "Evidence 4.1.3", type: "Evidence", desc: "FirewallTCPOutput.ds" }// TCP/UDP
 												]
 							},
-							{ name: "SubGoal 4.1.4", type: "Goal", desc: "その他TCPプロトコルに関しての設定を確認する" }//ポート指定、IP Address指定、オプション等
+//							{ name: "SubGoal 4.1.4", type: "Goal", desc: "その他TCPプロトコルに関しての設定を確認する" ,//ポート指定、IP Address指定、オプション等
+//							children: [
+//								{ name: "Evidence", type: "Evidence", desc: "人による確認" }
+//												]
+//							},
 //											]
 //						}
 //										]
@@ -273,10 +289,10 @@ function createSampleNode() {
 		},
 
 //Presentation layer->ネットワークに流れるデータの意味を統一。コードの変換以外にデータの暗号化や、データの圧縮なども。TCP/IP layerのApplication layer。
-		{ name: "SubGoal 5", type: "Goal", desc: "Application layerは正常である",
-		children: [
+//		{ name: "SubGoal 5", type: "Goal", desc: "Application layerは正常である",
+//		children: [
 //			{ name: "Context 5.1", type: "Context", desc: "@IP Address:192.168.59.101<br>@Hostname list:...<br>@Destination:192.168.59.102" },
-			{ name: "SubGoal 5.1", type: "Goal", desc: "名前解決できる" ,
+			{ name: "SubGoal 5.1", type: "Goal", desc: "アプリケーション層は正常である(名前解決できる)" ,
 			children: [
 				{ name: "Evidence 5.1", type: "Evidence", desc: "Nslookup.ds" }
 								]
@@ -286,53 +302,63 @@ function createSampleNode() {
 //				{ name: "Context 5.1", type: "Context", desc: "@Service:File Transfer, Send Message, Web, Telnet" },
 //				{ name: "SubGoal 5.1", type: "Goal", desc: "電子メール(SMTP)の送受信が可能(or)" },
 //				{ name: "SubGoal 5.2", type: "Goal", desc: "ワールドワイドウェブ(HTTP)の閲覧が可能(or)" },
-				{ name: "SubGoal 5.3", type: "Goal", desc: "ファイル転送が可能" ,
-				children: [
+//				{ name: "SubGoal 5.3", type: "Goal", desc: "ファイル転送が可能" ,
+//				children: [
 //					{ name: "Context", type: "Context", desc: "@Port:20,21" },
-					{ name: "Strategy", type: "Strategy", desc: "サービスの特性を踏まえて議論" ,
-					children: [
-						{ name: "SubGoal 5.3.1", type: "Goal", desc: "コントロールコネクションが成功する" ,
-						children: [
+//					{ name: "Strategy", type: "Strategy", desc: "サービスの特性を踏まえて議論" ,
+//					children: [
+//						{ name: "SubGoal 5.3.1", type: "Goal", desc: "コントロールコネクションが成功する" ,
+//						children: [
 //							{ name: "Context", type: "Context", desc: "@Port:21" },
-							{ name: "SubGoal 5.3.2", type: "Goal", desc: "firewallによりパケットを破棄していない" },
-							{ name: "SubGoal 5.3.3", type: "Goal", desc: "ユーザ名、パスワード名が正しい" ,
-							children: [
-								{ name: "Evidence", type: "Evidence", desc: "ユーザに確認" },
-												]
-							}
-											]
-						},
-						{ name: "SubGoal 5.3.2", type: "Goal", desc: "データコネクションが成功する" ,
-						children: [
+//							{ name: "SubGoal 5.3.2", type: "Goal", desc: "firewallによりパケットを破棄していない" ,
+//							children: [
+//								{ name: "Evidence", type: "Evidence", desc: "FTPControlConnect.ds" }
+//												]
+//							},
+//							{ name: "SubGoal 5.3.3", type: "Goal", desc: "ユーザ名、パスワード名が正しい" ,
+//							children: [
+//								{ name: "Evidence", type: "Evidence", desc: "ユーザの確認" },
+//												]
+//							}
+//											]
+//						},
+//						{ name: "SubGoal 5.3.2", type: "Goal", desc: "データコネクションが成功する" ,
+//						children: [
 //							{ name: "Context", type: "Context", desc: "@Port:20" },
-							{ name: "SubGoal 5.3.2.1", type: "Goal", desc: "firewallによりパケットを破棄していない" },
+//							{ name: "SubGoal 5.3.2.1", type: "Goal", desc: "firewallによりパケットを破棄していない" ,
+//							children: [
+//								{ name: "Evidence", type: "Evidence", desc: "FTPDataConnect.ds" }
+//												]
+//							},
 //							{ name: "Strategy", type: "Strategy", desc: "通信方式により議論" ,
 //							children: [
 //								{ name: "Context", type: "Context", desc: "@Mode:アクティブモード、パッシブモード" },
-								{ name: "SubGoal 5.3.2.2", type: "Goal", desc: "アクティブモードで通信できる" },
+//								{ name: "SubGoal 5.3.2.2", type: "Goal", desc: "アクティブモードで通信できる" ,
+//								children: [
+//									{ name: "Evidence", type: "Evidence", desc: "人による確認" }
+//													]
+//								},
 //								{ name: "SubGoal 5.3.2.3", type: "Goal", desc: "パッシブモードで通信できる" },
 //												]
 //							},
-											]
-						}
-										]
-						}
-									]
-				},
+//											]
+//						}
+//										]
+//						}
+//									]
+//				},
 //				{ name: "SubGoal 5.4", type: "Goal", desc: "Telnetが可能(or)" }
 //								]
 //			}
-							]
-		}
+//							]
+//		}
 	];
 	return createNodeFromJson2({
 		name: "TopGoal", type: "Goal",
 		desc: "通信可能である",
 		children: [
-			{ name: "Context", type: "Context", desc: "@IP:192.168.59.100<br>@OS:ubuntu12.04LTS 64bit<br>"+
-				"@Net Topology:ring<br>@IP Address list:192.168.59.101~106<br>@Hostname list:...<br>OS list:..." +
-				"@Service:FTP<br>@Used Ports:20,21@Connect Method:Ethernet"
-			},
+			{ name: "Context", type: "Context", desc: "@Machine list:{@IP:101@Hostname:A@OS:ubuntu12.04 64bit},{@IP:102@Hostname:B@OS:ubuntu12.04 64bit}<br>"+
+				"@Net Topology:ring<br>@Service:FTP<br>@Used Ports:20,21<br>@Connect Method:Ethernet" },
 //			{ name: "Dynamic Context", type: "Context", desc: "@Destination:192.168.59.102" },
 			{
 				name: "Strategy", type: "Strategy", desc: "レイヤーレベルで議論",//TCP/IPの階層でアプリケーション層(アプリケーション、プレゼンテーション、セッション)、トランスポート層(トランスポート)、インターネット層(インターネット)、ネットワークインターフェイス層(データリンク、物理)に分ける
