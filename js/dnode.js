@@ -90,7 +90,7 @@ function createNodeFromJson2(json) {
 
 function createSampleNode() {
 	var strategy_children = [
-		{ name: "SubGoal 1", type: "Goal", desc: "Link layerは正常である",
+		{ name: "SubGoal 1", type: "Goal", desc: "Network Access layerは正常である",
 		children: [
 			{ name: "Strategy", type: "Strategy", desc: "接続方式により議論" ,
 			children: [
@@ -99,8 +99,16 @@ function createSampleNode() {
 				children: [
 					{ name: "Strategy", type: "Strategy", desc: "PCや周辺機器の状態により判断" ,
 					children: [
-						{ name: "SubGoal 1.1.1", type: "Goal",  desc: "PCに繋がっているネットワークケーブルが途切れていない" },
-						{ name: "SubGoal 1.1.2", type: "Goal",  desc: "ハブが壊れていない" },
+						{ name: "SubGoal 1.1.1", type: "Goal",  desc: "PCに繋がっているネットワークケーブルが途切れていない" ,
+						children: [
+							{ name: "Evidence", type: "Evidence", desc: "ネットワークケーブルを確認" }
+											]
+						},
+						{ name: "SubGoal 1.1.2", type: "Goal",  desc: "ハブが壊れていない" ,
+						children: [
+							{ name: "Evidence", type: "Evidence", desc: "ハブを確認" }
+											]
+						},
 						{ name: "SubGoal 1.1.3", type: "Goal",  desc: "イーサネットカードが認識されている" ,
 						children: [
 							{ name: "Evidence", type: "Evidence", desc: "CheckNIC.ds" }
@@ -120,8 +128,16 @@ function createSampleNode() {
 				children: [
 					{ name: "Strategy", type: "Strategy", desc: "PCや周辺機器の状態により判断" ,
 					children: [
-						{ name: "SubGoal 1.2.1", type: "Goal",  desc: "電波信号が十分に強い" },
-						{ name: "SubGoal 1.2.2", type: "Goal",  desc: "電波干渉がない" },
+						{ name: "SubGoal 1.2.1", type: "Goal",  desc: "電波信号が十分に強い" ,
+						children: [
+							{ name: "Evidence", type: "Evidence", desc: "無線LANの電波強度を確認" }
+											]
+							},
+						{ name: "SubGoal 1.2.2", type: "Goal",  desc: "電波干渉がない" ,
+						children: [
+							{ name: "Evidence", type: "Evidence", desc: "同じチャネルの電波を確認" }
+											]
+							},
 						{ name: "SubGoal 1.2.3", type: "Goal",  desc: "無線LANカードが認識されている" ,
 						children: [
 							{ name: "Evidence", type: "Evidence", desc: "CheckNIC.ds" }
@@ -166,10 +182,14 @@ function createSampleNode() {
 						},
 						{ name: "SubGoal 2.2.2", type: "Goal", desc: "ゲートウェイを通してルーティングできる" ,
 						children: [
-							{ name: "Evidence 2.2.1", type: "Evidence", desc: "RoutingDefault.ds" }
+							{ name: "Evidence 2.2.2", type: "Evidence", desc: "RoutingDefault.ds" }
 											]
 							},
-						{ name: "SubGoal 2.2.3", type: "Goal", desc: "経路の各ルータが(ルーティングできる)パケットを破棄しない" }
+						{ name: "SubGoal 2.2.3", type: "Goal", desc: "経路の各ルータが(ルーティングできる)パケットを破棄しない" ,
+						children: [
+							{ name: "Evidence 2.2.3", type: "Evidence", desc: "ルータの設定を確認" }
+											]
+							},
 										]
 					}
 									]
@@ -237,7 +257,11 @@ function createSampleNode() {
 								{ name: "Evidence 4.1.3", type: "Evidence", desc: "FirewallTCPOutput.ds" }// TCP/UDP
 												]
 							},
-							{ name: "SubGoal 4.1.4", type: "Goal", desc: "その他TCPプロトコルに関しての設定を確認する" }//ポート指定、IP Address指定、オプション等
+							{ name: "SubGoal 4.1.4", type: "Goal", desc: "その他TCPプロトコルに関しての設定を確認する" ,//ポート指定、IP Address指定、オプション等
+							children: [
+								{ name: "Evidence 4.1.4", type: "Evidence", desc: "ファイアウォールの設定を確認" }// TCP/UDP
+												]
+							}
 											]
 						}
 										]
@@ -262,7 +286,11 @@ function createSampleNode() {
 						{ name: "Evidence 4.2.3", type: "Evidence", desc: "FirewallUDPInput.ds" }// TCP/UDP Port
 												]
 							},
-							{ name: "SubGoal 4.2.4", type: "Goal", desc: "その他UDPプロトコルに関しての設定を確認する" }
+							{ name: "SubGoal 4.2.4", type: "Goal", desc: "その他UDPプロトコルに関しての設定を確認する" ,
+							children: [
+								{ name: "Evidence 4.2.4", type: "Evidence", desc: "ファイアウォールの設定を確認" }// TCP/UDP
+												]
+							}
 											]
 						}
 										]
@@ -289,12 +317,11 @@ function createSampleNode() {
 				{ name: "SubGoal 5.3", type: "Goal", desc: "ファイル転送(FTP)が可能(or)" ,
 				children: [
 					{ name: "Context", type: "Context", desc: "@Port:20,21" },
-					{ name: "Strategy", type: "Strategy", desc: "サービスの特性を踏まえて議論" ,
+					{ name: "Strategy", type: "Strategy", desc: "サービスの性質を踏まえて議論" ,
 					children: [
 						{ name: "SubGoal 5.3.1", type: "Goal", desc: "コントロールコネクションが成功する" ,
 						children: [
-							{ name: "Context", type: "Context", desc: "@Port:21" },
-							{ name: "SubGoal 5.3.2", type: "Goal", desc: "firewallによりパケットを破棄していない" },
+							{ name: "SubGoal 5.3.2", type: "Goal", desc: "firewallによりポート21番のパケットを破棄していない" },
 							{ name: "SubGoal 5.3.3", type: "Goal", desc: "ユーザ名、パスワード名が正しい" ,
 							children: [
 								{ name: "Evidence", type: "Evidence", desc: "ユーザに確認" },
@@ -304,13 +331,12 @@ function createSampleNode() {
 						},
 						{ name: "SubGoal 5.3.2", type: "Goal", desc: "データコネクションが成功する" ,
 						children: [
-							{ name: "Context", type: "Context", desc: "@Port:20" },
-							{ name: "SubGoal 5.3.2.1", type: "Goal", desc: "firewallによりパケットを破棄していない" },
+							{ name: "SubGoal 5.3.2.1", type: "Goal", desc: "firewallによりポート20番のパケットを破棄していない" },
 							{ name: "Strategy", type: "Strategy", desc: "通信方式により議論" ,
 							children: [
 								{ name: "Context", type: "Context", desc: "@Mode:アクティブモード、パッシブモード" },
-								{ name: "SubGoal 5.3.2.2", type: "Goal", desc: "アクティブモードで通信できる" },
-								{ name: "SubGoal 5.3.2.3", type: "Goal", desc: "パッシブモードで通信できる" },
+								{ name: "SubGoal 5.3.2.2", type: "Goal", desc: "アクティブモードで通信できる(or)" },
+								{ name: "SubGoal 5.3.2.3", type: "Goal", desc: "パッシブモードで通信できる(or)" },
 												]
 							},
 											]
