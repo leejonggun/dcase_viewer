@@ -99,16 +99,16 @@ function createSampleNode() {
 //				children: [
 					{ name: "Strategy", type: "Strategy", desc: "PCや周辺機器の状態により判断" ,
 					children: [
-						{ name: "SubGoal 1.1.1", type: "Goal",  desc: "PCに繋がっているネットワークケーブルが途切れていない" ,
-						children: [
-							{ name: "Evidence", type: "Evidence", desc: "人による確認" }
-											]
-						},
-						{ name: "SubGoal 1.1.2", type: "Goal",  desc: "ハブが壊れていない" ,
-						children: [
-							{ name: "Evidence", type: "Evidence", desc: "人による確認" }
-											]
-						},
+//						{ name: "SubGoal 1.1.1", type: "Goal",  desc: "PCに繋がっているネットワークケーブルが途切れていない" ,
+//						children: [
+//							{ name: "Evidence", type: "Evidence", desc: "人による確認" }
+//											]
+//						},
+//						{ name: "SubGoal 1.1.2", type: "Goal",  desc: "ハブが壊れていない" ,
+//						children: [
+//							{ name: "Evidence", type: "Evidence", desc: "人による確認" }
+//											]
+//						},
 						{ name: "SubGoal 1.1.3", type: "Goal",  desc: "イーサネットカードが認識されている" ,
 						children: [
 							{ name: "Evidence", type: "Evidence", desc: "CheckNIC.ds" }
@@ -177,11 +177,11 @@ function createSampleNode() {
 							{ name: "Evidence 2.2.2", type: "Evidence", desc: "RoutingDefault.ds" }
 											]
 							},
-						{ name: "SubGoal 2.2.3", type: "Goal", desc: "ルータが壊れていない" ,
-						children: [
-							{ name: "Evidence", type: "Evidence", desc: "人による確認" }
-											]
-						},
+//						{ name: "SubGoal 2.2.3", type: "Goal", desc: "ルータが壊れていない" ,
+//						children: [
+//							{ name: "Evidence", type: "Evidence", desc: "人による確認" }
+//											]
+//						},
 										]
 					}
 									]
