@@ -1,9 +1,10 @@
-var FONT_SIZE = 12;
+var FONT_SIZE = 13;
 var MIN_DISP_SCALE = 4 / FONT_SIZE;
 
 function newGSNObject(root, type) {
 	var o = null;
 	if(type == "Goal") {
+		var n = 10;
 		o = root.createSvg("rect");
 		o.setBounds = function(x, y, w, h) {
 			this.setAttribute("x", x);
@@ -11,27 +12,27 @@ function newGSNObject(root, type) {
 			this.setAttribute("width", w);
 			this.setAttribute("height", h);
 		}
-		o.offset = { x: 0, y: 0 };
+		o.offset = { x: n, y: n };
 	} else if(type == "Context") {
 		o = root.createSvg("rect");
+		var n = 20;
 		o.setBounds = function(x, y, w, h) {
-			var n = 20 * root.scale;
-			this.setAttribute("rx", n);
-			this.setAttribute("ry", n);
+			this.setAttribute("rx", n * root.scale);
+			this.setAttribute("ry", n * root.scale);
 			this.setAttribute("x", x);
 			this.setAttribute("y", y);
 			this.setAttribute("width", w);
 			this.setAttribute("height", h);
-			o.offset = { x: n/3/root.scale, y: n/3/root.scale };
 		}
+		o.offset = { x: n/2, y: n/2 };
 	} else if(type == "Strategy") {
 		o = root.createSvg("polygon");
 		o.setBounds = function(x, y, w, h) {
 			var n = 20 * root.scale;
 			this.setAttribute("points", 
 					(x+n)+","+y+" "+(x+w)+","+y+" "+(x+w-n)+","+(y+h)+" "+x+","+(y+h));
-			o.offset = { x: 20, y: 0 };
 		}
+		o.offset = { x: 25, y: 10 };
 	} else if(type == "Evidence" || type == "Monitor") {
 		o = root.createSvg("ellipse");
 		o.setBounds = function(x, y, w, h) {
@@ -39,7 +40,7 @@ function newGSNObject(root, type) {
 			this.setAttribute("cy", y + h/2);
 			this.setAttribute("rx", w/2);
 			this.setAttribute("ry", h/2);
-			o.offset = { x: w/8/root.scale, y: h/8/root.scale };
+			o.offset = { x: w/6/root.scale, y: h/6/root.scale };
 		}
 		o.offset = { x: 0, y: 0 };
 	} else {
@@ -57,40 +58,49 @@ function getColorByState(state) {
 }
 
 /* class View */
-var View = function(root, node) {
-	// node
-	this.root = root;
+var View = function(viewer, node) {
+	var self = this;
+	this.viewer = viewer;
 	this.node = node;
-	this.svg = newGSNObject(root, node.type);
-	this.div = root.createDiv("node-container");
-	this.div.dcaseview = this;//FIXME
+	this.svg = newGSNObject(viewer, node.type);
+	this.div = document.createElement("div");
+	this.div.className = "node-container";
+	viewer.appendElem(this.div);
 
+	$(this.div).mouseup(function(e) {
+		viewer.dragEnd(self);
+	}).dblclick(function(e) {
+		if(node.isDScript()) {
+			viewer.showDScriptExecuteWindow(node.getDScriptNameInEvidence());
+		} else {
+			viewer.actExpandBranch(self);
+		}
+	}).bind("touchend", function(e) {
+		viewer.dragEnd(self);
+	});
 	if(node.isUndevelop()) {
-		this.svgUndevel = root.createSvg("polygon");
-		this.svgUndevel.setAttribute("fill", "none");
-		this.svgUndevel.setAttribute("stroke", "gray");
+		this.svgUndevel = $(document.createElementNS(SVG_NS, "polygon")).attr({
+			fill: "none", stroke: "gray"
+		});
+		viewer.appendSvg(this.svgUndevel)
 	}
 	if(node.isArgument()) {
-		this.argumentBorder = root.createDiv("div");
-		this.argumentBorder.className = "argument-border";
-		this.argumentBorder.style.zIndex = -99;
+		this.argumentBorder = $("<div></div>")
+				.addClass("argument-border")
+				.css({ zIndex: -99 });
+		viewer.appendElem(this.argumentBorder);
 	}
 	this.argumentBounds = {};
 
-	this.divName = document.createElement("div");
-	this.divName.className = "node-name";
-	this.divName.innerHTML = node.name;
-	this.div.appendChild(this.divName);
+	this.divName = $("<div></div>").addClass("node-name").html(node.name);
+	$(this.div).append(this.divName);
 
-	this.divText = document.createElement("div");
-	this.divText.className = "node-text";
-	this.divText.innerHTML = node.text;
-	this.div.appendChild(this.divText);
+	this.divText = $("<div></div>").addClass("node-text").html(node.text);
+	$(this.div).append(this.divText);
 
-	this.divNodes = document.createElement("div");
-	this.divNodes.className = "node-closednodes";
-	this.divNodes.innerHTML = "";
-	this.div.appendChild(this.divNodes);
+	this.divNodes = $("<div></div>").addClass("node-closednodes");
+	$(this.div).append(this.divNodes);
+
 	this.divNodesText = "";
 	this.divNodesVisible = false;
 	
@@ -103,7 +113,8 @@ var View = function(root, node) {
 	this.lines = [];
 	this.contextLines = [];
 	// for animation
-	this.bounds = { x: 0, y: 0, w: 200, h: this.div.getBoundingClientRect().height + 60 };
+	var r = this.div.getBoundingClientRect();
+	this.bounds = { x: 0, y: 0, w: 200, h: r.height + 60 };
 	this.visible = true;
 	this.childVisible = true;
 	this.bounds0 = this.bounds;
@@ -112,9 +123,9 @@ var View = function(root, node) {
 }
 
 View.prototype.modified = function() {
-	this.divName.innerHTML = this.node.name;
-	this.divText.innerHTML = this.node.text;
-	this.root.repaintAll();
+	this.divName.html(this.node.name);
+	this.divText.html(this.node.text);
+	this.viewer.repaintAll();
 }
 
 View.prototype.getX = function() { return this.location.x; }
@@ -151,7 +162,7 @@ View.prototype.setVisible = function(b) {
 }
 
 View.prototype.addChild = function(view) {
-	var l = this.root.createSvg("line");
+	var l = this.viewer.createSvg("line");
 	l.setAttribute("stroke", "#404040");
 	if(view.node.type != "Context") {
 		this.lines.push(l);
@@ -166,20 +177,21 @@ View.prototype.addChild = function(view) {
 
 View.prototype.setBounds = function(x, y, w, h) {
 	this.location = { x: x, y: y };
-	var scale = this.root.scale;
+	var scale = this.viewer.scale;
 	this.svg.setBounds(x * scale, y * scale, w * scale, h * scale);
-	this.div.style.left   = (x + this.svg.offset.x) * scale + "px";
-	this.div.style.top    = (y + this.svg.offset.y) * scale + "px";
-	this.div.style.width  = (w - this.svg.offset.x * 2) * scale + "px";
-	this.div.style.height = (h - this.svg.offset.y * 2) * scale + "px";
-	this.div.style.fontSize = Math.round(FONT_SIZE * scale) + "px";
-
+	$(this.div).css({
+		left  : (x + this.svg.offset.x) * scale + "px",
+		top   : (y + this.svg.offset.y) * scale + "px",
+		width : (w - this.svg.offset.x * 2) * scale + "px",
+		height: (h - this.svg.offset.y * 2) * scale + "px",
+		fontSize: Math.round(FONT_SIZE * scale) + "px",
+	});
 	if(this.node.isUndevelop()) {
 		var sx = (x + w/2) * scale;
 		var sy = (y + h) * scale;
 		var n = 20 * scale;
 		function s(x, y) { return x+","+y }
-		this.svgUndevel.setAttribute("points", 
+		this.svgUndevel.attr("points", 
 			s(sx, sy) + " " + s(sx+n, sy+n) + " " + s(sx, sy+n*2) + " " + s(sx-n, sy+n));
 	}
 }
@@ -252,7 +264,7 @@ View.prototype.updateLocation = function(x, y) {
 }
 
 View.prototype.animate = function(r) {
-	var scale = this.root.scale;
+	var scale = this.viewer.scale;
 	if(this.visible == this.visible0 && !this.visible0) return;
 	function mid(x0, x1) { return (x1-x0) * r + x0; }
 	this.setBounds(
@@ -269,32 +281,34 @@ View.prototype.animate = function(r) {
 	this.forEachNode(function(e) {
 		e.animate(r);
 	});
-	this.divNodes.style.display = !this.childVisible ? "block" : "none";
+	this.divNodes.css("display", !this.childVisible ? "block" : "none");
 	// line
 	var lines = this.lines;
 	for(var i=0; i<lines.length; i++) {
-		var l = lines[i];
 		var e = this.children[i];
-		l.setAttribute("x1", (this.getX() + this.bounds.w/2) * scale);
-		l.setAttribute("y1", (this.getY() + this.bounds.h) * scale);
-		l.setAttribute("x2", (e.getX() + e.bounds.w/2) * scale);
-		l.setAttribute("y2", (e.getY()) * scale);
+		$(lines[i]).attr({
+			x1: (this.getX() + this.bounds.w/2) * scale,
+			y1: (this.getY() + this.bounds.h) * scale,
+			x2: (e.getX() + e.bounds.w/2) * scale,
+			y2: (e.getY()) * scale
+		});
 		if(this.childVisible0 != this.childVisible) {
-			l.setAttribute("display", "block");
-			l.setAttribute("opacity", this.childVisible ? r : 1.0 - r);
+			lines[i].setAttribute("display", "block");
+			lines[i].setAttribute("opacity", this.childVisible ? r : 1.0 - r);
 		}
 	}
 	var lines = this.contextLines;
 	for(var i=0; i<lines.length; i++) {
-		var l = lines[i];
 		var e = this.contexts[i];
-		l.setAttribute("x1", (this.getX() + this.bounds.w) * scale);
-		l.setAttribute("y1", (this.getY() + this.bounds.h/2) * scale);
-		l.setAttribute("x2", (e.getX()) * scale);
-		l.setAttribute("y2", (e.getY() + e.bounds.h/2) * scale);
+		$(lines[i]).attr({
+			x1: (this.getX() + this.bounds.w) * scale,
+			y1: (this.getY() + this.bounds.h/2) * scale,
+			x2: e.getX() * scale,
+			y2: (e.getY() + e.bounds.h/2) * scale,
+		});
 		if(this.childVisible0 != this.childVisible) {
-			l.setAttribute("display", "block");
-			l.setAttribute("opacity", this.childVisible ? r : 1.0 - r);
+			lines[i].setAttribute("display", "block");
+			lines[i].setAttribute("opacity", this.childVisible ? r : 1.0 - r);
 		}
 	}
 	//this.argumentBorder.style.left = this.argumentBounds.x;
@@ -304,31 +318,36 @@ View.prototype.animate = function(r) {
 }
 
 View.prototype.move = function() {
-	var scale = this.root.scale;
+	var scale = this.viewer.scale;
 	this.setBounds(this.bounds.x, this.bounds.y, this.bounds.w, this.bounds.h);
 	this.svg.setAttribute("display", this.visible ? "block" : "none");
 	this.svg.setAttribute("fill", getColorByState(this.node.state));
+	if(this.viewer.selectedNode == this) {
+		this.svg.setAttribute("stroke", "orange");
+	} else {
+		this.svg.setAttribute("stroke", "none");
+	}
 	this.div.style.display = this.visible ? "block" : "none";
 	if(scale < MIN_DISP_SCALE) {
-		this.divText.style.display = "none";
-		this.divName.style.display = "none";
+		this.divText.css("display", "none");
+		this.divName.css("display", "none");
 		if(this.divNodesVisible) {
-			this.divNodes.innerHTML = "<p></p>";
+			this.divNodes.html("<p></p>");
 		}
 	} else {
-		this.divText.style.display = "block";
-		this.divName.style.display = "block";
+		this.divText.css("display", "block");
+		this.divName.css("display", "block");
 		if(this.divNodesVisible) {
-			this.divNodes.innerHTML = this.divNodesText;
+			this.divNodes.html(this.divNodesText);
 		}
 	}
 	if(this.node.isUndevelop()) {
-		this.svgUndevel.setAttribute("display", this.visible ? "block" : "none");
+		this.svgUndevel.attr("display", this.visible ? "block" : "none");
 	}
 	this.forEachNode(function(e) {
 		e.move();
 	});
-	this.divNodes.style.display = !this.childVisible ? "block" : "none";
+	this.divNodes.css("display", !this.childVisible ? "block" : "none");
 	// line
 	var lines = this.lines;
 	for(var i=0; i<lines.length; i++) {
@@ -352,11 +371,13 @@ View.prototype.move = function() {
 	}
 	if(this.node.isArgument()) {
 		var n = 10;
-		this.argumentBorder.style.left = scale * (this.argumentBounds.x-n) + "px";
-		this.argumentBorder.style.top  = scale * (this.argumentBounds.y-n) + "px";
-		this.argumentBorder.style.width  = scale * (this.argumentBounds.x1-this.argumentBounds.x+n*2) + "px";
-		this.argumentBorder.style.height = scale * (this.argumentBounds.y1-this.argumentBounds.y+n*2) + "px";
-		this.argumentBorder.style.display = this.childVisible ? "block" : "none";
+		this.argumentBorder.css({
+			left  : scale * (this.argumentBounds.x-n) + "px",
+			top   : scale * (this.argumentBounds.y-n) + "px",
+			width : scale * (this.argumentBounds.x1-this.argumentBounds.x+n*2) + "px",
+			height: scale * (this.argumentBounds.y1-this.argumentBounds.y+n*2) + "px",
+			display: this.childVisible ? "block" : "none"
+		});
 	}
 	this.bounds0 = this.bounds;
 	this.visible0 = this.visible;
