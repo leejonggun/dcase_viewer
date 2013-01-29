@@ -34,6 +34,26 @@ DNode.getTypes = function() {
 }
 
 //-------------------------------------
+// FIXME?
+var DSCRIPT_PREF = "D-Script:";
+var DSCRIPT_PREF_CONTEXT = "D-Script.Name:";
+DNode.prototype.isDScript = function() {
+	return this.type === "Evidence" && this.text.indexOf(DSCRIPT_PREF) == 0;
+}
+
+DNode.prototype.getDScriptNameInEvidence = function() {
+	return this.text.substr(DSCRIPT_PREF.length);
+}
+
+DNode.prototype.getDScriptNameInContext = function() {
+	if(this.type == "Context" && this.text.indexOf(DSCRIPT_PREF_CONTEXT) == 0) {
+		return this.text.substr(DSCRIPT_PREF_CONTEXT.length);
+	} else {
+		return null;
+	}
+}
+
+//-------------------------------------
 function createNodeFromURL(url) {
 	var a = $.ajax({
 		type: "GET",
@@ -49,19 +69,21 @@ function createNodeFromJson(json) {
 	var nodes = [];
 	for(var i=0; i<json.nodes.length; i++) {
 		var c = json.nodes[i];
-		nodes[c.name] = c;
+		nodes[c.node_id] = c;
 	}
 	function createChildren(l, node) {
 		for(var i=0; i<l.children.length; i++) {
 			var child = l.children[i];
-			var n = nodes[child.name];
-			var newNode = new DNode(0, n.name, n.DBNodeType, n.description);
+			var n = nodes[child.node_id];
+			n.name = n.type.charAt(0) + n.node_id;
+			var newNode = new DNode(n.node_id, n.name, n.type,
+					n.type != "Context" ? n.description : JSON.stringify(n.properties));
 			node.addChild(newNode);
 			createChildren(child, newNode);
 		}
 	}
-	var n = nodes[json.links.name];
-	var topNode = new DNode(0, n.name, n.DBNodeType, n.description);
+	var n = nodes[json.links.node_id];
+	var topNode = new DNode(0, "TopGoal", n.type, n.description);
 	createChildren(json.links, topNode);
 	return topNode;
 }
