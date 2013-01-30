@@ -114,23 +114,23 @@ function createSampleNode() {
 	var strategy_children = [
 		{ name: "SubGoal 1", type: "Goal", desc: "Network Access layerは正常である",
 		children: [
-			{ name: "Strategy", type: "Strategy", desc: "接続方式により議論" ,
-			children: [
-				{ name: "Context 1.1", type: "Context", desc: "@接続方法:イーサネット、無線LAN" },
-				{ name: "SubGoal 1.1(or)", type: "Goal",  desc: "イーサネットで接続している" ,
-				children: [
+//			{ name: "Strategy", type: "Strategy", desc: "接続方式により議論" ,
+//			children: [
+//				{ name: "Context 1.1", type: "Context", desc: "@接続方法:イーサネット、無線LAN" },
+//				{ name: "SubGoal 1.1(or)", type: "Goal",  desc: "イーサネットで接続している" ,
+//				children: [
 					{ name: "Strategy", type: "Strategy", desc: "PCや周辺機器の状態により判断" ,
 					children: [
-						{ name: "SubGoal 1.1.1", type: "Goal",  desc: "PCに繋がっているネットワークケーブルが途切れていない" ,
-						children: [
-							{ name: "Evidence", type: "Evidence", desc: "ネットワークケーブルを確認" }
-											]
-						},
-						{ name: "SubGoal 1.1.2", type: "Goal",  desc: "ハブが壊れていない" ,
-						children: [
-							{ name: "Evidence", type: "Evidence", desc: "ハブを確認" }
-											]
-						},
+//						{ name: "SubGoal 1.1.1", type: "Goal",  desc: "PCに繋がっているネットワークケーブルが途切れていない" ,
+//						children: [
+//							{ name: "Evidence", type: "Evidence", desc: "ネットワークケーブルを確認" }
+//											]
+//						},
+//						{ name: "SubGoal 1.1.2", type: "Goal",  desc: "ハブが壊れていない" ,
+//						children: [
+//							{ name: "Evidence", type: "Evidence", desc: "ハブを確認" }
+//											]
+//						},
 						{ name: "SubGoal 1.1.3", type: "Goal",  desc: "イーサネットカードが認識されている" ,
 						children: [
 							{ name: "Evidence", type: "Evidence", desc: "CheckNIC.ds" }
@@ -141,41 +141,41 @@ function createSampleNode() {
 							{ name: "Evidence", type: "Evidence", desc: "Connection.ds" }
 											]
 						}
-										]
-					}
+//										]
+//					}
 									]
 				},
 
-				{ name: "SubGoal 1.2(or)", type: "Goal",  desc: "無線LANで接続している" ,
-				children: [
-					{ name: "Strategy", type: "Strategy", desc: "PCや周辺機器の状態により判断" ,
-					children: [
-						{ name: "SubGoal 1.2.1", type: "Goal",  desc: "電波信号が十分に強い" ,
-						children: [
-							{ name: "Evidence", type: "Evidence", desc: "無線LANの電波強度を確認" }
-											]
-							},
-						{ name: "SubGoal 1.2.2", type: "Goal",  desc: "電波干渉がない" ,
-						children: [
-							{ name: "Evidence", type: "Evidence", desc: "同じチャネルの電波を確認" }
-											]
-							},
-						{ name: "SubGoal 1.2.3", type: "Goal",  desc: "無線LANカードが認識されている" ,
-						children: [
-							{ name: "Evidence", type: "Evidence", desc: "CheckNIC.ds" }
-											]
-							},
-							{ name: "SubGoal 2.2", type: "Goal",  desc: "PCで無線LANインターフェースが有効になっている" ,
-							children: [
-								{ name: "Evidence 2.1", type: "Evidence", desc: "Connection.ds" }
-												]
-							}
-										]
-					}
-									]
-				}
-								]
-			}
+//				{ name: "SubGoal 1.2(or)", type: "Goal",  desc: "無線LANで接続している" ,
+//				children: [
+//					{ name: "Strategy", type: "Strategy", desc: "PCや周辺機器の状態により判断" ,
+//					children: [
+//						{ name: "SubGoal 1.2.1", type: "Goal",  desc: "電波信号が十分に強い" ,
+//						children: [
+//							{ name: "Evidence", type: "Evidence", desc: "無線LANの電波強度を確認" }
+//											]
+//							},
+//						{ name: "SubGoal 1.2.2", type: "Goal",  desc: "電波干渉がない" ,
+//						children: [
+//							{ name: "Evidence", type: "Evidence", desc: "同じチャネルの電波を確認" }
+//											]
+//							},
+//						{ name: "SubGoal 1.2.3", type: "Goal",  desc: "無線LANカードが認識されている" ,
+//						children: [
+//							{ name: "Evidence", type: "Evidence", desc: "CheckNIC.ds" }
+//											]
+//							},
+//							{ name: "SubGoal 2.2", type: "Goal",  desc: "PCで無線LANインターフェースが有効になっている" ,
+//							children: [
+//								{ name: "Evidence 2.1", type: "Evidence", desc: "Connection.ds" }
+//												]
+//							}
+//										]
+//					}
+//									]
+//				}
+//								]
+//			}
 							]
 		},
 
@@ -207,11 +207,11 @@ function createSampleNode() {
 							{ name: "Evidence 2.2.2", type: "Evidence", desc: "RoutingDefault.ds" }
 											]
 							},
-						{ name: "SubGoal 2.2.3", type: "Goal", desc: "経路の各ルータが(ルーティングできる)パケットを破棄しない" ,
-						children: [
-							{ name: "Evidence 2.2.3", type: "Evidence", desc: "ルータの設定を確認" }
-											]
-							},
+//						{ name: "SubGoal 2.2.3", type: "Goal", desc: "経路の各ルータが(ルーティングできる)パケットを破棄しない" ,
+//						children: [
+//							{ name: "Evidence 2.2.3", type: "Evidence", desc: "ルータの設定を確認" }
+//											]
+//							},
 										]
 					}
 									]
@@ -244,7 +244,7 @@ function createSampleNode() {
 				{ name: "SubGoal 2.4", type: "Goal", desc: "pingが通る" ,
 				children: [
 					{ name: "Context 2.1", type: "Context", desc: "@IP Address:192.168.59.101<br>@OS:ubuntu12.04LTS 64bit" },
-					{ name: "Context 2.2", type: "Context", desc: "@Destination:192.168.59.102" },
+					{ name: "Context 2.2", type: "Context", desc: "@Destination1:192.168.59.102<br>@Destination2:192.168.59.103" },
 					{ name: "Evidence", type: "Evidence", desc: "Ping.ds" }
 									]
 				}
@@ -257,11 +257,11 @@ function createSampleNode() {
 //任意のサイズのデータを送るために、データの分割と再構築を行う。アプリケーションにパケットを渡すときにPort番号で識別している
 		{ name: "SubGoal 4", type: "Goal", desc: "Transport layerは正常である",
 			children: [
-				{ name: "Strategy", type: "Strategy", desc: "プロトコルにより判断する" ,
-				children: [
-					{ name: "Context 4.1", type: "Context", desc: "@プロトコル:TCP, UDP" },
-					{ name: "SubGoal 4.1", type: "Goal", desc: "TCPについて議論(or)" ,// TCP/UDP Port,再送制御、順序制御、フロー制御、輻輳制御
-					children: [
+//				{ name: "Strategy", type: "Strategy", desc: "プロトコルにより判断する" ,
+//				children: [
+//					{ name: "Context 4.1", type: "Context", desc: "@プロトコル:TCP, UDP" },
+//					{ name: "SubGoal 4.1", type: "Goal", desc: "TCPについて議論" ,// TCP/UDP Port,再送制御、順序制御、フロー制御、輻輳制御
+//					children: [
 						{ name: "Strategy", type: "Strategy", desc: "firewall設定を考慮する" ,
 						children: [
 							{ name: "SubGoal 4.1.1", type: "Goal", desc: "受信するTCPプロトコルのパケットを破棄しない" ,
@@ -279,44 +279,45 @@ function createSampleNode() {
 								{ name: "Evidence 4.1.3", type: "Evidence", desc: "FirewallTCPOutput.ds" }// TCP/UDP
 												]
 							},
-							{ name: "SubGoal 4.1.4", type: "Goal", desc: "その他TCPプロトコルに関しての設定を確認する" ,//ポート指定、IP Address指定、オプション等
-							children: [
-								{ name: "Evidence 4.1.4", type: "Evidence", desc: "ファイアウォールの設定を確認" }// TCP/UDP
-												]
-							}
-											]
-						}
-										]
-					},
+//							{ name: "SubGoal 4.1.4", type: "Goal", desc: "その他TCPプロトコルに関しての設定を確認する" ,//ポート指定、IP Address指定、オプション等
+//							children: [
+//								{ name: "Evidence 4.1.4", type: "Evidence", desc: "ファイアウォールの設定を確認" }// TCP/UDP
+//												]
+//							}
+//											]
+//						},
+//						{ name: "Strategy", type: "Strategy", desc: "" }
+//										]
+//					},
 
-					{ name: "SubGoal 4.2", type: "Goal", desc: "UDPについて議論(or)" ,// TCP/UDP Port
-					children: [
-						{ name: "Strategy", type: "Strategy", desc: "firewall設定を考慮する" ,
-						children: [
-							{ name: "SubGoal", type: "Goal", desc: "受信するUDPプロトコルのパケットを破棄しない" ,
-							children: [
-						{ name: "Evidence 4.2.1", type: "Evidence", desc: "FirewallUDPOutput.ds" },// TCP/UDP Port
-												]
-							},
-							{ name: "SubGoal", type: "Goal", desc: "中継するUDPプロトコルのパケットを破棄しない" ,
-							children: [
-						{ name: "Evidence 4.2.2", type: "Evidence", desc: "FirewallUDPForward.ds" },// TCP/UDP Port
-												]
-							},
-							{ name: "SubGoal", type: "Goal", desc: "送信するUDPプロトコルのパケットを破棄しない" ,
-							children: [
-						{ name: "Evidence 4.2.3", type: "Evidence", desc: "FirewallUDPInput.ds" }// TCP/UDP Port
-												]
-							},
-							{ name: "SubGoal 4.2.4", type: "Goal", desc: "その他UDPプロトコルに関しての設定を確認する" ,
-							children: [
-								{ name: "Evidence 4.2.4", type: "Evidence", desc: "ファイアウォールの設定を確認" }// TCP/UDP
-												]
-							}
-											]
-						}
-										]
-					}
+//					{ name: "SubGoal 4.2", type: "Goal", desc: "UDPについて議論(or)" ,// TCP/UDP Port
+//					children: [
+//						{ name: "Strategy", type: "Strategy", desc: "firewall設定を考慮する" ,
+//						children: [
+//							{ name: "SubGoal", type: "Goal", desc: "受信するUDPプロトコルのパケットを破棄しない" ,
+//							children: [
+//						{ name: "Evidence 4.2.1", type: "Evidence", desc: "FirewallUDPOutput.ds" },// TCP/UDP Port
+//												]
+//							},
+//							{ name: "SubGoal", type: "Goal", desc: "中継するUDPプロトコルのパケットを破棄しない" ,
+//							children: [
+//						{ name: "Evidence 4.2.2", type: "Evidence", desc: "FirewallUDPForward.ds" },// TCP/UDP Port
+//												]
+//							},
+//							{ name: "SubGoal", type: "Goal", desc: "送信するUDPプロトコルのパケットを破棄しない" ,
+//							children: [
+//						{ name: "Evidence 4.2.3", type: "Evidence", desc: "FirewallUDPInput.ds" }// TCP/UDP Port
+//												]
+//							},
+//							{ name: "SubGoal 4.2.4", type: "Goal", desc: "その他UDPプロトコルに関しての設定を確認する" ,
+//							children: [
+//								{ name: "Evidence 4.2.4", type: "Evidence", desc: "ファイアウォールの設定を確認" }// TCP/UDP
+//												]
+//							}
+//											]
+//						}
+//										]
+//					}
 									]
 				}
 								]
@@ -326,48 +327,56 @@ function createSampleNode() {
 		{ name: "SubGoal 5", type: "Goal", desc: "Application layerは正常である",
 		children: [
 			{ name: "Context 5.1", type: "Context", desc: "@IP Address:192.168.59.101<br>@Hostname list:...<br>@Destination:192.168.59.102" },
-			{ name: "SubGoal 5.1", type: "Goal", desc: "名前解決できる" ,
-			children: [
-				{ name: "Evidence 5.1", type: "Evidence", desc: "Nslookup.ds" }
-								]
-			},
 			{ name: "Strategy", type: "Strategy", desc: "サービス別に議論する" ,
 			children: [
-				{ name: "Context 5.1", type: "Context", desc: "@Service:File Transfer, Send Message, Web, Telnet" },
-				{ name: "SubGoal 5.1", type: "Goal", desc: "電子メール(SMTP)の送受信が可能(or)" },
-				{ name: "SubGoal 5.2", type: "Goal", desc: "ワールドワイドウェブ(HTTP)の閲覧が可能(or)" },
-				{ name: "SubGoal 5.3", type: "Goal", desc: "ファイル転送(FTP)が可能(or)" ,
+//				{ name: "Context 5.1", type: "Context", desc: "@Service:File Transfer, Send Message, Web, Telnet" },
+//				{ name: "SubGoal 5.1", type: "Goal", desc: "電子メール(SMTP)の送受信が可能(or)" },
+//				{ name: "SubGoal 5.2", type: "Goal", desc: "ワールドワイドウェブ(HTTP)の閲覧が可能(or)" },
+				{ name: "SubGoal 5.1", type: "Goal", desc: "名前解決できる" ,
+				children: [
+					{ name: "Evidence 5.1", type: "Evidence", desc: "Nslookup.ds" }
+									]
+				},
+				{ name: "SubGoal 5.2", type: "Goal", desc: "ファイル転送(FTP)が可能" ,
 				children: [
 					{ name: "Context", type: "Context", desc: "@Port:20,21" },
 					{ name: "Strategy", type: "Strategy", desc: "サービスの性質を踏まえて議論" ,
 					children: [
-						{ name: "SubGoal 5.3.1", type: "Goal", desc: "コントロールコネクションが成功する" ,
+						{ name: "SubGoal 5.2.1", type: "Goal", desc: "コントロールコネクションが成功する" ,
 						children: [
-							{ name: "SubGoal 5.3.2", type: "Goal", desc: "firewallによりポート21番のパケットを破棄していない" },
-							{ name: "SubGoal 5.3.3", type: "Goal", desc: "ユーザ名、パスワード名が正しい" ,
+							{ name: "SubGoal 5.2.1.1", type: "Goal", desc: "firewallによりポート21番のOUTPUTパケットを破棄していない" ,
+							children: [
+								{ name: "Evidence", type: "Evidence", desc: "Firewall21Output.ds" },
+												]
+							},
+							{ name: "SubGoal 5.2.1.2", type: "Goal", desc: "ユーザ名、パスワード名が正しい" ,
 							children: [
 								{ name: "Evidence", type: "Evidence", desc: "ユーザに確認" },
 												]
-							}
+							},
 											]
 						},
-						{ name: "SubGoal 5.3.2", type: "Goal", desc: "データコネクションが成功する" ,
+						{ name: "SubGoal 5.2.2", type: "Goal", desc: "データコネクションが成功する" ,
 						children: [
-							{ name: "SubGoal 5.3.2.1", type: "Goal", desc: "firewallによりポート20番のパケットを破棄していない" },
-							{ name: "Strategy", type: "Strategy", desc: "通信方式により議論" ,
+							{ name: "SubGoal 5.2.2.1", type: "Goal", desc: "firewallによりポート20番のINPUTパケットを破棄していない" ,
 							children: [
-								{ name: "Context", type: "Context", desc: "@Mode:アクティブモード、パッシブモード" },
-								{ name: "SubGoal 5.3.2.2", type: "Goal", desc: "アクティブモードで通信できる(or)" },
-								{ name: "SubGoal 5.3.2.3", type: "Goal", desc: "パッシブモードで通信できる(or)" },
+								{ name: "Evidence", type: "Evidence", desc: "Firewall20Input.ds" },
 												]
 							},
+//							{ name: "Strategy", type: "Strategy", desc: "通信方式により議論" ,
+//							children: [
+//								{ name: "Context", type: "Context", desc: "@Mode:アクティブモード、パッシブモード" },
+								{ name: "SubGoal 5.2.2.2", type: "Goal", desc: "アクティブモードで通信できる" },
+//								{ name: "SubGoal 5.3.3.3", type: "Goal", desc: "パッシブモードで通信できる(or)" },
+//												]
+//							},
 											]
 						}
 										]
 						}
 									]
 				},
-				{ name: "SubGoal 5.4", type: "Goal", desc: "Telnetが可能(or)" }
+//				{ name: "SubGoal 5.4", type: "Goal", desc: "Telnetが可能(or)" }
 								]
 			}
 							]
