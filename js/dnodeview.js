@@ -49,12 +49,8 @@ function newGSNObject(root, type) {
 	return o;
 }
 
-function getColorByState(state) {
-	if(state == "normal") {
-		return "#E0E0E0";
-	} else if(state == "error") {
-		return "#FF8080";
-	}
+function getColorByState(node) {
+	return node.isEvidence ? "#80FF80" : "#E0E0E0";
 }
 
 /* class View */
@@ -63,11 +59,10 @@ var View = function(viewer, node) {
 	this.viewer = viewer;
 	this.node = node;
 	this.svg = newGSNObject(viewer, node.type);
-	this.div = document.createElement("div");
-	this.div.className = "node-container";
+	this.div = $("<div></div>").addClass("node-container");
 	viewer.appendElem(this.div);
 
-	$(this.div).mouseup(function(e) {
+	this.div.mouseup(function(e) {
 		viewer.dragEnd(self);
 	}).dblclick(function(e) {
 		if(node.isDScript()) {
@@ -93,13 +88,13 @@ var View = function(viewer, node) {
 	this.argumentBounds = {};
 
 	this.divName = $("<div></div>").addClass("node-name").html(node.name);
-	$(this.div).append(this.divName);
+	this.div.append(this.divName);
 
 	this.divText = $("<div></div>").addClass("node-text").html(node.text);
-	$(this.div).append(this.divText);
+	this.div.append(this.divText);
 
 	this.divNodes = $("<div></div>").addClass("node-closednodes");
-	$(this.div).append(this.divNodes);
+	this.div.append(this.divNodes);
 
 	this.divNodesText = "";
 	this.divNodesVisible = false;
@@ -113,8 +108,8 @@ var View = function(viewer, node) {
 	this.lines = [];
 	this.contextLines = [];
 	// for animation
-	var r = this.div.getBoundingClientRect();
-	this.bounds = { x: 0, y: 0, w: 200, h: r.height + 60 };
+	this.div.width(200);
+	this.bounds = { x: 0, y: 0, w: 200, h: this.div.height() + 60 };
 	this.visible = true;
 	this.childVisible = true;
 	this.bounds0 = this.bounds;
@@ -179,7 +174,7 @@ View.prototype.setBounds = function(x, y, w, h) {
 	this.location = { x: x, y: y };
 	var scale = this.viewer.scale;
 	this.svg.setBounds(x * scale, y * scale, w * scale, h * scale);
-	$(this.div).css({
+	this.div.css({
 		left  : (x + this.svg.offset.x) * scale + "px",
 		top   : (y + this.svg.offset.y) * scale + "px",
 		width : (w - this.svg.offset.x * 2) * scale + "px",
@@ -273,10 +268,10 @@ View.prototype.animate = function(r) {
 	if(this.visible != this.visible0) {
 		if(this.visible) {
 			this.svg.setAttribute("display", "block");
-			this.div.style.display = "block";
+			this.div.css("display", "block");
 		}
 		this.svg.setAttribute("opacity", this.visible ? r : 1.0-r);
-		this.div.style.opacity = this.visible ? r : 1.0 - r;
+		this.div.css("opacity", this.visible ? r : 1.0 - r);
 	}
 	this.forEachNode(function(e) {
 		e.animate(r);
@@ -321,13 +316,13 @@ View.prototype.move = function() {
 	var scale = this.viewer.scale;
 	this.setBounds(this.bounds.x, this.bounds.y, this.bounds.w, this.bounds.h);
 	this.svg.setAttribute("display", this.visible ? "block" : "none");
-	this.svg.setAttribute("fill", getColorByState(this.node.state));
+	this.svg.setAttribute("fill", getColorByState(this.node));
 	if(this.viewer.selectedNode == this) {
 		this.svg.setAttribute("stroke", "orange");
 	} else {
 		this.svg.setAttribute("stroke", "none");
 	}
-	this.div.style.display = this.visible ? "block" : "none";
+	this.div.css("display", this.visible ? "block" : "none");
 	if(scale < MIN_DISP_SCALE) {
 		this.divText.css("display", "none");
 		this.divName.css("display", "none");
