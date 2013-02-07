@@ -1,73 +1,16 @@
 var FONT_SIZE = 13;
 var MIN_DISP_SCALE = 4 / FONT_SIZE;
 
-function newGSNObject(root, type) {
-	var o = null;
-	if(type == "Goal") {
-		var n = 10;
-		o = root.createSvg("rect");
-		o.setBounds = function(x, y, w, h) {
-			this.setAttribute("x", x);
-			this.setAttribute("y", y);
-			this.setAttribute("width", w);
-			this.setAttribute("height", h);
-		}
-		o.offset = { x: n, y: n };
-	} else if(type == "Context") {
-		o = root.createSvg("rect");
-		var n = 20;
-		o.setBounds = function(x, y, w, h) {
-			this.setAttribute("rx", n * root.scale);
-			this.setAttribute("ry", n * root.scale);
-			this.setAttribute("x", x);
-			this.setAttribute("y", y);
-			this.setAttribute("width", w);
-			this.setAttribute("height", h);
-		}
-		o.offset = { x: n/2, y: n/2 };
-	} else if(type == "Strategy") {
-		o = root.createSvg("polygon");
-		o.setBounds = function(x, y, w, h) {
-			var n = 20 * root.scale;
-			this.setAttribute("points", 
-					(x+n)+","+y+" "+(x+w)+","+y+" "+(x+w-n)+","+(y+h)+" "+x+","+(y+h));
-		}
-		o.offset = { x: 25, y: 10 };
-	} else if(type == "Evidence" || type == "Monitor") {
-		o = root.createSvg("ellipse");
-		o.setBounds = function(x, y, w, h) {
-			this.setAttribute("cx", x + w/2);
-			this.setAttribute("cy", y + h/2);
-			this.setAttribute("rx", w/2);
-			this.setAttribute("ry", h/2);
-			o.offset = { x: w/6/root.scale, y: h/6/root.scale };
-		}
-		o.offset = { x: 0, y: 0 };
-	} else {
-		throw type + " is not GSN type";
-	}
-	return o;
-}
-
-function getColorByState(state) {
-	if(state == "normal") {
-		return "#E0E0E0";
-	} else if(state == "error") {
-		return "#FF8080";
-	}
-}
-
-/* class View */
-var View = function(viewer, node) {
+/* class DNodeView */
+var DNodeView = function(viewer, node) {
 	var self = this;
 	this.viewer = viewer;
 	this.node = node;
-	this.svg = newGSNObject(viewer, node.type);
-	this.div = document.createElement("div");
-	this.div.className = "node-container";
+	this.svg = this.initSvg(node.type);
+	this.div = $("<div></div>").addClass("node-container");
 	viewer.appendElem(this.div);
 
-	$(this.div).mouseup(function(e) {
+	this.div.mouseup(function(e) {
 		viewer.dragEnd(self);
 	}).dblclick(function(e) {
 		if(node.isDScript()) {
@@ -84,57 +27,131 @@ var View = function(viewer, node) {
 		});
 		viewer.appendSvg(this.svgUndevel)
 	}
+	this.argumentBorder = null;
 	if(node.isArgument()) {
-		this.argumentBorder = $("<div></div>")
-				.addClass("argument-border")
-				.css({ zIndex: -99 });
-		viewer.appendElem(this.argumentBorder);
+		this.argumentBorder = $(document.createElementNS(SVG_NS, "rect")).attr({
+			stroke: "#8080D0",
+			fill: "none",
+			"stroke-dasharray": 3,
+		});
+		viewer.appendSvg(this.argumentBorder);
 	}
 	this.argumentBounds = {};
 
 	this.divName = $("<div></div>").addClass("node-name").html(node.name);
-	$(this.div).append(this.divName);
+	this.div.append(this.divName);
 
 	this.divText = $("<div></div>").addClass("node-text").html(node.text);
-	$(this.div).append(this.divText);
+	this.div.append(this.divText);
 
 	this.divNodes = $("<div></div>").addClass("node-closednodes");
-	$(this.div).append(this.divNodes);
+	this.div.append(this.divNodes);
 
 	this.divNodesText = "";
 	this.divNodesVisible = false;
 	
-	this.location = { x: 0, y: 0 };
 	this.childOpen = true;
 	// child node
-	this.contexts = [];
 	this.children = [];
+	this.context = null;
 	// line
 	this.lines = [];
-	this.contextLines = [];
+	this.contextLine = null;
 	// for animation
-	var r = this.div.getBoundingClientRect();
-	this.bounds = { x: 0, y: 0, w: 200, h: r.height + 60 };
+	this.div.width(200);
+	this.bounds = { x: 0, y: 0, w: 200, h: this.div.height() + 60 };
 	this.visible = true;
 	this.childVisible = true;
-	this.bounds0 = this.bounds;
-	this.visible0 = this.visible;
-	this.childVisible0 = this.childVisible;
 }
 
-View.prototype.modified = function() {
-	this.divName.html(this.node.name);
-	this.divText.html(this.node.text);
-	this.viewer.repaintAll();
+DNodeView.prototype.initSvg = function(type) {
+	var o = null;
+	var root = this.viewer;
+	if(type == "Goal") {
+		var n = 10;
+		o = root.createSvg("rect");
+		o.setBounds = function(a, x, y, w, h) {
+			a.moves(this, {
+				x: x,
+				y: y,
+				width : w,
+				height: h,
+			});
+		}
+		o.offset = { x: n, y: n };
+	} else if(type == "Context") {
+		o = root.createSvg("rect");
+		var n = 20;
+		o.setBounds = function(a, x, y, w, h) {
+			a.moves(this, {
+				rx: n * root.scale,
+				ry: n * root.scale,
+				x : x,
+				y : y,
+				width : w,
+				height: h
+			});
+		}
+		o.offset = { x: n/2, y: n/2 };
+	} else if(type == "Strategy") {
+		o = root.createSvg("polygon");
+		o.setBounds = function(a, x, y, w, h) {
+			var n = 20 * root.scale;
+			a.movePolygon(this, [
+				{ x: x+n, y: y },
+				{ x: x+w, y: y },
+				{ x: x+w-n, y: y+h },
+				{ x: x, y: y+h }
+			]);
+		}
+		o.offset = { x: 25, y: 10 };
+	} else if(type == "Evidence" || type == "Monitor") {
+		o = root.createSvg("ellipse");
+		o.setBounds = function(a, x, y, w, h) {
+			a.moves(this, {
+				cx: x + w/2,
+				cy: y + h/2,
+				rx: w/2,
+				ry: h/2,
+			});
+			o.offset = { x: w/6/root.scale, y: h/6/root.scale };
+		}
+		o.offset = { x: 0, y: 0 };
+	} else if(type == "DScript") {
+		var o1 = root.createSvg("ellipse");
+		var o2 = root.createSvg("polygon");
+		$(o2).attr({ stroke: "gray", fill:"gray" });
+		var o = root.createSvg("g");
+		o.appendChild(o1);
+		o.appendChild(o2);
+		o.setBounds = function(a, x, y, w, h) {
+			a.moves(o1, {
+				cx: x + w/2,
+				cy: y + h/2,
+				rx: w/2,
+				ry: h/2,
+			});
+			a.movePolygon(o2, [
+				{ x: x+w*5/8, y:y-h/4 },
+				{ x: x+w*5/8, y:y+h/4 },
+				{ x: x+w*7/8, y:y },
+			]);
+			o.offset = { x: w/6/root.scale, y: h/6/root.scale };
+		}
+		o.offset = { x: 200/6, y: 200/6 };
+	} else {
+		throw type + " is not GSN type";
+	}
+	return o;
 }
 
-View.prototype.getX = function() { return this.location.x; }
-View.prototype.getY = function() { return this.location.y; }
+function getColorByState(node) {
+	return node.isEvidence ? "#80FF80" : "#E0E0E0";
+}
 
-View.prototype.forEachNode = function(f) {
-	var contexts = this.contexts;
-	for(var i=0; i<contexts.length; i++) {
-		f(contexts[i]);
+DNodeView.prototype.forEachNode = function(f) {
+	if(this.context != null) {
+		f(this.context);
 	}
 	var children = this.children;
 	for(var i=0; i<children.length; i++) {
@@ -142,7 +159,7 @@ View.prototype.forEachNode = function(f) {
 	}
 }
 
-View.prototype.setChildVisible = function(b) {
+DNodeView.prototype.setChildVisible = function(b) {
 	this.childVisible = b;
 	this.childOpen = b;
 	this.forEachNode(function(e) {
@@ -150,7 +167,7 @@ View.prototype.setChildVisible = function(b) {
 	});
 }
 
-View.prototype.setVisible = function(b) {
+DNodeView.prototype.setVisible = function(b) {
 	this.visible = b;
 	if(b) {
 		b = this.childOpen;
@@ -161,42 +178,28 @@ View.prototype.setVisible = function(b) {
 	});
 }
 
-View.prototype.addChild = function(view) {
+DNodeView.prototype.addChild = function(view) {
 	var l = this.viewer.createSvg("line");
-	l.setAttribute("stroke", "#404040");
+	$(l).attr({
+		stroke: "#404040",
+		x1: 0, y1: 0, x2: 0, y2: 0
+	});
 	if(view.node.type != "Context") {
 		this.lines.push(l);
 		this.children.push(view);
 	} else {
-		this.contextLines.push(l);
-		this.contexts.push(view);
+		this.contextLine = l;
+		this.context = view;
 	}
-	this.divNodesText = (this.lines.length + this.contextLines.length) + " nodes...";
+	this.divNodesText = (this.lines.length + (this.contextLine!=null?1:0))
+			 + " nodes...";
 	this.divNodesVisible = true;
 }
 
-View.prototype.setBounds = function(x, y, w, h) {
-	this.location = { x: x, y: y };
-	var scale = this.viewer.scale;
-	this.svg.setBounds(x * scale, y * scale, w * scale, h * scale);
-	$(this.div).css({
-		left  : (x + this.svg.offset.x) * scale + "px",
-		top   : (y + this.svg.offset.y) * scale + "px",
-		width : (w - this.svg.offset.x * 2) * scale + "px",
-		height: (h - this.svg.offset.y * 2) * scale + "px",
-		fontSize: Math.round(FONT_SIZE * scale) + "px",
-	});
-	if(this.node.isUndevelop()) {
-		var sx = (x + w/2) * scale;
-		var sy = (y + h) * scale;
-		var n = 20 * scale;
-		function s(x, y) { return x+","+y }
-		this.svgUndevel.attr("points", 
-			s(sx, sy) + " " + s(sx+n, sy+n) + " " + s(sx, sy+n*2) + " " + s(sx-n, sy+n));
-	}
-}
-
-View.prototype.updateLocation = function(x, y) {
+DNodeView.prototype.updateLocation = function(x, y) {
+	var ARG_MARGIN = this.node.isArgument() ? 5 : 0;
+	x += ARG_MARGIN;
+	y += ARG_MARGIN;
 	var x0 = x;
 	var y0 = y;
 	var w = this.bounds.w;
@@ -206,181 +209,152 @@ View.prototype.updateLocation = function(x, y) {
 			e.updateLocation(x, y);
 		});
 		this.bounds = { x: x, y: y, w: w, h: h };
+		if(this.visible && this.node.isUndevelop()) {
+			h += 40;
+		}
+		if(this.node.isArgument()) {
+			this.argumentBounds = {
+				x: x0 - ARG_MARGIN,
+				y: y0 - ARG_MARGIN,
+				w: w + ARG_MARGIN * 2,
+				h: h + ARG_MARGIN * 2
+			};
+			w += ARG_MARGIN;
+			h += ARG_MARGIN;
+		}
 		if(this.visible) {
-			this.argumentBounds = { x:x0, y:y0, x1:x+w, y1:y+h };
 			return { x: x+w, y: y+h };
 		} else {
-			this.argumentBounds = { x:x0, y:y0, x1:x, y1:y };
 			return { x: x, y: y };
 		}
 	}
-	// contents
-	if(this.node.contexts.length != 0) {
-		var contexts = this.contexts;
-		for(var i=0; i<contexts.length; i++) {
-			var e = contexts[i];
-			y = e.updateLocation(x, y).y + X_MARGIN;
-		}
-		y -= X_MARGIN;
+	// calc context height
+	var contextHeight = 0;
+	var childrenY = y0 + h + Y_MARGIN;
+	if(this.context != null) {
+		var cy = this.context.updateLocation(x, y).y;
+		contextHeight = cy-y0;
+		childrenY = Math.max(childrenY, cy + X_MARGIN);
 	}
-	y = Math.max(y0 + h + Y_MARGIN, y + X_MARGIN);
-	var y1 = y;
+	var maxHeight = Math.max(contextHeight, h);
 
-	// children
-	if(this.node.children.length != 0) {
-		var children = this.children;
-		for(var i=0; i<children.length; i++) {
-			var e = children[i];
-			var size = e.updateLocation(x, y);
-			x = size.x + X_MARGIN;
-			y1 = Math.max(y1, size.y);
-		}
-		x -= X_MARGIN;
-	} else {
-		y -= Y_MARGIN;
-		y1 -= Y_MARGIN;
-	}
-	x = Math.max(x0 + w, x);
-	var x1 = x;
-
-	// set this bounds
-	this.bounds = { x: x0 + (x-x0-w)/2, y: y0, w: w, h: h };
-
-	// contents (second)
-	x = this.bounds.x + w + Y_MARGIN;
-	y = y0;
-	var contexts = this.contexts;
-	for(var i=0; i<contexts.length; i++) {
-		var e = contexts[i];
-		var p = e.updateLocation(x, y);
-		x1 = Math.max(x1, p.x);
-		y = p.y + X_MARGIN;
-	}
-	
-	x = Math.max(x1, this.bounds.x + w);
-	y = Math.max(y1, this.bounds.y + h);
-	this.argumentBounds = { x:x0, y:y0, x1:x, y1:y };
-	return { x: x, y: y };
-}
-
-View.prototype.animate = function(r) {
-	var scale = this.viewer.scale;
-	if(this.visible == this.visible0 && !this.visible0) return;
-	function mid(x0, x1) { return (x1-x0) * r + x0; }
-	this.setBounds(
-			mid(this.bounds0.x, this.bounds.x), mid(this.bounds0.y, this.bounds.y),
-			mid(this.bounds0.w, this.bounds.w), mid(this.bounds0.h, this.bounds.h));
-	if(this.visible != this.visible0) {
-		if(this.visible) {
-			this.svg.setAttribute("display", "block");
-			this.div.style.display = "block";
-		}
-		this.svg.setAttribute("opacity", this.visible ? r : 1.0-r);
-		this.div.style.opacity = this.visible ? r : 1.0 - r;
-	}
-	this.forEachNode(function(e) {
-		e.animate(r);
+	// update children location
+	$.each(this.children, function(i, e) {
+		if(i != 0) x += X_MARGIN;
+		var size = e.updateLocation(x, childrenY);
+		x = size.x;
+		maxHeight = Math.max(maxHeight, size.y - y0);
 	});
-	this.divNodes.css("display", !this.childVisible ? "block" : "none");
-	// line
-	var lines = this.lines;
-	for(var i=0; i<lines.length; i++) {
-		var e = this.children[i];
-		$(lines[i]).attr({
-			x1: (this.getX() + this.bounds.w/2) * scale,
-			y1: (this.getY() + this.bounds.h) * scale,
-			x2: (e.getX() + e.bounds.w/2) * scale,
-			y2: (e.getY()) * scale
-		});
-		if(this.childVisible0 != this.childVisible) {
-			lines[i].setAttribute("display", "block");
-			lines[i].setAttribute("opacity", this.childVisible ? r : 1.0 - r);
-		}
+	var maxWidth = Math.max(w, x - x0);
+
+	// update this location
+	this.bounds = {
+		x: x0 + (maxWidth-w)/2,
+		y: y0 + Math.max((contextHeight-h)/2, 0),
+		w: w,
+		h: h
+	};
+
+	// update context location
+	if(this.context != null) {
+		x = this.bounds.x + w + Y_MARGIN;
+		y = y0 + Math.max((h - contextHeight) / 2, 0);
+		var p = this.context.updateLocation(x, y);
+		maxWidth = Math.max(maxWidth, p.x - x0);
 	}
-	var lines = this.contextLines;
-	for(var i=0; i<lines.length; i++) {
-		var e = this.contexts[i];
-		$(lines[i]).attr({
-			x1: (this.getX() + this.bounds.w) * scale,
-			y1: (this.getY() + this.bounds.h/2) * scale,
-			x2: e.getX() * scale,
-			y2: (e.getY() + e.bounds.h/2) * scale,
-		});
-		if(this.childVisible0 != this.childVisible) {
-			lines[i].setAttribute("display", "block");
-			lines[i].setAttribute("opacity", this.childVisible ? r : 1.0 - r);
-		}
+	if(this.node.isUndevelop()) {
+		maxHeight += 40;
 	}
-	//this.argumentBorder.style.left = this.argumentBounds.x;
-	//this.argumentBorder.style.top  = this.argumentBounds.y;
-	//this.argumentBorder.style.right  = this.argumentBounds.x1;
-	//this.argumentBorder.style.bottom = this.argumentBounds.y1;
+	this.argumentBounds = {
+		x: x0 - ARG_MARGIN,
+		y: y0 - ARG_MARGIN,
+		w: maxWidth + ARG_MARGIN * 2,
+		h: maxHeight + ARG_MARGIN * 2
+	};
+	return { x: x0 + maxWidth + ARG_MARGIN, y: y0 + maxHeight + ARG_MARGIN };
 }
 
-View.prototype.move = function() {
+DNodeView.prototype.animeBegin = function(a) {
+	var self = this;
 	var scale = this.viewer.scale;
-	this.setBounds(this.bounds.x, this.bounds.y, this.bounds.w, this.bounds.h);
-	this.svg.setAttribute("display", this.visible ? "block" : "none");
-	this.svg.setAttribute("fill", getColorByState(this.node.state));
+	var b = this.bounds;
+	a.show(this.svg, this.visible);
+	a.show(this.div, this.visible);
+	a.show(this.divNodes, !this.childVisible);
+
+	this.svg.setBounds(a, b.x * scale, b.y * scale,
+			b.w * scale, b.h * scale);
+	a.moves(this.div, {
+		left  : (b.x + this.svg.offset.x) * scale,
+		top   : (b.y + this.svg.offset.y) * scale,
+		width : (b.w - this.svg.offset.x*2) * scale,
+		height: (b.h - this.svg.offset.y*2) * scale,
+		fontSize: FONT_SIZE*scale,
+	});
+
+	this.svg.setAttribute("fill", getColorByState(this.node));
 	if(this.viewer.selectedNode == this) {
 		this.svg.setAttribute("stroke", "orange");
 	} else {
 		this.svg.setAttribute("stroke", "none");
 	}
-	this.div.style.display = this.visible ? "block" : "none";
 	if(scale < MIN_DISP_SCALE) {
-		this.divText.css("display", "none");
-		this.divName.css("display", "none");
+		a.show(this.divText, false);
+		a.show(this.divName, false);
 		if(this.divNodesVisible) {
 			this.divNodes.html("<p></p>");
 		}
 	} else {
-		this.divText.css("display", "block");
-		this.divName.css("display", "block");
+		a.show(this.divText, true);
+		a.show(this.divName, true);
 		if(this.divNodesVisible) {
 			this.divNodes.html(this.divNodesText);
 		}
 	}
-	if(this.node.isUndevelop()) {
-		this.svgUndevel.attr("display", this.visible ? "block" : "none");
+	
+	$.each(this.lines, function(i, l) {
+		var e = self.children[i];
+		a.moves(l, {
+			x1: (b.x + b.w/2) * scale,
+			y1: (b.y + b.h  ) * scale,
+			x2: (e.bounds.x + e.bounds.w/2) * scale,
+			y2: (e.bounds.y) * scale,
+		}).show(l, self.childVisible);
+	});
+	if(this.contextLine != null) {
+		var e = self.context;
+		var l = self.contextLine;
+		a.moves(l, {
+			x1: (b.x + b.w  ) * scale,
+			y1: (b.y + b.h/2) * scale,
+			x2: (e.bounds.x) * scale,
+			y2: (e.bounds.y + e.bounds.h/2) * scale,
+		}).show(l, self.childVisible);
+	};
+	if(this.svgUndevel != null) {
+		var sx = (b.x + b.w/2) * scale;
+		var sy = (b.y + b.h) * scale;
+		var n = 20 * scale;
+		a.show(this.svgUndevel.context, this.visible);
+		a.movePolygon(this.svgUndevel.context, [
+			{ x: sx, y: sy },
+			{ x: sx-n, y: sy+n },
+			{ x: sx, y: sy+n*2 },
+			{ x: sx+n, y: sy+n },
+		]);
+	}
+	if(this.argumentBorder != null) {
+		var n = 10;
+		var b = this.argumentBorder.context;
+		a.moves(b, {
+			x     : this.argumentBounds.x * scale,
+			y     : this.argumentBounds.y * scale,
+			width : this.argumentBounds.w * scale,
+			height: this.argumentBounds.h * scale,
+		}).show(b, this.visible);
 	}
 	this.forEachNode(function(e) {
-		e.move();
+		e.animeBegin(a);
 	});
-	this.divNodes.css("display", !this.childVisible ? "block" : "none");
-	// line
-	var lines = this.lines;
-	for(var i=0; i<lines.length; i++) {
-		var l = lines[i];
-		var e = this.children[i];
-		l.setAttribute("x1", (this.getX() + this.bounds.w/2) * scale);
-		l.setAttribute("y1", (this.getY() + this.bounds.h) * scale);
-		l.setAttribute("x2", (e.getX() + e.bounds.w/2) * scale);
-		l.setAttribute("y2", (e.getY()) * scale);
-		l.setAttribute("display", this.childVisible ? "block" : "none");
-	}
-	var lines = this.contextLines;
-	for(var i=0; i<lines.length; i++) {
-		var l = lines[i];
-		var e = this.contexts[i];
-		l.setAttribute("x1", (this.getX() + this.bounds.w) * scale);
-		l.setAttribute("y1", (this.getY() + this.bounds.h/2) * scale);
-		l.setAttribute("x2", (e.getX()) * scale);
-		l.setAttribute("y2", (e.getY() + e.bounds.h/2) * scale);
-		l.setAttribute("display", this.childVisible ? "block" : "none");
-	}
-	if(this.node.isArgument()) {
-		var n = 10;
-		this.argumentBorder.css({
-			left  : scale * (this.argumentBounds.x-n) + "px",
-			top   : scale * (this.argumentBounds.y-n) + "px",
-			width : scale * (this.argumentBounds.x1-this.argumentBounds.x+n*2) + "px",
-			height: scale * (this.argumentBounds.y1-this.argumentBounds.y+n*2) + "px",
-			display: this.childVisible ? "block" : "none"
-		});
-	}
-	this.bounds0 = this.bounds;
-	this.visible0 = this.visible;
-	this.childVisible0 = this.childVisible;
 }
 
