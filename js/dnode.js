@@ -7,6 +7,8 @@ var DNode = function(id, name, type, text) {
 	this.children = [];
 	this.context = null;
 	this.parents = [];
+	this.prevVersion = null;
+	this.nextVersion = null;
 }
 
 DNode.prototype.addChild = function(node) {
@@ -99,8 +101,14 @@ function createBinNode(n) {
 	}
 }
 
+var id_count = 1;
 function createNodeFromJson2(json) {
+	var id = json.id != null ? parseInt(json.id) : id_count++;
 	var node = new DNode(0, json.name, json.type, json.desc);
+	if(json.prev != null) {
+		node.prevVersion = createNodeFromJson2(json.prev);
+		node.prevVersion.nextVersion = node;
+	}
 	if(json.children != null) {
 		for(var i=0; i<json.children.length; i++) {
 			var child = createNodeFromJson2(json.children[i]);
