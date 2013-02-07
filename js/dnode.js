@@ -5,7 +5,7 @@ var DNode = function(id, name, type, text) {
 	this.text = text;
 	this.type = type;
 	this.children = [];
-	this.contexts = [];
+	this.context = null;
 	this.parents = [];
 }
 
@@ -13,13 +13,13 @@ DNode.prototype.addChild = function(node) {
 	if(node.type != "Context") {
 		this.children.push(node);
 	} else {
-		this.contexts.push(node);
+		this.context = node;
 	}
 	node.parents.push(this);
 }
 
 DNode.prototype.isArgument = function() {
-	return this.contexts.length != 0 && this.type == "Goal";
+	return this.context != null && this.type == "Goal";
 }
 
 DNode.prototype.isUndevelop = function() {

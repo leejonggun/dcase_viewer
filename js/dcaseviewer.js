@@ -40,12 +40,12 @@ DCaseViewer.prototype.setModel = function(model) {
 
 	var self = this;
 	function create(node) {
-		var view = new View(self, node);
+		var view = new DNodeView(self, node);
+		if(node.context != null) {
+			view.addChild(create(node.context));
+		}
 		for(var i=0; i<node.children.length; i++) {
 			view.addChild(create(node.children[i]));
-		}
-		for(var i=0; i<node.contexts.length; i++) {
-			view.addChild(create(node.contexts[i]));
 		}
 		return view;
 	}
@@ -56,13 +56,13 @@ DCaseViewer.prototype.setModel = function(model) {
 	this.repaintAll(0);
 }
 
-DCaseViewer.prototype.centerize = function(view) {
+DCaseViewer.prototype.centerize = function(view, ms) {
 	this.selectedNode = view;
 	this.rootview.updateLocation(0, 0);
 	var b = view.bounds;
 	this.shiftX = -b.x * this.scale + ($(this.root).width() - b.w * this.scale) / 2;
 	this.shiftY = -b.y * this.scale + $(this.root).height() / 5 * this.scale;
-	this.repaintAll(500);
+	this.repaintAll(ms);
 }
 
 DCaseViewer.prototype.repaintAll = function(ms) {
@@ -70,8 +70,10 @@ DCaseViewer.prototype.repaintAll = function(ms) {
 	var rootview = self.rootview;
 	rootview.updateLocation(
 			(self.shiftX + self.dragX) / self.scale, (self.shiftY + self.dragY) / self.scale);
+	var a = new Animation();
+	rootview.animeBegin(a);
 	if(ms == 0) {
-		rootview.move();
+		a.animeFinish();
 		return;
 	}
 	self.moving = true;
@@ -80,10 +82,10 @@ DCaseViewer.prototype.repaintAll = function(ms) {
 		var time = new Date() - begin;
 		var r = time / ms;
 		if(r < 1.0) {
-			rootview.animate(r);
+			a.anime(r);
 		} else {
 			clearInterval(id);
-			rootview.move();
+			a.animeFinish();
 			self.moving = false;
 		}
 	}, 1000/60);
@@ -109,11 +111,12 @@ DCaseViewer.prototype.getSelectedNode = function() {
 DCaseViewer.prototype.actExpandBranch = function(view, b) {
 	if(b == undefined || b != view.childVisible) {
 		this.rootview.updateLocation(0, 0);
-		var x0 = view.bounds.x;
+		var b0 = view.bounds;
 		view.setChildVisible(!view.childVisible);
 		this.rootview.updateLocation(0, 0);
-		var x1 = view.bounds.x;
-		this.shiftX -= (x1-x0) * this.scale;
+		var b1 = view.bounds;
+		this.shiftX -= (b1.x-b0.x) * this.scale;
+		this.shiftY -= (b1.y-b0.y) * this.scale;
 		this.repaintAll(ANIME_MSEC);
 	}
 }
@@ -125,6 +128,17 @@ DCaseViewer.prototype.setTextSelectable = function(b) {
 		"-moz-user-select": p,
 		"-webkit-user-select": p
 	});
+}
+
+DCaseViewer.prototype.fit = function(ms) {
+	var size = this.rootview.updateLocation(0, 0);
+	this.scale = Math.min(
+		$(this.root).width()  * 0.98 / size.x,
+		$(this.root).height() * 0.98 / size.y);
+	var b = this.rootview.bounds;
+	this.shiftX = -b.x * this.scale + ($(this.root).width() - b.w * this.scale) / 2;
+	this.shiftY = -b.y * this.scale + ($(this.root).height() - size.y * this.scale) / 2;
+	this.repaintAll(ms);
 }
 
 DCaseViewer.prototype.appendElem = function(e) {
