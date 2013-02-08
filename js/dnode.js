@@ -120,60 +120,54 @@ function createNodeFromJson2(json) {
 
 function createSampleNode() {
 	var strategy_children = [
-		{ name: "SubGoal 1", type: "Goal", desc: "ネットワークアクセスは正常である",
+		{ name: "SubGoal 1", type: "Goal", desc: "物理層は正常である",
 		children: [
-//			{ name: "Strategy", type: "Strategy", desc: "接続方式により議論" ,
-//			children: [
-//				{ name: "Context 1.1", type: "Context", desc: "@接続方法:イーサネット、無線LAN" },
-//				{ name: "SubGoal 1.1(or)", type: "Goal",  desc: "イーサネットで接続している" ,
-//				children: [
+			{ name: "Strategy", type: "Strategy", desc: "PCや周辺機器の状態により判断" ,
+			children: [
+				{ name: "SubGoal 1.1", type: "Goal",  desc: "PCに繋がっているネットワークケーブルが途切れていない" ,
+				children: [
+					{ name: "Evidence", type: "Evidence", desc: "人による確認" }
+									]
+				},
+				{ name: "SubGoal 1.2", type: "Goal",  desc: "ハブが壊れていない" ,
+				children: [
+					{ name: "Evidence", type: "Evidence", desc: "人による確認" }
+									]
+				},
+				{ name: "SubGoal 1.3", type: "Goal",  desc: "ルータが壊れていない" ,
+				children: [
+					{ name: "Evidence", type: "Evidence", desc: "人による確認" }
+									]
+				},
+				{ name: "SubGoal 1.3", type: "Goal",  desc: "ルータの電源が切っていない" ,
+				children: [
+					{ name: "Evidence", type: "Evidence", desc: "人による確認" }
+									]
+				},
+				{ name: "SubGoal 1.4", type: "Goal",  desc: "ネットワークケーブルが半差しになっていない" ,
+				children: [
+					{ name: "Evidence", type: "Evidence", desc: "人による確認" }
+									]
+				},
+								]
+			}
+							]
+		},
+
+		{ name: "SubGoal 2", type: "Goal", desc: "データリンク層は正常である",
+		children: [
 					{ name: "Strategy", type: "Strategy", desc: "PCや周辺機器の状態により判断" ,
 					children: [
-//						{ name: "SubGoal 1.1.1", type: "Goal",  desc: "PCに繋がっているネットワークケーブルが途切れていない" ,
-//						children: [
-//							{ name: "Evidence", type: "Evidence", desc: "人による確認" }
-//											]
-//						},
-//						{ name: "SubGoal 1.1.2", type: "Goal",  desc: "ハブが壊れていない" ,
-//						children: [
-//							{ name: "Evidence", type: "Evidence", desc: "人による確認" }
-//											]
-//						},
-						{ name: "SubGoal 1.1.3", type: "Goal",  desc: "イーサネットカードが認識されている" ,
+						{ name: "SubGoal 2.1", type: "Goal",  desc: "イーサネットカードが認識されている" ,
 						children: [
 							{ name: "Evidence", type: "Evidence", desc: "CheckNIC.ds" }
 											]
 						},
-						{ name: "SubGoal 1.1.4", type: "Goal",  desc: "PCでイーサネットインターフェースが有効になっている" ,
+						{ name: "SubGoal 2.2", type: "Goal",  desc: "PCでイーサネットインターフェースが有効になっている" ,
 						children: [
 							{ name: "Evidence", type: "Evidence", desc: "Connection.ds" }
 											]
-//						}
-//										]
-//					}
-//									]
 				},
-
-//				{ name: "SubGoal 1.2(or)", type: "Goal",  desc: "無線LANで接続している" ,
-//				children: [
-//					{ name: "Strategy", type: "Strategy", desc: "PCや周辺機器の状態により判断" ,
-//					children: [
-//						{ name: "SubGoal 1.2.1", type: "Goal",  desc: "電波信号が十分に強い" },
-//						{ name: "SubGoal 1.2.2", type: "Goal",  desc: "電波干渉がない" },
-//						{ name: "SubGoal 1.2.3", type: "Goal",  desc: "無線LANカードが認識されている" ,
-//						children: [
-//							{ name: "Evidence", type: "Evidence", desc: "CheckNIC.ds" }
-//											]
-//							},
-//							{ name: "SubGoal 2.2", type: "Goal",  desc: "PCで無線LANインターフェースが有効になっている" ,
-//							children: [
-//								{ name: "Evidence 2.1", type: "Evidence", desc: "Connection.ds" }
-//												]
-//							}
-//										]
-//					}
-//									]
-//				}
 								]
 			}
 							]
@@ -182,36 +176,31 @@ function createSampleNode() {
 			//パケットを送信元から宛先まで届ける全工程を担っている。
 			//仮想的なパケット交換ネットワークを構築、ホストとホスト間の通信を実現。ICMP(Internet Control Message Protocol)等もここ。つまり、pingによるチェックはここまで。
 			//同じネットワーク媒体上に接続されているコンピュータ間同士だけではなく、異なるネットワーク媒体上に接続されているコンピュータの間でも通信を行えるようにする。(IP)アドレス付け。(ゲートウェイ内外の)ルーティングプロトコル。
-		{ name: "SubGoal 2", type: "Goal", desc: "インターネット層は正常である",
+		{ name: "SubGoal 3", type: "Goal", desc: "インターネット層は正常である",
 		children: [
 //			{ name: "Context 1.1", type: "Context", desc: "@IP Address:192.168.59.101" },
 			{ name: "Strategy", type: "Strategy", desc: "Internet layerの持つ役割を基に議論" ,
 			children: [
-				{ name: "SubGoal 2.1", type: "Goal", desc: "IP Addressが割り当てられている" ,//IP AddressがLAN外かLAN内か?
+				{ name: "SubGoal 3.1", type: "Goal", desc: "IP Addressが割り当てられている" ,//IP AddressがLAN外かLAN内か?
 				children: [
-					{ name: "Evidence 2.1", type: "Evidence", desc: "CheckIPAddress.ds" }
+					{ name: "Evidence 3.1", type: "Evidence", desc: "CheckIPAddress.ds" }
 									]
 				},
 
-				{ name: "SubGoal 2.2", type: "Goal", desc: "ルーティング可能" ,
+				{ name: "SubGoal 3.2", type: "Goal", desc: "ルーティング可能" ,
 				children: [
 					{ name: "Strategy", type: "Strategy", desc: "ルーティングテーブルを基に議論" ,
 					children: [
-						{ name: "SubGoal 2.2.1", type: "Goal", desc: "直接ルーティングできる" ,
+						{ name: "SubGoal 3.2.1", type: "Goal", desc: "直接ルーティングできる" ,
 						children: [
-							{ name: "Evidence 2.2.1", type: "Evidence", desc: "RoutingDirectly.ds" }
+							{ name: "Evidence 3.2.1", type: "Evidence", desc: "RoutingDirectly.ds" }
 											]
 						},
-						{ name: "SubGoal 2.2.2", type: "Goal", desc: "ゲートウェイを通してルーティングできる" ,
+						{ name: "SubGoal 3.2.2", type: "Goal", desc: "ゲートウェイを通してルーティングできる" ,
 						children: [
-							{ name: "Evidence 2.2.2", type: "Evidence", desc: "RoutingDefault.ds" }
+							{ name: "Evidence 3.2.2", type: "Evidence", desc: "RoutingDefault.ds" }
 											]
 							},
-//						{ name: "SubGoal 2.2.3", type: "Goal", desc: "ルータが壊れていない" ,
-//						children: [
-//							{ name: "Evidence", type: "Evidence", desc: "人による確認" }
-//											]
-//						},
 										]
 					}
 									]
@@ -261,7 +250,7 @@ function createSampleNode() {
 //				children: [
 //					{ name: "Context 4.1", type: "Context", desc: "@プロトコル:TCP, UDP" },
 //					{ name: "SubGoal 4.1", type: "Goal", desc: "TCPについて議論(or)" ,// TCP/UDP Port,再送制御、順序制御、フロー制御、輻輳制御
-//					children: [
+/					children: [
 						{ name: "Strategy", type: "Strategy", desc: "firewall設定を考慮する" ,
 						children: [
 							{ name: "SubGoal 4.1.1", type: "Goal", desc: "受信するTCPプロトコルのパケットを破棄しない" ,
