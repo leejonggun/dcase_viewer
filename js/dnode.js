@@ -203,27 +203,27 @@ function createSampleNode() {
 					children: [
 						{ name: "SubGoal 2.1", type: "Goal",  desc: "イーサネットカードが認識されている" ,
 						children: [
-							{ name: "Evidence", type: "Evidence", desc: "CheckNIC.ds" }
+							{ name: "D-Script", type: "DScript", desc: "CheckNIC.ds" }
 											]
 						},
 						{ name: "SubGoal 2.2", type: "Goal",  desc: "正しいドライバがインストールされている" ,
 						children: [
-							{ name: "Evidence", type: "Evidence", desc: "CheckDriver.ds" }
+							{ name: "D-Script", type: "DScript", desc: "CheckDriver.ds" }
 											]
 						},
 						{ name: "SubGoal 2.2", type: "Goal",  desc: "カーネルモジュールがアンロードされていない" ,
 						children: [
-							{ name: "Evidence", type: "Evidence", desc: "CheckMOD.ds" }
+							{ name: "D-Script", type: "DScript", desc: "CheckMOD.ds" }
 											]
 						},
 						{ name: "SubGoal 2.2", type: "Goal",  desc: "interfaces設定ファイルが間違っていない" ,
 //						children: [
-//							{ name: "Evidence", type: "Evidence", desc: "CheckSetting.ds" }
+//							{ name: "D-Script", type: "DScript", desc: "CheckSetting.ds" }
 //											]
 						},
 						{ name: "SubGoal 2.3", type: "Goal",  desc: "PCでイーサネットインターフェースが有効になっている" ,
 						children: [
-							{ name: "Evidence", type: "Evidence", desc: "Connection.ds" }
+							{ name: "D-Script", type: "DScript", desc: "Connection.ds" }
 											]
 						}
 									]
@@ -240,7 +240,7 @@ function createSampleNode() {
 			children: [
 				{ name: "SubGoal 2.1", type: "Goal", desc: "IP Addressが割り当てられている" ,
 				children: [
-					{ name: "Evidence 2.1", type: "Evidence", desc: "CheckIPAddress.ds" }
+					{ name: "D-Script", type: "DScript", desc: "CheckIPAddress.ds" }
 									]
 				},
 
@@ -257,10 +257,10 @@ function createSampleNode() {
 */
 						{ name: "SubGoal 2.2.2", type: "Goal", desc: "ゲートウェイが登録されている" ,
 						children: [
-							{ name: "Evidence 2.2.2", type: "Evidence", desc: "RoutingDefault.ds" }
+							{ name: "D-Script", type: "DScript", desc: "RoutingDefault.ds" }
 											]
 							},
-//						{ name: "SubGoal 2.2.3", type: "Goal", desc: "ルータAのルーティングテーブルにサーバまでの経路、ルータAまでの経路がある" ,
+//						{ name: "SubGoal 2.2.3", type: "Goal", desc: "ルータAにサーバまでの経路がある" ,
 //						children: [
 //							{ name: "Evidence 2.2.3", type: "Evidence", desc: "人による確認結果" }
 //											]
@@ -276,17 +276,17 @@ function createSampleNode() {
 					children: [
 						{ name: "SubGoal 2.3.1", type: "Goal", desc: "INPUTチェーンではパケットを受け入れている" ,
 						children: [
-							{ name: "Evidence", type: "Evidence", desc: "FirewallIPInput.ds" }
+							{ name: "D-Script", type: "DScript", desc: "FirewallIPInput.ds" }
 											]
 							},
 							{ name: "SubGoal 2.3.2", type: "Goal", desc: "FORWARDチェーンではパケットを受け入れている" ,
 							children: [
-								{ name: "Evidence", type: "Evidence", desc: "FirewallIPForward.ds" }
+								{ name: "D-Script", type: "DScript", desc: "FirewallIPForward.ds" }
 												]
 								},
 								{ name: "SubGoal 2.3.3", type: "Goal", desc: "OUTPUTチェーンではパケットを受け入れている" ,
 								children: [
-									{ name: "Evidence", type: "Evidence", desc: "FirewallIPOutput.ds" }
+									{ name: "D-Script", type: "DScript", desc: "FirewallIPOutput.ds" }
 													]
 								}
 										]
@@ -307,22 +307,22 @@ function createSampleNode() {
 						children: [
 							{ name: "SubGoal 4.1.1", type: "Goal", desc: "受信するTCPプロトコルのパケットを破棄しない" ,
 							children: [
-								{ name: "Evidence 4.1.1", type: "Evidence", desc: "FirewallTCPInput.ds" }// TCP/UDP
+								{ name: "D-Script", type: "DScript", desc: "FirewallTCPInput.ds" }// TCP/UDP
 												]
 							},
 							{ name: "SubGoal 4.1.2", type: "Goal", desc: "中継するTCPプロトコルのパケットを破棄しない" ,
 							children: [
-								{ name: "Evidence 4.1.2", type: "Evidence", desc: "FirewallTCPForward.ds" }// TCP/UDP
+								{ name: "D-Script", type: "DScript", desc: "FirewallTCPForward.ds" }// TCP/UDP
 												]
 							},
 							{ name: "SubGoal 4.1.3", type: "Goal", desc: "送信するTCPプロトコルのパケットを破棄しない" ,
 							children: [
-								{ name: "Evidence 4.1.3", type: "Evidence", desc: "FirewallTCPOutput.ds" }// TCP/UDP
+								{ name: "D-Script", type: "DScript", desc: "FirewallTCPOutput.ds" }// TCP/UDP
 												]
 							},
 							{ name: "SubGoal 4.1.3", type: "Goal", desc: "パケットトラフィックが多すぎない" ,
 							children: [
-								{ name: "Evidence 4.1.3", type: "Evidence", desc: "調査結果" }// TCP/UDP
+								{ name: "Evidence", type: "Evidence", desc: "調査結果" }// TCP/UDP
 												]
 							},
 //							{ name: "SubGoal 4.1.4", type: "Goal", desc: "その他TCPプロトコルに関しての設定を確認する" ,//ポート指定、IP Address指定、オプション等
@@ -338,7 +338,7 @@ function createSampleNode() {
 			children: [
 				{ name: "SubGoal 5.1", type: "Goal", desc: "名前解決できる" ,
 				children: [
-					{ name: "Evidence 5.1", type: "Evidence", desc: "Nslookup.ds" }
+					{ name: "D-Script", type: "DScript", desc: "Nslookup.ds" }
 									]
 				},
 				{ name: "SubGoal 5.2", type: "Goal", desc: "ファイル転送(FTP)が可能" ,
@@ -349,7 +349,7 @@ function createSampleNode() {
 						children: [
 							{ name: "SubGoal 5.2.1.1", type: "Goal", desc: "firewallによりポート21番のOUTPUTパケットを破棄していない" ,
 							children: [
-								{ name: "Evidence", type: "Evidence", desc: "Firewall21Output.ds" },
+								{ name: "D-Script", type: "DScript", desc: "Firewall21Output.ds" },
 												]
 							},
 							{ name: "SubGoal 5.2.1.2", type: "Goal", desc: "ユーザ名、パスワード名が間違っていない" ,
@@ -363,7 +363,7 @@ function createSampleNode() {
 						children: [
 							{ name: "SubGoal 5.2.2.1", type: "Goal", desc: "firewallによりポート20番のINPUTパケットを破棄していない" ,
 							children: [
-								{ name: "Evidence", type: "Evidence", desc: "Firewall20Input.ds" },
+								{ name: "D-Script", type: "DScript", desc: "Firewall20Input.ds" },
 												]
 							},
 //							{ name: "Strategy", type: "Strategy", desc: "通信方式により議論" ,
