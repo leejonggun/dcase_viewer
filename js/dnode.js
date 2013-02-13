@@ -20,6 +20,15 @@ DNode.prototype.addChild = function(node) {
 	node.parents.push(this);
 }
 
+DNode.prototype.removeChild = function(node) {
+	if(this.context == node) {
+		this.context = null;
+	} else {
+		var n = this.children.indexOf(node);
+		this.children.splice(n, 1);
+	}
+}
+
 DNode.prototype.isArgument = function() {
 	return this.context != null && this.type == "Goal";
 }
@@ -30,7 +39,7 @@ DNode.prototype.isUndevelop = function() {
 
 DNode.getTypes = function() {
 	return [
-			"Goal", "Context", "Strategy", "Evidence", "Monitor", "DScript"
+			"Goal", "Context", "Strategy", "Evidence", "Monitor", "DScript", "Rebuttal",
 	];
 }
 
@@ -39,7 +48,8 @@ DNode.getTypes = function() {
 var DSCRIPT_PREF = "D-Script:";
 var DSCRIPT_PREF_CONTEXT = "D-Script.Name:";
 DNode.prototype.isDScript = function() {
-	return this.type === "Evidence" && this.text.indexOf(DSCRIPT_PREF) == 0;
+	return this.type == "DScript";
+	//return this.type === "Evidence" && this.text.indexOf(DSCRIPT_PREF) == 0;
 }
 
 DNode.prototype.getDScriptNameInEvidence = function() {
@@ -65,6 +75,14 @@ function createNodeFromURL(url) {
 	return createNodeFromJson(JSON.parse(a.responseText));
 }
 
+function contextParams(params) {
+	var s = "";
+	for(key in params) {
+		s += "@" + key + " : " + params[key] + "\n";
+	}
+	return s;
+}
+
 function createNodeFromJson(json) {
 	console.log(json);
 	var nodes = [];
@@ -72,13 +90,14 @@ function createNodeFromJson(json) {
 		var c = json.nodes[i];
 		nodes[c.node_id] = c;
 	}
+		
 	function createChildren(l, node) {
 		for(var i=0; i<l.children.length; i++) {
 			var child = l.children[i];
 			var n = nodes[child.node_id];
 			n.name = n.type.charAt(0) + n.node_id;
-			var newNode = new DNode(n.node_id, n.name, n.type,
-					n.type != "Context" ? n.description : JSON.stringify(n.properties));
+			var desc = n.description ? n.description : contextParams(n.properties);
+			var newNode = new DNode(n.node_id, n.name, n.type, desc);
 			newNode.isEvidence = n.isEvidence;
 			node.addChild(newNode);
 			createChildren(child, newNode);
@@ -104,7 +123,8 @@ function createBinNode(n) {
 var id_count = 1;
 function createNodeFromJson2(json) {
 	var id = json.id != null ? parseInt(json.id) : id_count++;
-	var node = new DNode(0, json.name, json.type, json.desc);
+	var desc = json.desc ? json.desc : contextParams(json.prop);
+	var node = new DNode(0, json.name, json.type, desc);
 	if(json.prev != null) {
 		node.prevVersion = createNodeFromJson2(json.prev);
 		node.prevVersion.nextVersion = node;
@@ -120,6 +140,7 @@ function createNodeFromJson2(json) {
 
 function createSampleNode() {
 	var strategy_children = [
+<<<<<<< HEAD
 		{ name: "SubGoal 1", type: "Goal", desc: "Physical Layerは正常である",
 		children: [
 			{ name: "Strategy", type: "Strategy", desc: "PCや周辺機器の状態により判断する" ,
@@ -303,6 +324,7 @@ function createSampleNode() {
 // TCP/UDP Port,再送制御、順序制御、フロー制御、輻輳制御
 		{ name: "SubGoal 4", type: "Goal", desc: "Transport layerは正常である",
 			children: [
+<<<<<<< HEAD
 						{ name: "Strategy", type: "Strategy", desc: "firewall設定を考慮する" ,
 						children: [
 							{ name: "SubGoal 4.1.1", type: "Goal", desc: "受信するTCPプロトコルのパケットを破棄しない" ,
@@ -386,6 +408,7 @@ function createSampleNode() {
 	];
 	return createNodeFromJson2({
 		name: "TopGoal", type: "Goal",
+<<<<<<< HEAD
 		desc: "通信可能である",
 		children: [
 			{ name: "Context", type: "Context", desc: "@IP:192.168.59.100<br>@OS:ubuntu12.04LTS 64bit<br>"+
