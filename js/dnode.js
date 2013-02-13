@@ -139,9 +139,11 @@ function createNodeFromJson2(json) {
 }
 
 function createSampleNode() {
-	var strategy_children = [
-<<<<<<< HEAD
-		{ name: "SubGoal 1", type: "Goal", desc: "Physical Layerは正常である",
+	var strategy_children1 = [
+	{ name: "SubGoal", type: "Goal", desc: "サーバは障害要因ではない",
+	children: [
+		name: "Strategy", type: "Strategy", desc: "レイヤーレベルで議論",//TCP/IPの階層でアプリケーション層(アプリケーション、プレゼンテーション、セッション)、トランスポート層(トランスポート)、インターネット層(インターネット)、ネットワークインターフェイス層(データリンク、物理)に分ける
+		{ name: "SubGoal 1", type: "Goal", desc: "物理層は正常である",
 		children: [
 			{ name: "Strategy", type: "Strategy", desc: "PCや周辺機器の状態により判断する" ,
 			children: [
@@ -218,7 +220,7 @@ function createSampleNode() {
 							]
 		},
 
-		{ name: "SubGoal 2", type: "Goal", desc: "Date Link layerは正常である",
+		{ name: "SubGoal 2", type: "Goal", desc: "データリンク層は正常である",
 		children: [
 					{ name: "Strategy", type: "Strategy", desc: "PCの構成状況により議論する" ,
 					children: [
@@ -255,7 +257,7 @@ function createSampleNode() {
 			//パケットを送信元から宛先まで届ける全工程を担っている。
 			//仮想的なパケット交換ネットワークを構築、ホストとホスト間の通信を実現。ICMP(Internet Control Message Protocol)等もここ。つまり、pingによるチェックはここまで。
 			//同じネットワーク媒体上に接続されているコンピュータ間同士だけではなく、異なるネットワーク媒体上に接続されているコンピュータの間でも通信を行えるようにする。(IP)アドレス付け。(ゲートウェイ内外の)ルーティングプロトコル。
-		{ name: "SubGoal 2", type: "Goal", desc: "Internet layerは正常である",
+		{ name: "SubGoal 2", type: "Goal", desc: "インターネット層は正常である",
 		children: [
 			{ name: "Strategy", type: "Strategy", desc: "Internet layerの持つ役割を基に議論する" ,
 			children: [
@@ -322,9 +324,8 @@ function createSampleNode() {
 //データ伝送の信頼性を保証するための機能を物理的ネットワークから独立して提供。つまり、「仮想的な回線」を提供。データが正しく相手にまで届いたかどうかを確認し、問題があれば、データの再送信などを行う。(TCP,UDPなどがここ)
 //任意のサイズのデータを送るために、データの分割と再構築を行う。アプリケーションにパケットを渡すときにPort番号で識別している
 // TCP/UDP Port,再送制御、順序制御、フロー制御、輻輳制御
-		{ name: "SubGoal 4", type: "Goal", desc: "Transport layerは正常である",
+		{ name: "SubGoal 4", type: "Goal", desc: "トランスポート層は正常である",
 			children: [
-<<<<<<< HEAD
 						{ name: "Strategy", type: "Strategy", desc: "firewall設定を考慮する" ,
 						children: [
 							{ name: "SubGoal 4.1.1", type: "Goal", desc: "受信するTCPプロトコルのパケットを破棄しない" ,
@@ -354,7 +355,7 @@ function createSampleNode() {
 		},
 
 //Presentation layer->ネットワークに流れるデータの意味を統一。コードの変換以外にデータの暗号化や、データの圧縮なども。TCP/IP layerのApplication layer。
-		{ name: "SubGoal 5", type: "Goal", desc: "Application layerは正常である",
+		{ name: "SubGoal 5", type: "Goal", desc: "アプリケーション層は正常である",
 		children: [
 			{ name: "Strategy", type: "Strategy", desc: "サービス別に議論する" ,
 			children: [
@@ -405,18 +406,49 @@ function createSampleNode() {
 			}
 							]
 		}
+						]
+	}
+	];
+	var strategy_children2 = [
+	{ name: "SubGoal2", type: "Goal", desc: "ルータは障害要因ではない",
+	children: [
+		{ name: "Strategy2", type: "Strategy", desc: "レイヤーレベルで議論する",
+		children: [
+			{ name: "SubGoal2.1", type: "Goal", desc: "物理層は障害要因ではない"},
+			{ name: "SubGoal2.2", type: "Goal", desc: "データリンク層は障害要因ではない"},
+			{ name: "SubGoal2.3", type: "Goal", desc: "インターネット層は障害要因ではない"},
+							]
+						]
+		}
+	}
+		];
+	var strategy_children3 = [
+	{ name: "SubGoal2", type: "Goal", desc: "クライアントは障害要因ではない",
+	children: [
+		{ name: "Strategy2", type: "Strategy", desc: "レイヤーレベルで議論する",
+		children: [
+			{ name: "SubGoal2.1", type: "Goal", desc: "物理層は障害要因ではない"},
+			{ name: "SubGoal2.2", type: "Goal", desc: "データリンク層は障害要因ではない"},
+			{ name: "SubGoal2.3", type: "Goal", desc: "インターネット層は障害要因ではない"},
+			{ name: "SubGoal2.4", type: "Goal", desc: "トランスポート層は障害要因ではない"},
+			{ name: "SubGoal2.5", type: "Goal", desc: "アプリケーション層は障害要因ではない"},
+							]
+						]
+		}
+	}
 	];
 	return createNodeFromJson2({
 		name: "TopGoal", type: "Goal",
-<<<<<<< HEAD
 		desc: "通信可能である",
 		children: [
 			{ name: "Context", type: "Context", desc: "@IP:192.168.59.100<br>@OS:ubuntu12.04LTS 64bit<br>"+
 			  "@Service:FTP<br>Connection Type:Passive Mode<br>@Net Topology:star<br>@IP Address list:192.168.59.101,192.168.59.102<br>@OS list:ubuntu12.04LTS 64bit, ubuntu12.10 64bit"
 			},
 			{
-				name: "Strategy", type: "Strategy", desc: "レイヤーレベルで議論",//TCP/IPの階層でアプリケーション層(アプリケーション、プレゼンテーション、セッション)、トランスポート層(トランスポート)、インターネット層(インターネット)、ネットワークインターフェイス層(データリンク、物理)に分ける
-				children: strategy_children
+				name: "Strategy", type: "Strategy", desc: "構成機器により分類",
+				children: strategy_children1
+				children: strategy_children2
+				children: strategy_children3
 			}
 		]
 	});
