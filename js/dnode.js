@@ -140,8 +140,8 @@ function createNodeFromJson2(json) {
 
 function createSampleNode() {
 	var strategy_children1 = [
-//		{ name: "Strategy", type: "Strategy", desc: "レイヤーレベルで議論",//TCP/IPの階層でアプリケーション層(アプリケーション、プレゼンテーション、セッション)、トランスポート層(トランスポート)、インターネット層(インターネット)、ネットワークインターフェイス層(データリンク、物理)に分ける
-//		children: [
+		{ name: "Strategy", type: "Strategy", desc: "レイヤーレベルで議論",//TCP/IPの階層でアプリケーション層(アプリケーション、プレゼンテーション、セッション)、トランスポート層(トランスポート)、インターネット層(インターネット)、ネットワークインターフェイス層(データリンク、物理)に分ける
+		children: [
 		{ name: "SubGoal 1", type: "Goal", desc: "物理層は正常である",
 		children: [
 			{ name: "Strategy", type: "Strategy", desc: "PCや周辺機器の状態により判断する" ,
@@ -239,9 +239,9 @@ function createSampleNode() {
 											]
 						},
 						{ name: "SubGoal 2.2", type: "Goal",  desc: "interfaces設定ファイルが間違っていない" ,
-//						children: [
+						children: [
 //							{ name: "D-Script", type: "DScript", desc: "CheckSetting.ds" }
-//											]
+											]
 						},
 						{ name: "SubGoal 2.3", type: "Goal",  desc: "PCでイーサネットインターフェースが有効になっている" ,
 						children: [
@@ -256,7 +256,7 @@ function createSampleNode() {
 			//パケットを送信元から宛先まで届ける全工程を担っている。
 			//仮想的なパケット交換ネットワークを構築、ホストとホスト間の通信を実現。ICMP(Internet Control Message Protocol)等もここ。つまり、pingによるチェックはここまで。
 			//同じネットワーク媒体上に接続されているコンピュータ間同士だけではなく、異なるネットワーク媒体上に接続されているコンピュータの間でも通信を行えるようにする。(IP)アドレス付け。(ゲートウェイ内外の)ルーティングプロトコル。
-		{ name: "SubGoal 2", type: "Goal", desc: "インターネット層は正常である",
+		{ name: "SubGoal 2", type: "Goal", desc: "インターネット層は障害要因ではない",
 		children: [
 			{ name: "Strategy", type: "Strategy", desc: "Internet layerの持つ役割を基に議論する" ,
 			children: [
@@ -265,26 +265,39 @@ function createSampleNode() {
 					{ name: "D-Script", type: "DScript", desc: "CheckIPAddress.ds" }
 									]
 				},
-						{ name: "SubGoal 2.2.2", type: "Goal", desc: "ゲートウェイが登録されている" ,
+				{ name: "SubGoal 2", type: "Goal", desc: "ルーティング機能は障害要因ではない",
+				children: [
+					{ name: "Strategy", type: "Strategy", desc: "ルーティングテーブルを基に議論する" ,
+					children: [
+						{ name: "SubGoal 2.2", type: "Goal", desc: "ゲートウェイが登録されている" ,
 						children: [
 							{ name: "D-Script", type: "DScript", desc: "RoutingDefault.ds" }
 											]
 							},
+						{ name: "SubGoal 2.3", type: "Goal", desc: "接続先が直接登録されている" ,
+						children: [
+							{ name: "D-Script", type: "DScript", desc: "RoutingDirect.ds" }
+											]
+							}
+										]
+					}
+									]
+				},
 				{ name: "SubGoal 2.3", type: "Goal", desc: "firewall設定によりIP Addressレベルでパケット情報が破棄されない" ,
 				children: [
 					{ name: "Strategy", type: "Strategy", desc: "INPUT, FORWARD, OUTPUT別に確認する" ,
 					children: [
-						{ name: "SubGoal 2.3.1", type: "Goal", desc: "INPUTチェーンではパケットを受け入れている" ,
+						{ name: "SubGoal 2.3.1", type: "Goal", desc: "INPUTチェーンではパケットを破棄しない" ,
 						children: [
 							{ name: "D-Script", type: "DScript", desc: "FirewallIPInput.ds" }
 											]
 							},
-							{ name: "SubGoal 2.3.2", type: "Goal", desc: "FORWARDチェーンではパケットを受け入れている" ,
+							{ name: "SubGoal 2.3.2", type: "Goal", desc: "FORWARDチェーンではパケットを破棄しない" ,
 							children: [
 								{ name: "D-Script", type: "DScript", desc: "FirewallIPForward.ds" }
 												]
 								},
-								{ name: "SubGoal 2.3.3", type: "Goal", desc: "OUTPUTチェーンではパケットを受け入れている" ,
+								{ name: "SubGoal 2.3.3", type: "Goal", desc: "OUTPUTチェーンではパケットを破棄しない" ,
 								children: [
 									{ name: "D-Script", type: "DScript", desc: "FirewallIPOutput.ds" }
 													]
@@ -320,18 +333,13 @@ function createSampleNode() {
 								{ name: "D-Script", type: "DScript", desc: "FirewallTCPOutput.ds" }// TCP/UDP
 												]
 							},
-							{ name: "SubGoal 4.1.3", type: "Goal", desc: "パケットトラフィックが多すぎない" ,
-							children: [
-								{ name: "Evidence", type: "Evidence", desc: "調査結果" }// TCP/UDP
-												]
-							},
 									]
 				}
 								]
 		},
 
 //Presentation layer->ネットワークに流れるデータの意味を統一。コードの変換以外にデータの暗号化や、データの圧縮なども。TCP/IP layerのApplication layer。
-		{ name: "SubGoal 5", type: "Goal", desc: "アプリケーション層は正常である",
+		{ name: "SubGoal 5", type: "Goal", desc: "アプリケーション層は障害要因ではない",
 		children: [
 			{ name: "Strategy", type: "Strategy", desc: "サービス別に議論する" ,
 			children: [
@@ -342,33 +350,57 @@ function createSampleNode() {
 				},
 				{ name: "SubGoal 5.2", type: "Goal", desc: "ファイル転送(FTP)が可能" ,
 				children: [
-					{ name: "Strategy", type: "Strategy", desc: "サービスの性質を踏まえて議論" ,
-					children: [
-						{ name: "SubGoal 5.2.1", type: "Goal", desc: "コントロールコネクションが失敗しない" ,
+						{ name: "Strategy", type: "Strategy", desc: "コントロールコネクションについて議論" ,
 						children: [
 							{ name: "SubGoal 5.2.1.1", type: "Goal", desc: "firewallによりポート21番のOUTPUTパケットを破棄していない" ,
 							children: [
-								{ name: "D-Script", type: "DScript", desc: "Firewall21Output.ds" },
+								{ name: "D-Script", type: "DScript", desc: "FirewallFTPOutput.ds" },
 												]
 							},
-							{ name: "SubGoal 5.2.1.2", type: "Goal", desc: "ユーザ名、パスワード名が間違っていない" ,
+							{ name: "SubGoal 5.2.1.1", type: "Goal", desc: "firewallによりポート21番のFORWARDパケットを破棄していない" ,
+							children: [
+								{ name: "D-Script", type: "DScript", desc: "FirewallFTPOutput.ds" },
+												]
+							},
+							{ name: "SubGoal 5.2.1.2", type: "Goal", desc: "firewallによりポート21番のINPUTパケットを破棄していない" ,
+							children: [
+								{ name: "D-Script", type: "DScript", desc: "FirewallFTPInput.ds" },
+												]
+							},
+							{ name: "SubGoal 5.2.1.3", type: "Goal", desc: "ユーザ名、パスワード名が間違っていない" ,
 							children: [
 								{ name: "Evidence", type: "Evidence", desc: "ユーザの確認結果" },
+												]
+							}
+											]
+						},
+						{ name: "Strategy", type: "Strategy", desc: "データコネクションについて議論" ,
+						children: [
+							{ name: "SubGoal 5.2.1.1", type: "Goal", desc: "firewallによりデータ転送に使用するポートのOUTPUTパケットを破棄していない" ,
+							children: [
+								{ name: "D-Script", type: "DScript", desc: "FirewallFTPOutput.ds" },
+												]
+							},
+							{ name: "SubGoal 5.2.1.1", type: "Goal", desc: "firewallによりデータ転送に使用するポートのFORWARDパケットを破棄していない" ,
+							children: [
+								{ name: "D-Script", type: "DScript", desc: "FirewallFTPOutput.ds" },
+												]
+							},
+							{ name: "SubGoal 5.2.1.2", type: "Goal", desc: "firewallによりデータ転送に使用するポートのINPUTパケットを破棄していない" ,
+							children: [
+								{ name: "D-Script", type: "DScript", desc: "FirewallFTPInput.ds" },
 												]
 							},
 											]
 						},
-						{ name: "SubGoal 5.2.2", type: "Goal", desc: "FTP設定が間違っていない" ,
+						{ name: "Strategy", type: "Strategy", desc: "FTP設定ファイルを考慮する" ,
 						children: [
-							{ name: "SubGoal 5.2.2.1", type: "Goal", desc: "firewallによりポート20番のINPUTパケットを破棄していない" ,
+							{ name: "SubGoal 5.2.2.1", type: "Goal", desc: "匿名で接続できる設定になっている" ,
 							children: [
-								{ name: "D-Script", type: "DScript", desc: "Firewall20Input.ds" },
+								{ name: "Evidence", type: "Evidence", desc: "vsconfファイル確認結果" },
 												]
 							},
-								{ name: "SubGoal 5.3.3.3", type: "Goal", desc: "パッシブモードで通信できる" },
 											]
-						}
-										]
 						}
 									]
 				}
@@ -376,35 +408,9 @@ function createSampleNode() {
 			}
 							]
 		}
-//							]
-//	}
+							]
+	}
 	];
-	return createNodeFromJson2({
-		name: "TopGoal", type: "Goal",
-		desc: "通信可能である",
-		children: [
-			{ name: "Context", type: "Context", desc: "@IP:192.168.59.100<br>@OS:ubuntu12.04LTS 64bit<br>"+
-			  "@Service:FTP<br>Connection Type:Passive Mode<br>@Net Topology:star<br>@IP Address list:192.168.59.101,192.168.59.102<br>@OS list:ubuntu12.04LTS 64bit, ubuntu12.10 64bit"
-			},
-			{ name: "Strategy", type: "Strategy", desc: "レイヤーレベルで議論する",
-//				children: [
-//				{ name: "SubGoal", type: "Goal", desc: "サーバは障害要因ではない",
-				children: strategy_children1
-//				},
-//				{ name: "SubGoal", type: "Goal", desc: "ルータは障害要因ではない",
-//				children: strategy_children2
-//				},
-//				{ name: "SubGoal", type: "Goal", desc: "クライアントは障害要因ではない",
-//				children: strategy_children3
-//				}
-//				]
-			}
-		]
-	});
-}
-
-
-
 //	var strategy_children1 = [
 //		{ name: "Strategy", type: "Strategy", desc: "レイヤーレベルで議論",//TCP/IPの階層でアプリケーション層(アプリケーション、プレゼンテーション、セッション)、トランスポート層(トランスポート)、インターネット層(インターネット)、ネットワークインターフェイス層(データリンク、物理)に分ける
 //		children: [
@@ -416,23 +422,50 @@ function createSampleNode() {
 //							]
 //	}
 //	];
-//	var strategy_children2 = [
-//		{ name: "Strategy2", type: "Strategy", desc: "レイヤーレベルで議論する",
-//		children: [
-//			{ name: "SubGoal2.1", type: "Goal", desc: "物理層は障害要因ではない"},
-//			{ name: "SubGoal2.2", type: "Goal", desc: "データリンク層は障害要因ではない"},
-//			{ name: "SubGoal2.3", type: "Goal", desc: "インターネット層は障害要因ではない"}
-//							]
-//		}
-//		];
-//	var strategy_children3 = [
-//		{ name: "Strategy2", type: "Strategy", desc: "レイヤーレベルで議論する",
-//		children: [
-//			{ name: "SubGoal2.1", type: "Goal", desc: "物理層は障害要因ではない"},
-//			{ name: "SubGoal2.2", type: "Goal", desc: "データリンク層は障害要因ではない"},
-//			{ name: "SubGoal2.3", type: "Goal", desc: "インターネット層は障害要因ではない"},
-//			{ name: "SubGoal2.4", type: "Goal", desc: "トランスポート層は障害要因ではない"},
-//			{ name: "SubGoal2.5", type: "Goal", desc: "アプリケーション層は障害要因ではない"}
-//							]
-//}
-//];
+	var strategy_children2 = [
+		{ name: "Strategy2", type: "Strategy", desc: "レイヤーレベルで議論する",
+		children: [
+			{ name: "SubGoal2.1", type: "Goal", desc: "物理層は障害要因ではない"},
+			{ name: "SubGoal2.2", type: "Goal", desc: "データリンク層は障害要因ではない"},
+			{ name: "SubGoal2.3", type: "Goal", desc: "インターネット層は障害要因ではない"}
+							]
+		}
+		];
+	var strategy_children3 = [
+		{ name: "Strategy2", type: "Strategy", desc: "レイヤーレベルで議論する",
+		children: [
+			{ name: "SubGoal2.1", type: "Goal", desc: "物理層は障害要因ではない"},
+			{ name: "SubGoal2.2", type: "Goal", desc: "データリンク層は障害要因ではない"},
+			{ name: "SubGoal2.3", type: "Goal", desc: "インターネット層は障害要因ではない"},
+			{ name: "SubGoal2.4", type: "Goal", desc: "トランスポート層は障害要因ではない"},
+			{ name: "SubGoal2.5", type: "Goal", desc: "アプリケーション層は障害要因ではない"}
+							]
+}
+];
+
+	return createNodeFromJson2({
+		name: "TopGoal", type: "Goal",
+		desc: "通信可能である",
+		children: [
+			{ name: "Context", type: "Context", desc: "@IP:192.168.59.75\n@OS:ubuntu12.04LTS 64bit\n"+
+			  "@Service:FTPConnection\n@Type:Passive Mode\n@Topology:star\n@DEST:192.168.59.40\n@OS:ubuntu12.10 64bit"
+			},
+			{ name: "Strategy", type: "Strategy", desc: "レイヤーレベルで議論する",
+				children: [
+				{ name: "SubGoal", type: "Goal", desc: "サーバは障害要因ではない",
+			children: strategy_children1
+				},
+				{ name: "SubGoal", type: "Goal", desc: "ルータは障害要因ではない",
+				children: strategy_children2
+				},
+				{ name: "SubGoal", type: "Goal", desc: "クライアントは障害要因ではない",
+				children: strategy_children3
+				}
+				]
+			}
+		]
+	});
+}
+
+
+
