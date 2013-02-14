@@ -348,9 +348,9 @@ function createSampleNode() {
 					{ name: "D-Script", type: "DScript", desc: "Nslookup.ds" }
 									]
 				},
-				{ name: "SubGoal 5.2", type: "Goal", desc: "ファイル転送(FTP)が可能" ,
+				{ name: "SubGoal 5.2", type: "Goal", desc: "ファイル転送(FTP)が可能である" ,
 				children: [
-						{ name: "Strategy", type: "Strategy", desc: "コントロールコネクションについて議論" ,
+						{ name: "Strategy", type: "Strategy", desc: "コントロールコネクション接続可否について議論" ,
 						children: [
 							{ name: "SubGoal 5.2.1.1", type: "Goal", desc: "firewallによりポート21番のOUTPUTパケットを破棄していない" ,
 							children: [
@@ -378,17 +378,17 @@ function createSampleNode() {
 						children: [
 							{ name: "SubGoal 5.2.1.1", type: "Goal", desc: "firewallによりデータ転送に使用するポートのOUTPUTパケットを破棄していない" ,
 							children: [
-								{ name: "D-Script", type: "DScript", desc: "FirewallFTPOutput.ds" },
+								{ name: "D-Script", type: "DScript", desc: "FirewallFTPDataOutput.ds" },
 												]
 							},
 							{ name: "SubGoal 5.2.1.1", type: "Goal", desc: "firewallによりデータ転送に使用するポートのFORWARDパケットを破棄していない" ,
 							children: [
-								{ name: "D-Script", type: "DScript", desc: "FirewallFTPOutput.ds" },
+								{ name: "D-Script", type: "DScript", desc: "FirewallFTPDataOutput.ds" },
 												]
 							},
 							{ name: "SubGoal 5.2.1.2", type: "Goal", desc: "firewallによりデータ転送に使用するポートのINPUTパケットを破棄していない" ,
 							children: [
-								{ name: "D-Script", type: "DScript", desc: "FirewallFTPInput.ds" },
+								{ name: "D-Script", type: "DScript", desc: "FirewallFTPDataInput.ds" },
 												]
 							},
 											]
@@ -397,9 +397,14 @@ function createSampleNode() {
 						children: [
 							{ name: "SubGoal 5.2.2.1", type: "Goal", desc: "匿名で接続できる設定になっている" ,
 							children: [
-								{ name: "Evidence", type: "Evidence", desc: "vsconfファイル確認結果" },
+								{ name: "D-Script", type: "DScript", desc: "CheckAnonConf.ds" },
 												]
 							},
+							{ name: "SubGoal 5.2.2.1", type: "Goal", desc: "匿名のためのルートディレクトリが設定されている" ,
+							children: [
+								{ name: "D-Script", type: "DScript", desc: "CheckRootConf.ds" },
+												]
+							}
 											]
 						}
 									]
