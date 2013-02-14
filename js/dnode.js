@@ -140,8 +140,8 @@ function createNodeFromJson2(json) {
 
 function createSampleNode() {
 	var strategy_children1 = [
-		{ name: "Strategy", type: "Strategy", desc: "レイヤーレベルで議論",//TCP/IPの階層でアプリケーション層(アプリケーション、プレゼンテーション、セッション)、トランスポート層(トランスポート)、インターネット層(インターネット)、ネットワークインターフェイス層(データリンク、物理)に分ける
-		children: [
+//		{ name: "Strategy", type: "Strategy", desc: "レイヤーレベルで議論",//TCP/IPの階層でアプリケーション層(アプリケーション、プレゼンテーション、セッション)、トランスポート層(トランスポート)、インターネット層(インターネット)、ネットワークインターフェイス層(データリンク、物理)に分ける
+//		children: [
 		{ name: "SubGoal 1", type: "Goal", desc: "物理層は正常である",
 		children: [
 			{ name: "Strategy", type: "Strategy", desc: "PCや周辺機器の状態により判断する" ,
@@ -265,33 +265,11 @@ function createSampleNode() {
 					{ name: "D-Script", type: "DScript", desc: "CheckIPAddress.ds" }
 									]
 				},
-
-//				{ name: "SubGoal 2.2", type: "Goal", desc: "ルーティングには問題がない" ,
-//				children: [
-//					{ name: "Strategy", type: "Strategy", desc: "ルーティングテーブルを基に議論" ,
-//					children: [
-/*Router BにおいてのD-Case
-						{ name: "SubGoal 2.2.1", type: "Goal", desc: "ルータBのルーティングテーブルにサーバが登録されている" ,
-						children: [
-							{ name: "Evidence 2.2.1", type: "Evidence", desc: "人による確認結果" }
-											]
-						},
-*/
 						{ name: "SubGoal 2.2.2", type: "Goal", desc: "ゲートウェイが登録されている" ,
 						children: [
 							{ name: "D-Script", type: "DScript", desc: "RoutingDefault.ds" }
 											]
 							},
-//						{ name: "SubGoal 2.2.3", type: "Goal", desc: "ルータAにサーバまでの経路がある" ,
-//						children: [
-//							{ name: "Evidence 2.2.3", type: "Evidence", desc: "人による確認結果" }
-//											]
-//							},
-//										]
-//					}
-//									]
-//				},
-
 				{ name: "SubGoal 2.3", type: "Goal", desc: "firewall設定によりIP Addressレベルでパケット情報が破棄されない" ,
 				children: [
 					{ name: "Strategy", type: "Strategy", desc: "INPUT, FORWARD, OUTPUT別に確認する" ,
@@ -314,10 +292,10 @@ function createSampleNode() {
 										]
 					}
 									]
-				},
+				}
 								]
-//			}
-//							]
+			}
+							]
 		},
 
 //データ伝送の信頼性を保証するための機能を物理的ネットワークから独立して提供。つまり、「仮想的な回線」を提供。データが正しく相手にまで届いたかどうかを確認し、問題があれば、データの再送信などを行う。(TCP,UDPなどがここ)
@@ -347,7 +325,6 @@ function createSampleNode() {
 								{ name: "Evidence", type: "Evidence", desc: "調査結果" }// TCP/UDP
 												]
 							},
-//							{ name: "SubGoal 4.1.4", type: "Goal", desc: "その他TCPプロトコルに関しての設定を確認する" ,//ポート指定、IP Address指定、オプション等
 									]
 				}
 								]
@@ -388,13 +365,7 @@ function createSampleNode() {
 								{ name: "D-Script", type: "DScript", desc: "Firewall20Input.ds" },
 												]
 							},
-//							{ name: "Strategy", type: "Strategy", desc: "通信方式により議論" ,
-//							children: [
-//								{ name: "Context", type: "Context", desc: "@Mode:アクティブモード、パッシブモード" },
-///								{ name: "SubGoal 5.2.2.2", type: "Goal", desc: "アクティブモードで通信できる" },
 								{ name: "SubGoal 5.3.3.3", type: "Goal", desc: "パッシブモードで通信できる" },
-//												]
-//							},
 											]
 						}
 										]
@@ -405,30 +376,8 @@ function createSampleNode() {
 			}
 							]
 		}
-						]
-		}
-							]
-	}
-	];
-	var strategy_children2 = [
-		{ name: "Strategy2", type: "Strategy", desc: "レイヤーレベルで議論する",
-		children: [
-			{ name: "SubGoal2.1", type: "Goal", desc: "物理層は障害要因ではない"},
-			{ name: "SubGoal2.2", type: "Goal", desc: "データリンク層は障害要因ではない"},
-			{ name: "SubGoal2.3", type: "Goal", desc: "インターネット層は障害要因ではない"}
-							]
-		}
-		];
-	var strategy_children3 = [
-		{ name: "Strategy2", type: "Strategy", desc: "レイヤーレベルで議論する",
-		children: [
-			{ name: "SubGoal2.1", type: "Goal", desc: "物理層は障害要因ではない"},
-			{ name: "SubGoal2.2", type: "Goal", desc: "データリンク層は障害要因ではない"},
-			{ name: "SubGoal2.3", type: "Goal", desc: "インターネット層は障害要因ではない"},
-			{ name: "SubGoal2.4", type: "Goal", desc: "トランスポート層は障害要因ではない"},
-			{ name: "SubGoal2.5", type: "Goal", desc: "アプリケーション層は障害要因ではない"}
-							]
-	}
+//							]
+//	}
 	];
 	return createNodeFromJson2({
 		name: "TopGoal", type: "Goal",
@@ -437,20 +386,53 @@ function createSampleNode() {
 			{ name: "Context", type: "Context", desc: "@IP:192.168.59.100<br>@OS:ubuntu12.04LTS 64bit<br>"+
 			  "@Service:FTP<br>Connection Type:Passive Mode<br>@Net Topology:star<br>@IP Address list:192.168.59.101,192.168.59.102<br>@OS list:ubuntu12.04LTS 64bit, ubuntu12.10 64bit"
 			},
-			{ name: "Strategy", type: "Strategy", desc: "構成機器により分類",
-				children: [
-				{ name: "SubGoal", type: "Goal", desc: "サーバは障害要因ではない",
+			{ name: "Strategy", type: "Strategy", desc: "レイヤーレベルで議論する",
+//				children: [
+//				{ name: "SubGoal", type: "Goal", desc: "サーバは障害要因ではない",
 				children: strategy_children1
-				},
-				{ name: "SubGoal", type: "Goal", desc: "ルータは障害要因ではない",
-				children: strategy_children2
-				},
-				{ name: "SubGoal", type: "Goal", desc: "クライアントは障害要因ではない",
-				children: strategy_children3
-				}
-				]
+//				},
+//				{ name: "SubGoal", type: "Goal", desc: "ルータは障害要因ではない",
+//				children: strategy_children2
+//				},
+//				{ name: "SubGoal", type: "Goal", desc: "クライアントは障害要因ではない",
+//				children: strategy_children3
+//				}
+//				]
 			}
 		]
 	});
 }
 
+
+
+//	var strategy_children1 = [
+//		{ name: "Strategy", type: "Strategy", desc: "レイヤーレベルで議論",//TCP/IPの階層でアプリケーション層(アプリケーション、プレゼンテーション、セッション)、トランスポート層(トランスポート)、インターネット層(インターネット)、ネットワークインターフェイス層(データリンク、物理)に分ける
+//		children: [
+//			{ name: "SubGoal2.1", type: "Goal", desc: "物理層は障害要因ではない"},
+//			{ name: "SubGoal2.2", type: "Goal", desc: "データリンク層は障害要因ではない"},
+//			{ name: "SubGoal2.3", type: "Goal", desc: "インターネット層は障害要因ではない"},
+//			{ name: "SubGoal2.4", type: "Goal", desc: "トランスポート層は障害要因ではない"},
+//			{ name: "SubGoal2.5", type: "Goal", desc: "アプリケーション層は障害要因ではない"}
+//							]
+//	}
+//	];
+//	var strategy_children2 = [
+//		{ name: "Strategy2", type: "Strategy", desc: "レイヤーレベルで議論する",
+//		children: [
+//			{ name: "SubGoal2.1", type: "Goal", desc: "物理層は障害要因ではない"},
+//			{ name: "SubGoal2.2", type: "Goal", desc: "データリンク層は障害要因ではない"},
+//			{ name: "SubGoal2.3", type: "Goal", desc: "インターネット層は障害要因ではない"}
+//							]
+//		}
+//		];
+//	var strategy_children3 = [
+//		{ name: "Strategy2", type: "Strategy", desc: "レイヤーレベルで議論する",
+//		children: [
+//			{ name: "SubGoal2.1", type: "Goal", desc: "物理層は障害要因ではない"},
+//			{ name: "SubGoal2.2", type: "Goal", desc: "データリンク層は障害要因ではない"},
+//			{ name: "SubGoal2.3", type: "Goal", desc: "インターネット層は障害要因ではない"},
+//			{ name: "SubGoal2.4", type: "Goal", desc: "トランスポート層は障害要因ではない"},
+//			{ name: "SubGoal2.5", type: "Goal", desc: "アプリケーション層は障害要因ではない"}
+//							]
+//}
+//];
