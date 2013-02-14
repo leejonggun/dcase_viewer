@@ -140,9 +140,8 @@ function createNodeFromJson2(json) {
 
 function createSampleNode() {
 	var strategy_children1 = [
-	{ name: "SubGoal", type: "Goal", desc: "サーバは障害要因ではない",
-	children: [
-		name: "Strategy", type: "Strategy", desc: "レイヤーレベルで議論",//TCP/IPの階層でアプリケーション層(アプリケーション、プレゼンテーション、セッション)、トランスポート層(トランスポート)、インターネット層(インターネット)、ネットワークインターフェイス層(データリンク、物理)に分ける
+		{ name: "Strategy", type: "Strategy", desc: "レイヤーレベルで議論",//TCP/IPの階層でアプリケーション層(アプリケーション、プレゼンテーション、セッション)、トランスポート層(トランスポート)、インターネット層(インターネット)、ネットワークインターフェイス層(データリンク、物理)に分ける
+		children: [
 		{ name: "SubGoal 1", type: "Goal", desc: "物理層は正常である",
 		children: [
 			{ name: "Strategy", type: "Strategy", desc: "PCや周辺機器の状態により判断する" ,
@@ -317,8 +316,8 @@ function createSampleNode() {
 									]
 				},
 								]
-			}
-							]
+//			}
+//							]
 		},
 
 //データ伝送の信頼性を保証するための機能を物理的ネットワークから独立して提供。つまり、「仮想的な回線」を提供。データが正しく相手にまで届いたかどうかを確認し、問題があれば、データの再送信などを行う。(TCP,UDPなどがここ)
@@ -407,34 +406,28 @@ function createSampleNode() {
 							]
 		}
 						]
+		}
+							]
 	}
 	];
 	var strategy_children2 = [
-	{ name: "SubGoal2", type: "Goal", desc: "ルータは障害要因ではない",
-	children: [
 		{ name: "Strategy2", type: "Strategy", desc: "レイヤーレベルで議論する",
 		children: [
 			{ name: "SubGoal2.1", type: "Goal", desc: "物理層は障害要因ではない"},
 			{ name: "SubGoal2.2", type: "Goal", desc: "データリンク層は障害要因ではない"},
-			{ name: "SubGoal2.3", type: "Goal", desc: "インターネット層は障害要因ではない"},
+			{ name: "SubGoal2.3", type: "Goal", desc: "インターネット層は障害要因ではない"}
 							]
-						]
 		}
-	}
 		];
 	var strategy_children3 = [
-	{ name: "SubGoal2", type: "Goal", desc: "クライアントは障害要因ではない",
-	children: [
 		{ name: "Strategy2", type: "Strategy", desc: "レイヤーレベルで議論する",
 		children: [
 			{ name: "SubGoal2.1", type: "Goal", desc: "物理層は障害要因ではない"},
 			{ name: "SubGoal2.2", type: "Goal", desc: "データリンク層は障害要因ではない"},
 			{ name: "SubGoal2.3", type: "Goal", desc: "インターネット層は障害要因ではない"},
 			{ name: "SubGoal2.4", type: "Goal", desc: "トランスポート層は障害要因ではない"},
-			{ name: "SubGoal2.5", type: "Goal", desc: "アプリケーション層は障害要因ではない"},
+			{ name: "SubGoal2.5", type: "Goal", desc: "アプリケーション層は障害要因ではない"}
 							]
-						]
-		}
 	}
 	];
 	return createNodeFromJson2({
@@ -444,11 +437,18 @@ function createSampleNode() {
 			{ name: "Context", type: "Context", desc: "@IP:192.168.59.100<br>@OS:ubuntu12.04LTS 64bit<br>"+
 			  "@Service:FTP<br>Connection Type:Passive Mode<br>@Net Topology:star<br>@IP Address list:192.168.59.101,192.168.59.102<br>@OS list:ubuntu12.04LTS 64bit, ubuntu12.10 64bit"
 			},
-			{
-				name: "Strategy", type: "Strategy", desc: "構成機器により分類",
+			{ name: "Strategy", type: "Strategy", desc: "構成機器により分類",
+				children: [
+				{ name: "SubGoal", type: "Goal", desc: "サーバは障害要因ではない",
 				children: strategy_children1
+				},
+				{ name: "SubGoal", type: "Goal", desc: "ルータは障害要因ではない",
 				children: strategy_children2
+				},
+				{ name: "SubGoal", type: "Goal", desc: "クライアントは障害要因ではない",
 				children: strategy_children3
+				}
+				]
 			}
 		]
 	});
