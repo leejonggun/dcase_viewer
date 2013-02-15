@@ -267,20 +267,7 @@ function createSampleNode() {
 				},
 				{ name: "SubGoal 2", type: "Goal", desc: "ルーティング機能は障害要因ではない",
 				children: [
-					{ name: "Strategy", type: "Strategy", desc: "ルーティングテーブルを基に議論する" ,
-					children: [
-						{ name: "SubGoal 2.2", type: "Goal", desc: "ゲートウェイが登録されている" ,
-						children: [
-							{ name: "D-Script", type: "DScript", desc: "RoutingDefault.ds" }
-											]
-							},
-						{ name: "SubGoal 2.3", type: "Goal", desc: "接続先が直接登録されている" ,
-						children: [
-							{ name: "D-Script", type: "DScript", desc: "RoutingDirect.ds" }
-											]
-							}
-										]
-					}
+					{ name: "D-Script", type: "DScript", desc: "Routing.ds" }
 									]
 				},
 				{ name: "SubGoal 2.3", type: "Goal", desc: "firewall設定によりIP Addressレベルでパケット情報が破棄されない" ,
@@ -352,12 +339,12 @@ function createSampleNode() {
 				children: [
 						{ name: "Strategy", type: "Strategy", desc: "コントロールコネクション接続可否について議論" ,
 						children: [
-							{ name: "SubGoal 5.2.1.1", type: "Goal", desc: "firewallによりポート21番のOUTPUTパケットを破棄していない" ,
+							{ name: "SubGoal 5.2.1.1", type: "Goal", desc: "firewallによりポート21番のFORWARDパケットを破棄していない" ,
 							children: [
-								{ name: "D-Script", type: "DScript", desc: "FirewallFTPOutput.ds" },
+								{ name: "D-Script", type: "DScript", desc: "FirewallFTPForward.ds" },
 												]
 							},
-							{ name: "SubGoal 5.2.1.1", type: "Goal", desc: "firewallによりポート21番のFORWARDパケットを破棄していない" ,
+							{ name: "SubGoal 5.2.1.1", type: "Goal", desc: "firewallによりポート21番のOUTPUTパケットを破棄していない" ,
 							children: [
 								{ name: "D-Script", type: "DScript", desc: "FirewallFTPOutput.ds" },
 												]
@@ -383,7 +370,7 @@ function createSampleNode() {
 							},
 							{ name: "SubGoal 5.2.1.1", type: "Goal", desc: "firewallによりデータ転送に使用するポートのFORWARDパケットを破棄していない" ,
 							children: [
-								{ name: "D-Script", type: "DScript", desc: "FirewallFTPDataOutput.ds" },
+								{ name: "D-Script", type: "DScript", desc: "FirewallFTPDataForward.ds" },
 												]
 							},
 							{ name: "SubGoal 5.2.1.2", type: "Goal", desc: "firewallによりデータ転送に使用するポートのINPUTパケットを破棄していない" ,
@@ -427,45 +414,45 @@ function createSampleNode() {
 //							]
 //	}
 //	];
-	var strategy_children2 = [
-		{ name: "Strategy2", type: "Strategy", desc: "レイヤーレベルで議論する",
-		children: [
-			{ name: "SubGoal2.1", type: "Goal", desc: "物理層は障害要因ではない"},
-			{ name: "SubGoal2.2", type: "Goal", desc: "データリンク層は障害要因ではない"},
-			{ name: "SubGoal2.3", type: "Goal", desc: "インターネット層は障害要因ではない"}
-							]
-		}
-		];
-	var strategy_children3 = [
-		{ name: "Strategy2", type: "Strategy", desc: "レイヤーレベルで議論する",
-		children: [
-			{ name: "SubGoal2.1", type: "Goal", desc: "物理層は障害要因ではない"},
-			{ name: "SubGoal2.2", type: "Goal", desc: "データリンク層は障害要因ではない"},
-			{ name: "SubGoal2.3", type: "Goal", desc: "インターネット層は障害要因ではない"},
-			{ name: "SubGoal2.4", type: "Goal", desc: "トランスポート層は障害要因ではない"},
-			{ name: "SubGoal2.5", type: "Goal", desc: "アプリケーション層は障害要因ではない"}
-							]
-}
-];
+//	var strategy_children2 = [
+//		{ name: "Strategy2", type: "Strategy", desc: "レイヤーレベルで議論する",
+//		children: [
+//			{ name: "SubGoal2.1", type: "Goal", desc: "物理層は障害要因ではない"},
+//			{ name: "SubGoal2.2", type: "Goal", desc: "データリンク層は障害要因ではない"},
+//			{ name: "SubGoal2.3", type: "Goal", desc: "インターネット層は障害要因ではない"}
+//							]
+//		}
+//		];
+//	var strategy_children3 = [
+//		{ name: "Strategy2", type: "Strategy", desc: "レイヤーレベルで議論する",
+//		children: [
+//			{ name: "SubGoal2.1", type: "Goal", desc: "物理層は障害要因ではない"},
+//			{ name: "SubGoal2.2", type: "Goal", desc: "データリンク層は障害要因ではない"},
+//			{ name: "SubGoal2.3", type: "Goal", desc: "インターネット層は障害要因ではない"},
+//			{ name: "SubGoal2.4", type: "Goal", desc: "トランスポート層は障害要因ではない"},
+//			{ name: "SubGoal2.5", type: "Goal", desc: "アプリケーション層は障害要因ではない"}
+//							]
+//}
+//];
 
 	return createNodeFromJson2({
 		name: "TopGoal", type: "Goal",
-		desc: "通信可能である",
+		desc: "ネットワークに障害要因はない",
 		children: [
 			{ name: "Context", type: "Context", desc: "@IP:192.168.59.75\n@OS:ubuntu12.04LTS 64bit\n"+
-			  "@Service:FTPConnection\n@Type:Passive Mode\n@Topology:star\n@DEST:192.168.59.40\n@OS:ubuntu12.10 64bit"
+			  "@Service:FTPConnection\n@Type:Passive Mode\n@Topology:star\n@DEST:test\n@DEST-IP:192.168.59.40\n@OS:ubuntu12.10 64bit"
 			},
-			{ name: "Strategy", type: "Strategy", desc: "レイヤーレベルで議論する",
+			{ name: "Strategy", type: "Strategy", desc: "構成機器により分割",
 				children: [
 				{ name: "SubGoal", type: "Goal", desc: "サーバは障害要因ではない",
 			children: strategy_children1
 				},
-				{ name: "SubGoal", type: "Goal", desc: "ルータは障害要因ではない",
-				children: strategy_children2
-				},
-				{ name: "SubGoal", type: "Goal", desc: "クライアントは障害要因ではない",
-				children: strategy_children3
-				}
+//				{ name: "SubGoal", type: "Goal", desc: "ルータは障害要因ではない",
+//				children: strategy_children2
+//				},
+//				{ name: "SubGoal", type: "Goal", desc: "クライアントは障害要因ではない",
+//				children: strategy_children3
+//				}
 				]
 			}
 		]
