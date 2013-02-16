@@ -1,6 +1,5 @@
 var FONT_SIZE = 13;
 var MIN_DISP_SCALE = 4 / FONT_SIZE;
-
 function toHTML(txt) {
 	if(txt == "") {
 		return "<font color=gray>(no description)</font>";
@@ -11,6 +10,8 @@ function toHTML(txt) {
 	return x;
 }
 
+var DEF_WIDTH = 200;
+
 /* class DNodeView */
 var DNodeView = function(viewer, node) {
 	var self = this;
@@ -19,6 +20,7 @@ var DNodeView = function(viewer, node) {
 	this.svg = this.initSvg(node.type);
 	this.div = $("<div></div>")
 			.addClass("node-container")
+			.width(DEF_WIDTH)
 			.appendTo(viewer.root);
 
 	if(node.isUndevelop()) {
@@ -56,8 +58,7 @@ var DNodeView = function(viewer, node) {
 	this.lines = [];
 	this.contextLine = null;
 	// for animation
-	this.div.width(200);
-	this.bounds = { x: 0, y: 0, w: 200, h: this.div.height() + 60 };
+	this.bounds = { x: 0, y: 0, w: DEF_WIDTH, h: 100 };//200, h: this.div.height() + 60 };
 	this.visible = true;
 	this.childVisible = true;
 
@@ -92,7 +93,8 @@ var DNodeView = function(viewer, node) {
 				$(this).remove();
 				editflag = false;
 				setTimeout(function() {
-					self.bounds.h = self.divText.height() / self.viewer.scale + 60;
+					var b = self.getOuterSize(200, self.divText.height() / self.viewer.scale + 60);
+					self.bounds.h = b.h;
 					viewer.repaintAll();
 				}, 100);
 			});
@@ -104,7 +106,6 @@ var DNodeView = function(viewer, node) {
 	}).bind("touchend", function(e) {
 		viewer.dragEnd(self);
 		if(touchinfo.time != null && (new Date() - touchinfo.time) < 300) {
-			//console.log(new Date() - touchinfo.time);
 			viewer.actExpandBranch(self);
 			touchinfo.time = null;
 		}
@@ -135,6 +136,9 @@ DNodeView.prototype.initSvg = function(type) {
 				width : w,
 				height: h,
 			});
+		}
+		this.getOuterSize = function(w, h) {
+			return { w: w + n*2, h: h + n*2 };
 		}
 		o.offset = { x: n, y: n };
 	} else if(type == "DContext") {
@@ -171,6 +175,9 @@ DNodeView.prototype.initSvg = function(type) {
 				height: h
 			});
 		}
+		this.getOuterSize = function(w, h) {
+			return { w: w + n, h: h + n };
+		}
 		o.offset = { x: n/2, y: n/2 };
 	} else if(type == "DScriptContext") {
 		var o = root.createSvg("g");
@@ -179,23 +186,27 @@ DNodeView.prototype.initSvg = function(type) {
 		$(o2).attr({ stroke: "gray", fill:"gray" });
 		o.appendChild(o1);
 		o.appendChild(o2);
-		var n = 20;
 		o.setBounds = function(a, x, y, w, h) {
+			var n = 20 * root.scale;
 			a.moves(o1, {
-				rx: n * root.scale,
-				ry: n * root.scale,
+				rx: n,
+				ry: n,
 				x : x,
 				y : y,
 				width : w,
 				height: h
 			});
 			a.movePolygon(o2, [
-				{ x: x+w*5/8, y:y-h/4 },
-				{ x: x+w*5/8, y:y+h/4 },
-				{ x: x+w*7/8, y:y },
+				{ x: x+w*5/8, y:y-n },
+				{ x: x+w*5/8, y:y+n },
+				{ x: x+w*5/8+n*2, y:y },
 			]);
+			o.offset = { x: n/2, y: n/2 };
 		}
-		o.offset = { x: n/2, y: n/2 };
+		this.getOuterSize = function(w, h) {
+			return { w: w + 20, h: h + 20 };
+		}
+		o.offset = { x: 1, y: 1 };
 	} else if(type == "Strategy") {
 		o = root.createSvg("polygon");
 		o.setBounds = function(a, x, y, w, h) {
@@ -206,6 +217,9 @@ DNodeView.prototype.initSvg = function(type) {
 				{ x: x+w-n, y: y+h },
 				{ x: x, y: y+h }
 			]);
+		}
+		this.getOuterSize = function(w, h) {
+			return { w: w + 20*2, h: h + 10*2 };
 		}
 		o.offset = { x: 25, y: 10 };
 	} else if(type == "Evidence" || type == "Monitor" || type == "Rebuttal") {
@@ -218,6 +232,9 @@ DNodeView.prototype.initSvg = function(type) {
 				ry: h/2,
 			});
 			o.offset = { x: w/6/root.scale, y: h/6/root.scale };
+		}
+		this.getOuterSize = function(w, h) {
+			return { w: w*8/6, h: h*8/6 };
 		}
 		o.offset = { x: 0, y: 0 };
 	} else if(type == "DScript") {
@@ -234,12 +251,16 @@ DNodeView.prototype.initSvg = function(type) {
 				rx: w/2,
 				ry: h/2,
 			});
+			var n = 20 * root.scale;
 			a.movePolygon(o2, [
-				{ x: x+w*5/8, y:y-h/4 },
-				{ x: x+w*5/8, y:y+h/4 },
-				{ x: x+w*7/8, y:y },
+				{ x: x+w*5/8, y:y-n },
+				{ x: x+w*5/8, y:y+n },
+				{ x: x+w*5/8+n*2, y:y },
 			]);
 			o.offset = { x: w/6/root.scale, y: h/6/root.scale };
+		}
+		this.getOuterSize = function(w, h) {
+			return { w: w*8/6, h: h*8/6 };
 		}
 		o.offset = { x: 200/6, y: 200/6 };
 	} else {
@@ -283,17 +304,33 @@ DNodeView.prototype.setVisible = function(b) {
 }
 
 DNodeView.prototype.addChild = function(view) {
-	var l = this.viewer.createSvg("line");
-	$(l).attr({
-		stroke: "#404040",
-		x1: 0, y1: 0, x2: 0, y2: 0
-	});
-	if(view.node.type == "Context" || view.node.type == "Rebuttal" || view.node.type == "DScriptContext") {
+	switch(view.node.type) {
+	case "Context":
+	case "Rebuttal":
+	case "DScriptContext":
+		var l = this.viewer.createSvg("line");
+		$(l).attr({
+			fill: "none",
+			stroke: "#404040",
+			x1: 0, y1: 0, x2: 0, y2: 0,
+			"marker-end": "url(#Triangle-black)",
+		});
+
 		this.contextLine = l;
 		this.context = view;
-	} else {
+		break;
+	default:
+		var l = this.viewer.createSvg("path");
+		$(l).attr({
+			d: "M0,0 C0,0 0,0 0,0",
+			fill: "none",
+			stroke: "#404040",
+			"marker-end": "url(#Triangle-black)",
+		});
+
 		this.lines.push(l);
 		this.children.push(view);
+		break;
 	}
 	this.divNodesText = (this.lines.length + (this.contextLine!=null?1:0))
 			 + " nodes...";
@@ -327,9 +364,9 @@ DNodeView.prototype.updateLocation = function(x, y) {
 			h += ARG_MARGIN;
 		}
 		if(this.visible) {
-			return { x: x+w, y: y+h };
+			return { x: x+w, cx: x+w, y: y+h };
 		} else {
-			return { x: x, y: y };
+			return { x: x, cx: x, y: y };
 		}
 	}
 	// calc context height
@@ -356,7 +393,7 @@ DNodeView.prototype.updateLocation = function(x, y) {
 
 	// update this location
 	this.bounds = {
-		x: x0 + (maxWidth-w)/2,
+		x: x0 + (maxCWidth-w)/2,
 		y: y0 + Math.max((contextHeight-h)/2, 0),
 		w: w,
 		h: h
@@ -379,6 +416,7 @@ DNodeView.prototype.updateLocation = function(x, y) {
 		h: maxHeight + ARG_MARGIN * 2
 	};
 	return {
+		cx: x0 + maxCWidth + ARG_MARGIN,
 		x: x0 + maxWidth + ARG_MARGIN,
 		y: y0 + maxHeight + ARG_MARGIN,
 	};
@@ -399,7 +437,7 @@ DNodeView.prototype.animeStart = function(a) {
 		top   : (b.y + this.svg.offset.y) * scale,
 		width : (b.w - this.svg.offset.x*2) * scale,
 		height: (b.h - this.svg.offset.y*2) * scale,
-		fontSize: FONT_SIZE*scale,
+		fontSize: Math.floor(FONT_SIZE*scale),
 	});
 
 	this.svg.setAttribute("fill", getColorByState(this.node));
@@ -424,12 +462,28 @@ DNodeView.prototype.animeStart = function(a) {
 	
 	$.each(this.lines, function(i, l) {
 		var e = self.children[i];
-		a.moves(l, {
-			x1: (b.x + b.w/2) * scale,
-			y1: (b.y + b.h  ) * scale,
-			x2: (e.bounds.x + e.bounds.w/2) * scale,
-			y2: (e.bounds.y) * scale,
-		}).show(l, self.childVisible);
+		var start = l.pathSegList.getItem(0); // SVG_PATHSEG_MOVETO_ABS(M)
+		var curve = l.pathSegList.getItem(1); // SVG_PATHSEG_CURVETO_CUBIC_ABS(C)
+		
+		var x1 = (b.x + b.w/2) * scale;
+		var y1 = (b.y + b.h  ) * scale;
+		var x2 = (e.bounds.x + e.bounds.w/2) * scale;
+		var y2 = (e.bounds.y) * scale;
+
+		a.show(l, self.childVisible);
+	
+		a.moves(start, {
+			x: x1,
+			y: y1,
+		});
+		a.moves(curve, {
+			x1: (9 * x1 + x2) / 10,
+			y1: (y1 + y2) / 2,
+			x2: (9 * x2 + x1) / 10,
+			y2: (y1 + y2) / 2,
+			x: x2,
+			y: y2,
+		});
 	});
 	if(this.contextLine != null) {
 		var e = self.context;
@@ -440,7 +494,7 @@ DNodeView.prototype.animeStart = function(a) {
 			x2: (e.bounds.x) * scale,
 			y2: (e.bounds.y + e.bounds.h/2) * scale,
 		}).show(l, self.childVisible);
-	};
+	}
 	if(this.svgUndevel != null) {
 		var sx = (b.x + b.w/2) * scale;
 		var sy = (b.y + b.h) * scale;

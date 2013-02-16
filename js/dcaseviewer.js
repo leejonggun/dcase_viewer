@@ -57,10 +57,22 @@ DCaseViewer.prototype.setModel = function(model) {
 		return view;
 	}
 	this.rootview = create(model);
-	this.shiftX = ($(this.root).width() - this.rootview.updateLocation(0, 0).x * this.scale)/2;
-	this.shiftY = 20;
 	this.model = model;
-	this.repaintAll(0);
+
+	setTimeout(function() {
+		function f(v) {
+			var b = v.getOuterSize(200, v.divText.height() / self.scale + 60);
+			v.bounds.w = b.w;
+			v.bounds.h = b.h;
+			v.forEachNode(function(e) {
+				f(e);
+			});
+		}
+		f(self.rootview);
+		self.shiftX = ($(self.root).width() - self.rootview.updateLocation(0, 0).x * self.scale)/2;
+		self.shiftY = 20;
+		self.repaintAll();
+	}, 100);
 }
 
 DCaseViewer.prototype.centerize = function(view, ms) {
@@ -109,7 +121,6 @@ DCaseViewer.prototype.prevVersion = function(v) {
 				if(prev.parents.length == 0) {
 					prev.parents.push(parent);
 				}
-				console.log("node " + i);
 				this.setModel(this.model);
 				break;
 			}
@@ -128,7 +139,6 @@ DCaseViewer.prototype.nextVersion = function(v) {
 				if(next.parents.length == 0) {
 					next.parents.push(parent);
 				}
-				console.log("node " + i);
 				this.setModel(this.model);
 				break;
 			}
@@ -147,7 +157,7 @@ DCaseViewer.prototype.showToolbox = function(node) {
 
 			$("#toolbar").css({
 				display: "block",
-				left: b.left + (w - x)/2,//b.left + 80 * self.scale,
+				left: b.left + (w - x)/2,
 				top: b.top - 40,
 				width: x,
 				height: 30,
@@ -235,6 +245,7 @@ DCaseViewer.prototype.createSvg = function(name) {
 
 DCaseViewer.prototype.showDScriptExecuteWindow = function(scriptName) {
 	var self = this;
+	self.showToolbox(null);
 	var r = DCaseAPI.call("search", { filter: ["Context"] });
 	var nn = null;
 	for(var i=0; i<r[0].length; i++) {

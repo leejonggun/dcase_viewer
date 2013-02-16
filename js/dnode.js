@@ -148,141 +148,181 @@ function createNodeFromJson2(json) {
 }
 
 function createSampleNode() {
-	var strategy_children = [
-		{ name: "SubGoal 1", type: "Goal", desc: "Network Access layerは正常である",
+	var strategy_children1 = [
+		{ name: "Strategy", type: "Strategy", desc: "レイヤーレベルで議論",//TCP/IPの階層でアプリケーション層(アプリケーション、プレゼンテーション、セッション)、トランスポート層(トランスポート)、インターネット層(インターネット)、ネットワークインターフェイス層(データリンク、物理)に分ける
 		children: [
-//			{ name: "Strategy", type: "Strategy", desc: "接続方式により議論" ,
-//			children: [
-//				{ name: "Context 1.1", type: "Context", desc: "@接続方法:イーサネット、無線LAN" },
-//				{ name: "SubGoal 1.1(or)", type: "Goal",  desc: "イーサネットで接続している" ,
-//				children: [
-					{ name: "Strategy", type: "Strategy", desc: "PCや周辺機器の状態により判断" ,
-					children: [
-//						{ name: "SubGoal 1.1.1", type: "Goal",  desc: "PCに繋がっているネットワークケーブルが途切れていない" ,
-//						children: [
-//							{ name: "Evidence", type: "Evidence", desc: "ネットワークケーブルを確認" }
-//											]
-//						},
-//						{ name: "SubGoal 1.1.2", type: "Goal",  desc: "ハブが壊れていない" ,
-//						children: [
-//							{ name: "Evidence", type: "Evidence", desc: "ハブを確認" }
-//											]
-//						},
-						{ name: "SubGoal 1.1.3", type: "Goal",  desc: "イーサネットカードが認識されている" ,
+		{ name: "SubGoal 1", type: "Goal", desc: "物理層は正常である",
+		children: [
+			{ name: "Strategy", type: "Strategy", desc: "PCや周辺機器の状態により判断する" ,
+			children: [
+				{ name: "SubGoal 1.1", type: "Goal", desc: "PC機器は障害要因ではない",
+				children:[
+					{name: "Strategy", type: "Strategy", desc: "PCとネットワークケーブルとの接続状態を考慮する",
+					children:[
+						{ name: "SubGoal 1.1.1", type: "Goal",  desc: "PCにネットワークケーブルが繋がっている" ,
 						children: [
-							{ name: "Evidence", type: "Evidence", desc: "CheckNIC.ds" }
+							{ name: "Evidence", type: "Evidence", desc: "人による確認結果" }
 											]
 						},
-						{ name: "SubGoal 1.1.4", type: "Goal",  desc: "PCでイーサネットインターフェースが有効になっている" ,
+						{ name: "SubGoal 1.1.2", type: "Goal",  desc: "ネットワークケーブルがPCに半差しになっていない" ,
 						children: [
-							{ name: "Evidence", type: "Evidence", desc: "Connection.ds" }
+							{ name: "Evidence", type: "Evidence", desc: "人による確認結果" }
 											]
 						}
-//										]
-//					}
 									]
+					},
+					{name: "Strategy", type: "Strategy", desc: "PCとネットワークケーブルとの接続状態を考慮する",
+					children:[
+						{ name: "SubGoal 1.1.3", type: "Goal",  desc: "ネットワークドライバは壊れていない" ,
+						children: [
+							{ name: "Evidence", type: "Evidence", desc: "人による確認結果" }
+											]
+						}
+									]
+					}
+								]
 				},
+				{ name: "SubGoal 1.2", type: "Goal", desc: "周辺機器は障害要因ではない",
+				children: [
+					{ name: "Strategy", type: "Strategy", desc: "ネットワークケーブルの状態に関して議論する",
+					children: [
+						{ name: "SubGoal 1.2", type: "Goal",  desc: "ネットワークケーブルは断線されていない" ,
+						children: [
+							{ name: "Evidence", type: "Evidence", desc: "人による確認結果" }
+											]
+						}
+										]
+					},
+					{ name: "Strategy", type: "Strategy", desc: "ハブの状態に関して議論する",
+					children: [
+						{ name: "SubGoal 1.3", type: "Goal",  desc: "ハブが壊れていない" ,
+						children: [
+							{ name: "Evidence", type: "Evidence", desc: "人による確認結果" }
+											]
+						},
+						{ name: "SubGoal 1.4", type: "Goal",  desc: "ハブの電源が切られていない" ,
+						children: [
+							{ name: "Evidence", type: "Evidence", desc: "人による確認結果" }
+											]
+						},
+										]
+					},
+					{ name: "Strategy", type: "Strategy", desc: "ルータの状態に関して議論する",
+					children: [
+						{ name: "SubGoal 1.5", type: "Goal",  desc: "ルータが壊れていない" ,
+						children: [
+							{ name: "Evidence", type: "Evidence", desc: "人による確認結果" }
+											]
+						},
+						{ name: "SubGoal 1.6", type: "Goal",  desc: "ルータの電源が切られていない" ,
+						children: [
+							{ name: "Evidence", type: "Evidence", desc: "人による確認結果" }
+											]
+						},
+										]
+					}
+									]
+				}
+								]
+			}
+							]
+		},
 
-//				{ name: "SubGoal 1.2(or)", type: "Goal",  desc: "無線LANで接続している" ,
-//				children: [
-//					{ name: "Strategy", type: "Strategy", desc: "PCや周辺機器の状態により判断" ,
-//					children: [
-//						{ name: "SubGoal 1.2.1", type: "Goal",  desc: "電波信号が十分に強い" ,
-//						children: [
-//							{ name: "Evidence", type: "Evidence", desc: "無線LANの電波強度を確認" }
-//											]
-//							},
-//						{ name: "SubGoal 1.2.2", type: "Goal",  desc: "電波干渉がない" ,
-//						children: [
-//							{ name: "Evidence", type: "Evidence", desc: "同じチャネルの電波を確認" }
-//											]
-//							},
-//						{ name: "SubGoal 1.2.3", type: "Goal",  desc: "無線LANカードが認識されている" ,
-//						children: [
-//							{ name: "Evidence", type: "Evidence", desc: "CheckNIC.ds" }
-//											]
-//							},
-//							{ name: "SubGoal 2.2", type: "Goal",  desc: "PCで無線LANインターフェースが有効になっている" ,
-//							children: [
-//								{ name: "Evidence 2.1", type: "Evidence", desc: "Connection.ds" }
-//												]
-//							}
-//										]
-//					}
-//									]
-//				}
-//								]
-//			}
+		{ name: "SubGoal 2", type: "Goal", desc: "データリンク層は正常である",
+		children: [
+					{ name: "Strategy", type: "Strategy", desc: "PCの構成状況により議論する" ,
+					children: [
+						{ name: "SubGoal 2.1", type: "Goal",  desc: "イーサネットカードが認識されている" ,
+						children: [
+							{ name: "D-Script", type: "DScript", desc: "CheckNIC.ds" }
+											]
+						},
+						{ name: "SubGoal 2.2", type: "Goal",  desc: "正しいドライバがインストールされている" ,
+						children: [
+							{ name: "D-Script", type: "DScript", desc: "CheckDriver.ds" }
+											]
+						},
+						{ name: "SubGoal 2.2", type: "Goal",  desc: "カーネルモジュールがアンロードされていない" ,
+						children: [
+							{ name: "D-Script", type: "DScript", desc: "CheckMOD.ds" }
+											]
+						},
+						{ name: "SubGoal 2.2", type: "Goal",  desc: "interfaces設定ファイルが間違っていない" ,
+						children: [
+//							{ name: "D-Script", type: "DScript", desc: "CheckSetting.ds" }
+											]
+						},
+						{ name: "SubGoal 2.3", type: "Goal",  desc: "PCでイーサネットインターフェースが有効になっている" ,
+						children: [
+							{ name: "D-Script", type: "DScript", desc: "Connection.ds" }
+											]
+						}
+									]
+					}
 							]
 		},
 
 			//パケットを送信元から宛先まで届ける全工程を担っている。
 			//仮想的なパケット交換ネットワークを構築、ホストとホスト間の通信を実現。ICMP(Internet Control Message Protocol)等もここ。つまり、pingによるチェックはここまで。
 			//同じネットワーク媒体上に接続されているコンピュータ間同士だけではなく、異なるネットワーク媒体上に接続されているコンピュータの間でも通信を行えるようにする。(IP)アドレス付け。(ゲートウェイ内外の)ルーティングプロトコル。
-		{ name: "SubGoal 2", type: "Goal", desc: "Internet layerは正常である",
+		{ name: "SubGoal 2", type: "Goal", desc: "インターネット層は障害要因ではない",
 		children: [
-			{ name: "Context 1.1", type: "Context", desc: "@IP Address:192.168.59.101" },
-			{ name: "Strategy", type: "Strategy", desc: "Internet layerの持つ役割を基に議論" ,
+			{ name: "Strategy", type: "Strategy", desc: "Internet layerの持つ役割を基に議論する" ,
 			children: [
-//				{ name: "SubGoal 2.1", type: "Goal", desc: "IP Addressが割り当てられている" ,//IP AddressがLAN外かLAN内か?
-//				children: [
-//					{ name: "Evidence 2.1", type: "Evidence", desc: "CheckIPAddress.ds" }
-//									]
-//				},
-
-				{ name: "SubGoal 2.2", type: "Goal", desc: "ルーティングができる" ,
+				{ name: "SubGoal 2.1", type: "Goal", desc: "IP Addressが割り当てられている" ,
 				children: [
-					{ name: "Strategy", type: "Strategy", desc: "ルーティングのされ方で議論" ,
-					children: [
-						{ name: "SubGoal 2.2.1", type: "Goal", desc: "直接ルーティングできる" ,
-						children: [
-							{ name: "Evidence 2.2.1", type: "Evidence", desc: "RoutingDirectly.ds" }
-											]
-						},
-						{ name: "SubGoal 2.2.2", type: "Goal", desc: "ゲートウェイを通してルーティングできる" ,
-						children: [
-							{ name: "Evidence 2.2.2", type: "Evidence", desc: "RoutingDefault.ds" }
-											]
-							},
-//						{ name: "SubGoal 2.2.3", type: "Goal", desc: "経路の各ルータが(ルーティングできる)パケットを破棄しない" ,
-//						children: [
-//							{ name: "Evidence 2.2.3", type: "Evidence", desc: "ルータの設定を確認" }
-//											]
-//							},
-										]
-					}
+					{ name: "D-Script", type: "DScript", desc: "CheckIPAddress.ds" }
 									]
 				},
-
-				{ name: "SubGoal 2.3", type: "Goal", desc: "firewall設定によりIP Addressレベルでパケット情報が破棄されない" ,
+				{ name: "SubGoal 2", type: "Goal", desc: "ルーティング機能は障害要因ではない",
+				children: [
+					{ name: "D-Script", type: "DScript", desc: "Routing.ds" }
+									]
+				},
+				{ name: "SubGoal 2.3", type: "Goal", desc: "firewall設定によりIP Addressレベルでパケットが破棄されない" ,
 				children: [
 					{ name: "Strategy", type: "Strategy", desc: "INPUT, FORWARD, OUTPUT別に確認する" ,
 					children: [
-						{ name: "SubGoal 2.3.1", type: "Goal", desc: "INPUTチェーンではパケットを受け入れている" ,
+						{ name: "SubGoal 2.3.1", type: "Goal", desc: "INPUTチェーンではパケットを破棄しない" ,
 						children: [
-							{ name: "Evidence", type: "Evidence", desc: "FirewallIPInput.ds" }
+							{ name: "D-Script", type: "DScript", desc: "FirewallIPInput.ds" }
 											]
 							},
-							{ name: "SubGoal 2.3.2", type: "Goal", desc: "FORWARDチェーンではパケットを受け入れている" ,
+							{ name: "SubGoal 2.3.2", type: "Goal", desc: "FORWARDチェーンではパケットを破棄しない" ,
 							children: [
-								{ name: "Evidence", type: "Evidence", desc: "FirewallIPForward.ds" }
+								{ name: "D-Script", type: "DScript", desc: "FirewallIPForward.ds" }
 												]
 								},
-								{ name: "SubGoal 2.3.3", type: "Goal", desc: "OUTPUTチェーンではパケットを受け入れている" ,
+								{ name: "SubGoal 2.3.3", type: "Goal", desc: "OUTPUTチェーンではパケットを破棄しない" ,
 								children: [
-									{ name: "Evidence", type: "Evidence", desc: "FirewallIPOutput.ds" }
+									{ name: "D-Script", type: "DScript", desc: "FirewallIPOutput.ds" }
 													]
-									}
+								}
 										]
 					}
 									]
 				},
-
-				{ name: "SubGoal 2.4", type: "Goal", desc: "pingが通る" ,
+				{ name: "SubGoal 2.4", type: "Goal", desc: "firewall設定によりPOLICYでパケットが破棄されない" ,
 				children: [
-					{ name: "Context 2.1", type: "Context", desc: "@IP Address:192.168.59.101<br>@OS:ubuntu12.04LTS 64bit" },
-					{ name: "Context 2.2", type: "Context", desc: "@Destination1:192.168.59.102<br>@Destination2:192.168.59.103" },
-					{ name: "Evidence", type: "Evidence", desc: "Ping.ds" }
+					{ name: "Strategy", type: "Strategy", desc: "INPUT, FORWARD, OUTPUT別に確認する" ,
+					children: [
+						{ name: "SubGoal 2.4.1", type: "Goal", desc: "INPUTチェーンではパケットを破棄しない" ,
+						children: [
+							{ name: "D-Script", type: "DScript", desc: "FirewallIPInput.ds" }
+											]
+							},
+							{ name: "SubGoal 2.4.2", type: "Goal", desc: "FORWARDチェーンではパケットを破棄しない" ,
+							children: [
+								{ name: "D-Script", type: "DScript", desc: "FirewallIPForward.ds" }
+												]
+								},
+								{ name: "SubGoal 2.4.3", type: "Goal", desc: "OUTPUTチェーンではパケットを破棄しない" ,
+								children: [
+									{ name: "D-Script", type: "DScript", desc: "FirewallIPOutput.ds" }
+													]
+								}
+										]
+					}
 									]
 				}
 								]
@@ -292,146 +332,164 @@ function createSampleNode() {
 
 //データ伝送の信頼性を保証するための機能を物理的ネットワークから独立して提供。つまり、「仮想的な回線」を提供。データが正しく相手にまで届いたかどうかを確認し、問題があれば、データの再送信などを行う。(TCP,UDPなどがここ)
 //任意のサイズのデータを送るために、データの分割と再構築を行う。アプリケーションにパケットを渡すときにPort番号で識別している
-		{ name: "SubGoal 4", type: "Goal", desc: "Transport layerは正常である",
+// TCP/UDP Port,再送制御、順序制御、フロー制御、輻輳制御
+		{ name: "SubGoal 4", type: "Goal", desc: "トランスポート層は正常である",
 			children: [
-//				{ name: "Strategy", type: "Strategy", desc: "プロトコルにより判断する" ,
-//				children: [
-//					{ name: "Context 4.1", type: "Context", desc: "@プロトコル:TCP, UDP" },
-//					{ name: "SubGoal 4.1", type: "Goal", desc: "TCPについて議論" ,// TCP/UDP Port,再送制御、順序制御、フロー制御、輻輳制御
-//					children: [
 						{ name: "Strategy", type: "Strategy", desc: "firewall設定を考慮する" ,
 						children: [
 							{ name: "SubGoal 4.1.1", type: "Goal", desc: "受信するTCPプロトコルのパケットを破棄しない" ,
 							children: [
-								{ name: "Evidence 4.1.1", type: "Evidence", desc: "FirewallTCPInput.ds" }// TCP/UDP
+								{ name: "D-Script", type: "DScript", desc: "FirewallTCPInput.ds" }// TCP/UDP
 												]
 							},
 							{ name: "SubGoal 4.1.2", type: "Goal", desc: "中継するTCPプロトコルのパケットを破棄しない" ,
 							children: [
-								{ name: "Evidence 4.1.2", type: "Evidence", desc: "FirewallTCPForward.ds" }// TCP/UDP
+								{ name: "D-Script", type: "DScript", desc: "FirewallTCPForward.ds" }// TCP/UDP
 												]
 							},
 							{ name: "SubGoal 4.1.3", type: "Goal", desc: "送信するTCPプロトコルのパケットを破棄しない" ,
 							children: [
-								{ name: "Evidence 4.1.3", type: "Evidence", desc: "FirewallTCPOutput.ds" }// TCP/UDP
+								{ name: "D-Script", type: "DScript", desc: "FirewallTCPOutput.ds" }// TCP/UDP
 												]
 							},
-//							{ name: "SubGoal 4.1.4", type: "Goal", desc: "その他TCPプロトコルに関しての設定を確認する" ,//ポート指定、IP Address指定、オプション等
-//							children: [
-//								{ name: "Evidence 4.1.4", type: "Evidence", desc: "ファイアウォールの設定を確認" }// TCP/UDP
-//												]
-//							}
-//											]
-//						},
-//						{ name: "Strategy", type: "Strategy", desc: "" }
-//										]
-//					},
-
-//					{ name: "SubGoal 4.2", type: "Goal", desc: "UDPについて議論(or)" ,// TCP/UDP Port
-//					children: [
-//						{ name: "Strategy", type: "Strategy", desc: "firewall設定を考慮する" ,
-//						children: [
-//							{ name: "SubGoal", type: "Goal", desc: "受信するUDPプロトコルのパケットを破棄しない" ,
-//							children: [
-//						{ name: "Evidence 4.2.1", type: "Evidence", desc: "FirewallUDPOutput.ds" },// TCP/UDP Port
-//												]
-//							},
-//							{ name: "SubGoal", type: "Goal", desc: "中継するUDPプロトコルのパケットを破棄しない" ,
-//							children: [
-//						{ name: "Evidence 4.2.2", type: "Evidence", desc: "FirewallUDPForward.ds" },// TCP/UDP Port
-//												]
-//							},
-//							{ name: "SubGoal", type: "Goal", desc: "送信するUDPプロトコルのパケットを破棄しない" ,
-//							children: [
-//						{ name: "Evidence 4.2.3", type: "Evidence", desc: "FirewallUDPInput.ds" }// TCP/UDP Port
-//												]
-//							},
-//							{ name: "SubGoal 4.2.4", type: "Goal", desc: "その他UDPプロトコルに関しての設定を確認する" ,
-//							children: [
-//								{ name: "Evidence 4.2.4", type: "Evidence", desc: "ファイアウォールの設定を確認" }// TCP/UDP
-//												]
-//							}
-//											]
-//						}
-//										]
-//					}
 									]
 				}
 								]
 		},
 
 //Presentation layer->ネットワークに流れるデータの意味を統一。コードの変換以外にデータの暗号化や、データの圧縮なども。TCP/IP layerのApplication layer。
-		{ name: "SubGoal 5", type: "Goal", desc: "Application layerは正常である",
+		{ name: "SubGoal 5", type: "Goal", desc: "アプリケーション層は障害要因ではない",
 		children: [
-			{ name: "Context 5.1", type: "Context", desc: "@IP Address:192.168.59.101<br>@Hostname list:...<br>@Destination:192.168.59.102" },
 			{ name: "Strategy", type: "Strategy", desc: "サービス別に議論する" ,
 			children: [
-//				{ name: "Context 5.1", type: "Context", desc: "@Service:File Transfer, Send Message, Web, Telnet" },
-//				{ name: "SubGoal 5.1", type: "Goal", desc: "電子メール(SMTP)の送受信が可能(or)" },
-//				{ name: "SubGoal 5.2", type: "Goal", desc: "ワールドワイドウェブ(HTTP)の閲覧が可能(or)" },
 				{ name: "SubGoal 5.1", type: "Goal", desc: "名前解決できる" ,
 				children: [
-					{ name: "Evidence 5.1", type: "Evidence", desc: "Nslookup.ds" }
+					{ name: "D-Script", type: "DScript", desc: "Nslookup.ds" }
 									]
 				},
-				{ name: "SubGoal 5.2", type: "Goal", desc: "ファイル転送(FTP)が可能" ,
+				{ name: "SubGoal 5.2", type: "Goal", desc: "ファイル転送(FTP)が可能である" ,
 				children: [
-					{ name: "Context", type: "Context", desc: "@Port:20,21" },
-					{ name: "Strategy", type: "Strategy", desc: "サービスの性質を踏まえて議論" ,
-					children: [
-						{ name: "SubGoal 5.2.1", type: "Goal", desc: "コントロールコネクションが成功する" ,
+						{ name: "Strategy", type: "Strategy", desc: "コントロールコネクション接続可否について議論" ,
 						children: [
-							{ name: "SubGoal 5.2.1.1", type: "Goal", desc: "firewallによりポート21番のOUTPUTパケットを破棄していない" ,
+							{ name: "SubGoal 5.2.1.1", type: "Goal", desc: "firewallによりポート21番のFORWARDパケットを破棄していない" ,
 							children: [
-								{ name: "Evidence", type: "Evidence", desc: "Firewall21Output.ds" },
+								{ name: "D-Script", type: "DScript", desc: "FirewallFTPForward.ds" },
 												]
 							},
-							{ name: "SubGoal 5.2.1.2", type: "Goal", desc: "ユーザ名、パスワード名が正しい" ,
+							{ name: "SubGoal 5.2.1.1", type: "Goal", desc: "firewallによりポート21番のOUTPUTパケットを破棄していない" ,
 							children: [
-								{ name: "Evidence", type: "Evidence", desc: "ユーザに確認" },
+								{ name: "D-Script", type: "DScript", desc: "FirewallFTPOutput.ds" },
+												]
+							},
+							{ name: "SubGoal 5.2.1.2", type: "Goal", desc: "firewallによりポート21番のINPUTパケットを破棄していない" ,
+							children: [
+								{ name: "D-Script", type: "DScript", desc: "FirewallFTPInput.ds" },
+												]
+							},
+							{ name: "SubGoal 5.2.1.3", type: "Goal", desc: "ユーザ名、パスワード名が間違っていない" ,
+							children: [
+								{ name: "Evidence", type: "Evidence", desc: "ユーザの確認結果" },
+												]
+							}
+											]
+						},
+						{ name: "Strategy", type: "Strategy", desc: "データコネクションについて議論" ,
+						children: [
+							{ name: "SubGoal 5.2.1.1", type: "Goal", desc: "firewallによりデータ転送に使用するポートのOUTPUTパケットを破棄していない" ,
+							children: [
+								{ name: "D-Script", type: "DScript", desc: "FirewallFTPDataOutput.ds" },
+												]
+							},
+							{ name: "SubGoal 5.2.1.1", type: "Goal", desc: "firewallによりデータ転送に使用するポートのFORWARDパケットを破棄していない" ,
+							children: [
+								{ name: "D-Script", type: "DScript", desc: "FirewallFTPDataForward.ds" },
+												]
+							},
+							{ name: "SubGoal 5.2.1.2", type: "Goal", desc: "firewallによりデータ転送に使用するポートのINPUTパケットを破棄していない" ,
+							children: [
+								{ name: "D-Script", type: "DScript", desc: "FirewallFTPDataInput.ds" },
 												]
 							},
 											]
 						},
-						{ name: "SubGoal 5.2.2", type: "Goal", desc: "データコネクションが成功する" ,
+						{ name: "Strategy", type: "Strategy", desc: "FTP設定ファイルを考慮する" ,
 						children: [
-							{ name: "SubGoal 5.2.2.1", type: "Goal", desc: "firewallによりポート20番のINPUTパケットを破棄していない" ,
+							{ name: "SubGoal 5.2.2.1", type: "Goal", desc: "匿名で接続できる設定になっている" ,
 							children: [
-								{ name: "Evidence", type: "Evidence", desc: "Firewall20Input.ds" },
+								{ name: "D-Script", type: "DScript", desc: "CheckAnonConf.ds" },
 												]
 							},
-//							{ name: "Strategy", type: "Strategy", desc: "通信方式により議論" ,
-//							children: [
-//								{ name: "Context", type: "Context", desc: "@Mode:アクティブモード、パッシブモード" },
-								{ name: "SubGoal 5.2.2.2", type: "Goal", desc: "アクティブモードで通信できる" },
-//								{ name: "SubGoal 5.3.3.3", type: "Goal", desc: "パッシブモードで通信できる(or)" },
-//												]
-//							},
+							{ name: "SubGoal 5.2.2.1", type: "Goal", desc: "匿名のためのルートディレクトリが設定されている" ,
+							children: [
+								{ name: "D-Script", type: "DScript", desc: "CheckRootConf.ds" },
+												]
+							}
 											]
 						}
-										]
-						}
 									]
-				},
-//				{ name: "SubGoal 5.4", type: "Goal", desc: "Telnetが可能(or)" }
+				}
 								]
 			}
 							]
 		}
+							]
+	}
 	];
+//	var strategy_children1 = [
+//		{ name: "Strategy", type: "Strategy", desc: "レイヤーレベルで議論",//TCP/IPの階層でアプリケーション層(アプリケーション、プレゼンテーション、セッション)、トランスポート層(トランスポート)、インターネット層(インターネット)、ネットワークインターフェイス層(データリンク、物理)に分ける
+//		children: [
+//			{ name: "SubGoal2.1", type: "Goal", desc: "物理層は障害要因ではない"},
+//			{ name: "SubGoal2.2", type: "Goal", desc: "データリンク層は障害要因ではない"},
+//			{ name: "SubGoal2.3", type: "Goal", desc: "インターネット層は障害要因ではない"},
+//			{ name: "SubGoal2.4", type: "Goal", desc: "トランスポート層は障害要因ではない"},
+//			{ name: "SubGoal2.5", type: "Goal", desc: "アプリケーション層は障害要因ではない"}
+//							]
+//	}
+//	];
+	var strategy_children2 = [
+		{ name: "Strategy2", type: "Strategy", desc: "レイヤーレベルで議論する",
+		children: [
+			{ name: "SubGoal2.1", type: "Goal", desc: "物理層は障害要因ではない"},
+			{ name: "SubGoal2.2", type: "Goal", desc: "データリンク層は障害要因ではない"},
+			{ name: "SubGoal2.3", type: "Goal", desc: "インターネット層は障害要因ではない"}
+							]
+		}
+		];
+	var strategy_children3 = [
+		{ name: "Strategy2", type: "Strategy", desc: "レイヤーレベルで議論する",
+		children: [
+			{ name: "SubGoal2.1", type: "Goal", desc: "物理層は障害要因ではない"},
+			{ name: "SubGoal2.2", type: "Goal", desc: "データリンク層は障害要因ではない"},
+			{ name: "SubGoal2.3", type: "Goal", desc: "インターネット層は障害要因ではない"},
+			{ name: "SubGoal2.4", type: "Goal", desc: "トランスポート層は障害要因ではない"},
+			{ name: "SubGoal2.5", type: "Goal", desc: "アプリケーション層は障害要因ではない"}
+							]
+}
+];
+
 	return createNodeFromJson2({
 		name: "TopGoal", type: "Goal",
-		desc: "通信可能である",
+		desc: "ネットワークに障害要因はない",
 		children: [
-			{ name: "Static Context", type: "Context", desc: "@IP:192.168.59.100<br>@OS:ubuntu12.04LTS 64bit<br>"+
-			  "@Service:FTP<br>@Net Topology:ring<br>@IP Address list:192.168.59.101~106<br>@Hostname list:...<br>OS list:..."
+			{ name: "Context", type: "Context", desc: "@IP:192.168.59.75\n@OS:ubuntu12.04LTS 64bit\n"+
+			  "@Service:FTPConnection\n@Type:Passive Mode\n@Topology:star\n@DEST:test\n@DEST-IP:192.168.59.40\n@OS:ubuntu12.10 64bit"
 			},
-			{ name: "Dynamic Context", type: "Context", desc: "@Destination:192.168.59.102" },
-			{
-				name: "Strategy", type: "Strategy", desc: "レイヤーレベルで議論",//TCP/IPの階層でアプリケーション層(アプリケーション、プレゼンテーション、セッション)、トランスポート層(トランスポート)、インターネット層(インターネット)、ネットワークインターフェイス層(データリンク、物理)に分ける
-				children: strategy_children
+			{ name: "Strategy", type: "Strategy", desc: "構成機器により分割",
+				children: [
+				{ name: "SubGoal", type: "Goal", desc: "サーバは障害要因ではない",
+			children: strategy_children1
+				},
+				{ name: "SubGoal", type: "Goal", desc: "ルータは障害要因ではない",
+				children: strategy_children2
+				},
+				{ name: "SubGoal", type: "Goal", desc: "クライアントは障害要因ではない",
+				children: strategy_children3
+				}
+				]
 			}
 		]
 	});
 }
+
+
 
