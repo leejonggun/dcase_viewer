@@ -270,7 +270,7 @@ function createSampleNode() {
 					{ name: "D-Script", type: "DScript", desc: "Routing.ds" }
 									]
 				},
-				{ name: "SubGoal 2.3", type: "Goal", desc: "firewall設定によりIP Addressレベルでパケット情報が破棄されない" ,
+				{ name: "SubGoal 2.3", type: "Goal", desc: "firewall設定によりIP Addressレベルでパケットが破棄されない" ,
 				children: [
 					{ name: "Strategy", type: "Strategy", desc: "INPUT, FORWARD, OUTPUT別に確認する" ,
 					children: [
@@ -285,6 +285,29 @@ function createSampleNode() {
 												]
 								},
 								{ name: "SubGoal 2.3.3", type: "Goal", desc: "OUTPUTチェーンではパケットを破棄しない" ,
+								children: [
+									{ name: "D-Script", type: "DScript", desc: "FirewallIPOutput.ds" }
+													]
+								}
+										]
+					}
+									]
+				},
+				{ name: "SubGoal 2.4", type: "Goal", desc: "firewall設定によりPOLICYでパケットが破棄されない" ,
+				children: [
+					{ name: "Strategy", type: "Strategy", desc: "INPUT, FORWARD, OUTPUT別に確認する" ,
+					children: [
+						{ name: "SubGoal 2.4.1", type: "Goal", desc: "INPUTチェーンではパケットを破棄しない" ,
+						children: [
+							{ name: "D-Script", type: "DScript", desc: "FirewallIPInput.ds" }
+											]
+							},
+							{ name: "SubGoal 2.4.2", type: "Goal", desc: "FORWARDチェーンではパケットを破棄しない" ,
+							children: [
+								{ name: "D-Script", type: "DScript", desc: "FirewallIPForward.ds" }
+												]
+								},
+								{ name: "SubGoal 2.4.3", type: "Goal", desc: "OUTPUTチェーンではパケットを破棄しない" ,
 								children: [
 									{ name: "D-Script", type: "DScript", desc: "FirewallIPOutput.ds" }
 													]
@@ -414,26 +437,26 @@ function createSampleNode() {
 //							]
 //	}
 //	];
-//	var strategy_children2 = [
-//		{ name: "Strategy2", type: "Strategy", desc: "レイヤーレベルで議論する",
-//		children: [
-//			{ name: "SubGoal2.1", type: "Goal", desc: "物理層は障害要因ではない"},
-//			{ name: "SubGoal2.2", type: "Goal", desc: "データリンク層は障害要因ではない"},
-//			{ name: "SubGoal2.3", type: "Goal", desc: "インターネット層は障害要因ではない"}
-//							]
-//		}
-//		];
-//	var strategy_children3 = [
-//		{ name: "Strategy2", type: "Strategy", desc: "レイヤーレベルで議論する",
-//		children: [
-//			{ name: "SubGoal2.1", type: "Goal", desc: "物理層は障害要因ではない"},
-//			{ name: "SubGoal2.2", type: "Goal", desc: "データリンク層は障害要因ではない"},
-//			{ name: "SubGoal2.3", type: "Goal", desc: "インターネット層は障害要因ではない"},
-//			{ name: "SubGoal2.4", type: "Goal", desc: "トランスポート層は障害要因ではない"},
-//			{ name: "SubGoal2.5", type: "Goal", desc: "アプリケーション層は障害要因ではない"}
-//							]
-//}
-//];
+	var strategy_children2 = [
+		{ name: "Strategy2", type: "Strategy", desc: "レイヤーレベルで議論する",
+		children: [
+			{ name: "SubGoal2.1", type: "Goal", desc: "物理層は障害要因ではない"},
+			{ name: "SubGoal2.2", type: "Goal", desc: "データリンク層は障害要因ではない"},
+			{ name: "SubGoal2.3", type: "Goal", desc: "インターネット層は障害要因ではない"}
+							]
+		}
+		];
+	var strategy_children3 = [
+		{ name: "Strategy2", type: "Strategy", desc: "レイヤーレベルで議論する",
+		children: [
+			{ name: "SubGoal2.1", type: "Goal", desc: "物理層は障害要因ではない"},
+			{ name: "SubGoal2.2", type: "Goal", desc: "データリンク層は障害要因ではない"},
+			{ name: "SubGoal2.3", type: "Goal", desc: "インターネット層は障害要因ではない"},
+			{ name: "SubGoal2.4", type: "Goal", desc: "トランスポート層は障害要因ではない"},
+			{ name: "SubGoal2.5", type: "Goal", desc: "アプリケーション層は障害要因ではない"}
+							]
+}
+];
 
 	return createNodeFromJson2({
 		name: "TopGoal", type: "Goal",
@@ -447,12 +470,12 @@ function createSampleNode() {
 				{ name: "SubGoal", type: "Goal", desc: "サーバは障害要因ではない",
 			children: strategy_children1
 				},
-//				{ name: "SubGoal", type: "Goal", desc: "ルータは障害要因ではない",
-//				children: strategy_children2
-//				},
-//				{ name: "SubGoal", type: "Goal", desc: "クライアントは障害要因ではない",
-//				children: strategy_children3
-//				}
+				{ name: "SubGoal", type: "Goal", desc: "ルータは障害要因ではない",
+				children: strategy_children2
+				},
+				{ name: "SubGoal", type: "Goal", desc: "クライアントは障害要因ではない",
+				children: strategy_children3
+				}
 				]
 			}
 		]
