@@ -12,12 +12,21 @@ var DNode = function(id, name, type, text) {
 }
 
 DNode.prototype.addChild = function(node) {
-	if(node.type != "Context") {
+	if(node.type != "Context" || node.type != "DScriptContext") {
 		this.children.push(node);
 	} else {
 		this.context = node;
 	}
 	node.parents.push(this);
+}
+
+DNode.prototype.removeChild = function(node) {
+	if(this.context == node) {
+		this.context = null;
+	} else {
+		var n = this.children.indexOf(node);
+		this.children.splice(n, 1);
+	}
 }
 
 DNode.prototype.isArgument = function() {
@@ -30,7 +39,7 @@ DNode.prototype.isUndevelop = function() {
 
 DNode.getTypes = function() {
 	return [
-			"Goal", "Context", "Strategy", "Evidence", "Monitor", "DScript"
+			"Goal", "Context", "Strategy", "Evidence", "Monitor", "DScript", "DScriptContext", "Rebuttal"
 	];
 }
 
@@ -39,11 +48,13 @@ DNode.getTypes = function() {
 var DSCRIPT_PREF = "D-Script:";
 var DSCRIPT_PREF_CONTEXT = "D-Script.Name:";
 DNode.prototype.isDScript = function() {
-	return this.type === "Evidence" && this.text.indexOf(DSCRIPT_PREF) == 0;
+	return this.type == "DScript";
+	//return this.type === "Evidence" && this.text.indexOf(DSCRIPT_PREF) == 0;
 }
 
 DNode.prototype.getDScriptNameInEvidence = function() {
-	return this.text.substr(DSCRIPT_PREF.length);
+	//return this.text.substr(DSCRIPT_PREF.length);
+	return this.text;
 }
 
 DNode.prototype.getDScriptNameInContext = function() {
@@ -65,6 +76,14 @@ function createNodeFromURL(url) {
 	return createNodeFromJson(JSON.parse(a.responseText));
 }
 
+function contextParams(params) {
+	var s = "";
+	for(key in params) {
+		s += "@" + key + " : " + params[key] + "\n";
+	}
+	return s;
+}
+
 function createNodeFromJson(json) {
 	console.log(json);
 	var nodes = [];
@@ -72,13 +91,22 @@ function createNodeFromJson(json) {
 		var c = json.nodes[i];
 		nodes[c.node_id] = c;
 	}
+		
 	function createChildren(l, node) {
 		for(var i=0; i<l.children.length; i++) {
 			var child = l.children[i];
 			var n = nodes[child.node_id];
 			n.name = n.type.charAt(0) + n.node_id;
-			var newNode = new DNode(n.node_id, n.name, n.type,
-					n.type != "Context" ? n.description : JSON.stringify(n.properties));
+			var desc = n.description ? n.description : contextParams(n.properties);
+			if(n.description.indexOf("D-Script:") == 0) {
+				desc = n.description.slice(9);
+				n.type = "DScript";
+			}
+			else if(n.type == "Context" && n.properties.hasOwnProperty("D-Script")) {
+				n.type = "DScriptContext";
+				desc = n.properties["D-Script"];
+			}
+			var newNode = new DNode(n.node_id, n.name, n.type, desc);
 			newNode.isEvidence = n.isEvidence;
 			node.addChild(newNode);
 			createChildren(child, newNode);
@@ -104,7 +132,8 @@ function createBinNode(n) {
 var id_count = 1;
 function createNodeFromJson2(json) {
 	var id = json.id != null ? parseInt(json.id) : id_count++;
-	var node = new DNode(0, json.name, json.type, json.desc);
+	var desc = json.desc ? json.desc : contextParams(json.prop);
+	var node = new DNode(0, json.name, json.type, desc);
 	if(json.prev != null) {
 		node.prevVersion = createNodeFromJson2(json.prev);
 		node.prevVersion.nextVersion = node;

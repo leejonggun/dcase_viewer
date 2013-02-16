@@ -15,6 +15,13 @@ var DCaseViewer = function(root, model, opts) {
 	this.svgroot = $(document.createElementNS(SVG_NS, "svg")).css({
 		position: "absolute", left: 0, top: 0, width: "100%", height: "100%"
 	});
+	this.editInPlaceOpts = {
+		callback: function(_, txt) { return txt; },
+		field_type: "textarea",
+		textarea_rows: 3,
+		textarea_cols: 20,
+		show_buttons: true
+	};
 	this.root = root;
 	this.opts = opts;
 	this.moving = false;
@@ -71,7 +78,7 @@ DCaseViewer.prototype.repaintAll = function(ms) {
 	rootview.updateLocation(
 			(self.shiftX + self.dragX) / self.scale, (self.shiftY + self.dragY) / self.scale);
 	var a = new Animation();
-	rootview.animeBegin(a);
+	rootview.animeStart(a);
 	if(ms == 0) {
 		a.animeFinish();
 		return;
@@ -129,6 +136,35 @@ DCaseViewer.prototype.nextVersion = function(v) {
 	}
 }
 
+DCaseViewer.prototype.showToolbox = function(node) {
+	var self = this;
+	if(this.toolboxNode != node) {
+		if(node != null) {
+			var data = node.node;
+			var b = node.div.offset();
+			var w = node.div.width();
+			var x = 120;
+
+			$("#toolbar").css({
+				display: "block",
+				left: b.left + (w - x)/2,//b.left + 80 * self.scale,
+				top: b.top - 40,
+				width: x,
+				height: 30,
+			});
+
+			$("#toolbar .tool-left").css("display", data.prevVersion != null ? "inline" : "none");
+			$("#toolbar .tool-right").css("display", data.nextVersion != null ? "inline" : "none");
+			$("#toolbar .tool-play").css("display", data.isDScript() ? "inline" : "none");
+			$("#toolbar .tool-up").css("display", node.childVisible ? "inline" : "none");
+			$("#toolbar .tool-down").css("display", node.childVisible ? "none" : "inline");
+		} else {
+			$("#toolbar").css("display", "none");
+		}
+		this.toolboxNode = node;
+	}
+}
+
 DCaseViewer.prototype.setDragLock = function(b) {
 	this.drag_flag = b;
 }
@@ -140,6 +176,7 @@ DCaseViewer.prototype.getDragLock = function() {
 DCaseViewer.prototype.setSelectedNode = function(node) {
 	this.selectedNode = node;
 	this.repaintAll();
+	this.showToolbox(node);
 }
 
 DCaseViewer.prototype.getSelectedNode = function() {
@@ -179,12 +216,15 @@ DCaseViewer.prototype.fit = function(ms) {
 	this.repaintAll(ms);
 }
 
-DCaseViewer.prototype.appendElem = function(e) {
-	$(this.root).append(e);
-}
-
-DCaseViewer.prototype.appendSvg = function(e) {
-	$(this.svgroot).append(e);
+DCaseViewer.prototype.traverseAll = function(f) {
+	function traverse(node) {
+		f(node);
+		if(node.context != null) f(node.context);
+		for(var i=0; i<node.children.length; i++) {
+			traverse(node.children[i]);
+		}
+	}
+	traverse(this.model);
 }
 
 DCaseViewer.prototype.createSvg = function(name) {
@@ -204,8 +244,12 @@ DCaseViewer.prototype.showDScriptExecuteWindow = function(scriptName) {
 			break;
 		}
 	}
-	var t = $("<div></div>").addClass("dscript-exe-window");
-	self.appendElem(t);
+	if(nn.context != null) {
+		nn.context.type = "DScriptContext";
+	}
+	var t = $("<div></div>")
+			.addClass("dscript-exe-window")
+			.appendTo(self.root);
 
 	var r1x = document.createElement("div");
 	var t1 = $(r1x).css({
@@ -217,10 +261,22 @@ DCaseViewer.prototype.showDScriptExecuteWindow = function(scriptName) {
 		argument_id: self.opts.id
 	});
 	t.append($("<input></input>").attr({
-		type: "button", value: "実行"
+		type: "button", value: "実行",
+		id: scriptName
 	}).click(function() {
-		var r = DCaseAPI.call("run", {});
-		alert(r);
+		var r = DCaseAPI.call("run", { name: this.id });
+		function f(n) {
+			n.forEachNode(function(e) {
+				console.log(e);
+				if(e.node.type == "DScript") {
+					e.node.isEvidence = true;
+				}
+				f(e);
+			});
+		}
+		f(v.rootview);
+		v.repaintAll(1);
+		alert(r.stdout);
 	}));
 	t.append($("<input></input>").attr({
 		type: "button", value: "キャンセル"
