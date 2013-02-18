@@ -140,8 +140,8 @@ function createNodeFromJson2(json) {
 
 function createSampleNode() {
 	var strategy_children1 = [
-		{ name: "Strategy", type: "Strategy", desc: "レイヤーレベルで議論",//TCP/IPの階層でアプリケーション層(アプリケーション、プレゼンテーション、セッション)、トランスポート層(トランスポート)、インターネット層(インターネット)、ネットワークインターフェイス層(データリンク、物理)に分ける
-		children: [
+//		{ name: "Strategy", type: "Strategy", desc: "レイヤーレベルで議論",//TCP/IPの階層でアプリケーション層(アプリケーション、プレゼンテーション、セッション)、トランスポート層(トランスポート)、インターネット層(インターネット)、ネットワークインターフェイス層(データリンク、物理)に分ける
+//		children: [
 		{ name: "SubGoal 1", type: "Goal", desc: "物理層は正常である",
 		children: [
 			{ name: "Strategy", type: "Strategy", desc: "PCや周辺機器の状態により判断する" ,
@@ -238,11 +238,11 @@ function createSampleNode() {
 							{ name: "D-Script", type: "DScript", desc: "CheckMOD.ds" }
 											]
 						},
-						{ name: "SubGoal 2.2", type: "Goal",  desc: "interfaces設定ファイルが間違っていない" ,
-						children: [
+//						{ name: "SubGoal 2.2", type: "Goal",  desc: "interfaces設定ファイルが間違っていない" ,
+//						children: [
 //							{ name: "D-Script", type: "DScript", desc: "CheckSetting.ds" }
-											]
-						},
+//											]
+//						},
 						{ name: "SubGoal 2.3", type: "Goal",  desc: "PCでイーサネットインターフェースが有効になっている" ,
 						children: [
 							{ name: "D-Script", type: "DScript", desc: "Connection.ds" }
@@ -423,8 +423,8 @@ function createSampleNode() {
 			}
 							]
 		}
-							]
-	}
+//							]
+//	}
 	];
 //	var strategy_children1 = [
 //		{ name: "Strategy", type: "Strategy", desc: "レイヤーレベルで議論",//TCP/IPの階層でアプリケーション層(アプリケーション、プレゼンテーション、セッション)、トランスポート層(トランスポート)、インターネット層(インターネット)、ネットワークインターフェイス層(データリンク、物理)に分ける
@@ -437,26 +437,26 @@ function createSampleNode() {
 //							]
 //	}
 //	];
-	var strategy_children2 = [
-		{ name: "Strategy2", type: "Strategy", desc: "レイヤーレベルで議論する",
-		children: [
-			{ name: "SubGoal2.1", type: "Goal", desc: "物理層は障害要因ではない"},
-			{ name: "SubGoal2.2", type: "Goal", desc: "データリンク層は障害要因ではない"},
-			{ name: "SubGoal2.3", type: "Goal", desc: "インターネット層は障害要因ではない"}
-							]
-		}
-		];
-	var strategy_children3 = [
-		{ name: "Strategy2", type: "Strategy", desc: "レイヤーレベルで議論する",
-		children: [
-			{ name: "SubGoal2.1", type: "Goal", desc: "物理層は障害要因ではない"},
-			{ name: "SubGoal2.2", type: "Goal", desc: "データリンク層は障害要因ではない"},
-			{ name: "SubGoal2.3", type: "Goal", desc: "インターネット層は障害要因ではない"},
-			{ name: "SubGoal2.4", type: "Goal", desc: "トランスポート層は障害要因ではない"},
-			{ name: "SubGoal2.5", type: "Goal", desc: "アプリケーション層は障害要因ではない"}
-							]
-}
-];
+//	var strategy_children2 = [
+//		{ name: "Strategy2", type: "Strategy", desc: "レイヤーレベルで議論する",
+//		children: [
+//			{ name: "SubGoal2.1", type: "Goal", desc: "物理層は障害要因ではない"},
+//			{ name: "SubGoal2.2", type: "Goal", desc: "データリンク層は障害要因ではない"},
+//			{ name: "SubGoal2.3", type: "Goal", desc: "インターネット層は障害要因ではない"}
+//							]
+//		}
+//		];
+//	var strategy_children3 = [
+//		{ name: "Strategy2", type: "Strategy", desc: "レイヤーレベルで議論する",
+//		children: [
+//			{ name: "SubGoal2.1", type: "Goal", desc: "物理層は障害要因ではない"},
+//			{ name: "SubGoal2.2", type: "Goal", desc: "データリンク層は障害要因ではない"},
+//			{ name: "SubGoal2.3", type: "Goal", desc: "インターネット層は障害要因ではない"},
+//			{ name: "SubGoal2.4", type: "Goal", desc: "トランスポート層は障害要因ではない"},
+//			{ name: "SubGoal2.5", type: "Goal", desc: "アプリケーション層は障害要因ではない"}
+//							]
+//}
+//];
 
 	return createNodeFromJson2({
 		name: "TopGoal", type: "Goal",
@@ -465,19 +465,19 @@ function createSampleNode() {
 			{ name: "Context", type: "Context", desc: "@IP:192.168.59.75\n@OS:ubuntu12.04LTS 64bit\n"+
 			  "@Service:FTPConnection\n@Type:Passive Mode\n@Topology:star\n@DEST:test\n@DEST-IP:192.168.59.40\n@OS:ubuntu12.10 64bit"
 			},
-			{ name: "Strategy", type: "Strategy", desc: "構成機器により分割",
-				children: [
-				{ name: "SubGoal", type: "Goal", desc: "サーバは障害要因ではない",
+//			{ name: "Strategy", type: "Strategy", desc: "構成機器により分割",
+//				children: [
+				{ name: "Strategy", type: "Strategy", desc: "レイヤーレベルで議論する",
 			children: strategy_children1
 				},
-				{ name: "SubGoal", type: "Goal", desc: "ルータは障害要因ではない",
-				children: strategy_children2
-				},
-				{ name: "SubGoal", type: "Goal", desc: "クライアントは障害要因ではない",
-				children: strategy_children3
-				}
-				]
-			}
+//				{ name: "SubGoal", type: "Goal", desc: "ルータは障害要因ではない",
+//				children: strategy_children2
+//				},
+//				{ name: "SubGoal", type: "Goal", desc: "クライアントは障害要因ではない",
+//				children: strategy_children3
+//				}
+//				]
+//			}
 		]
 	});
 }
