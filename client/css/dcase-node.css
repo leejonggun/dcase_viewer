@@ -3,15 +3,18 @@
 	font-size: 12px;
 	word-wrap: break-word;
 }
+
 .node-name {
 	font-weight: bold;
 	font-size: 120%;
 	text-align: left;
 }
+
 .node-text {
 	font-size: 100%;
 	text-align: left;
 }
+
 .node-closednodes {
 	background: #A0F0A0;
 	position: absolute;
@@ -43,4 +46,29 @@
 	border-style: solid;
 	border-color: #808080;
 	z-index: 10;
+}
+
+// -------------
+// dnode style
+
+.dnode {
+}
+
+.dnode-argument {
+	fill: none;
+	stroke: #8080D0;
+}
+
+.dnode-undevelop {
+	fill: none;
+	stroke: black;
+}
+
+.dnode-focused {
+	stroke: #A17AA3;
+}
+
+.dnode-line {
+	fill: none;
+	stroke: black;
 }

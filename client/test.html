@@ -5,13 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>D-CASE VIEWER</title>
 <link rel="stylesheet" type="text/css" href="lib/codemirror.css"/>
-<link rel="stylesheet" type="text/css" href="lib/jquery.svg.css"/>
 <link rel="stylesheet" type="text/css" href="lib/bootstrap.icons.css"/>
+<link rel="stylesheet" type="text/css" href="lib/jquery.colorPicker.css"/>
 <link rel="stylesheet" type="text/css" href="css/dcase-node.css"/>
 <link rel="stylesheet" type="text/css" href="css/viewer.css"/>
 <link rel="stylesheet" type="text/css" href="css/sidemenu.css"/>
 <link rel="stylesheet" type="text/css" href="css/edit.css"/>
-<link rel="stylesheet" type="text/css" href="css/timeline.css"/>
+<link rel="stylesheet" type="text/css" href="lib/bootstrap.min.css"/>
+<link rel="stylesheet" type="text/css" href="lib/bootstrap-responsive.min.css"/>
+<link rel="stylesheet" type="text/css" href="lib/jquery.ui.autocomplete.css"/>
 <style>
 body {
 	min-height: 480px;
@@ -26,61 +28,56 @@ body {
 </style>
 <script type="text/javascript" src="lib/jquery.min.js"></script>
 <script type="text/javascript" src="lib/jquery.mousewheel.min.js"></script>
+<script type="text/javascript" src="lib/jquery.ui.autocomplete.js"></script>
 <script type="text/javascript" src="lib/jquery.svg.min.js"></script>
 <script type="text/javascript" src="lib/jquery.svganim.min.js"></script>
+<script type="text/javascript" src="lib/jquery.colorPicker.min.js"></script>
+<script type="text/javascript" src="lib/jquery.draggable.min.js"></script>
 <script type="text/javascript" src="lib/codemirror.js"></script>
 <script type="text/javascript" src="lib/storyjs-embed.js"></script>
+<script type="text/javascript" src="lib/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/config.js"></script>
 <script type="text/javascript" src="js/dcaseviewer.js"></script>
 <script type="text/javascript" src="js/dnode.js"></script>
 <script type="text/javascript" src="js/dnodeview.js"></script>
 <script type="text/javascript" src="js/handler.js"></script>
 <script type="text/javascript" src="js/edit.js"></script>
-<script type="text/javascript" src="js/sidemenu.js"></script>
 <script type="text/javascript" src="js/api.js"></script>
+<script type="text/javascript" src="js/sidemenu.js"></script>
 <script type="text/javascript" src="js/animation.js"></script>
 <script type="text/javascript" src="js/operation.js"></script>
 <script type="text/javascript">
 
+function getNodeFromServer(id) {
+	var res1 = DCaseAPI.call("getArgumentList");
+	console.log("get id=" + id);
+	var res2 = DCaseAPI.call("getNodeTree", {BelongedArgumentId: id});
+	console.log(res2);
+	var node = createNodeFromJson(res2);
+	return node;
+}
+
+function getURLParameter(name) {
+	return decodeURI(
+		(RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
+	);
+}
+
+// sorry matz.
+var DCase_Viewer;
+
 window.addEventListener("load",function() {
-	//var args = DCaseAPI.call("getArgumentList", {});
-	//var tree = DCaseAPI.call("getNodeTree", { BelongedArgumentId: args.id[0]});
-	//var node = DCaseAPI.createNode(tree.Tree);
-	var viewer = new DCaseViewer(document.getElementById("viewer"), null);
-	var menu = new SideMenu(document.body, viewer);
-
-	viewer.createTimeline('timeline-embed');
-
-	$(".tool-new").click(function() {
-		menu.actInsertToSelectedNode();
-	});
-	$(".tool-edit").click(function() {
-		menu.actEditSelectedNode();
-	});
-	$(".tool-remove").click(function() {
-		menu.actRemoveSelectedNode();
-	});
-	$(".tool-left").click(function() {
-		viewer.prevVersion(viewer.getSelectedNode());
-	});
-	$(".tool-right").click(function() {
-		viewer.nextVersion(viewer.getSelectedNode());
-	});
-	$(".tool-up").click(function() {
-		viewer.actExpandBranch(viewer.getSelectedNode(), false);
-		$(".tool-up").css("display", "none");
-		$(".tool-down").css("display", "inline");
-	});
-	$(".tool-down").click(function() {
-		viewer.actExpandBranch(viewer.getSelectedNode(), true);
-		$(".tool-up").css("display", "inline");
-		$(".tool-down").css("display", "none");
-	});
-
-	$(".tool-play").click(function() {
-		var v = viewer.getSelectedNode();
-		viewer.showDScriptExecuteWindow(v.node.getDScriptNameInEvidence());
-	});
-
+	var id = parseInt(getURLParameter('id'));
+	var opts = {};
+	var node = null;
+	if(id > 0) {
+		opts = {
+			'argument_id': id
+		};
+		node = getNodeFromServer(id);
+	}
+	DCase_Viewer = new DCaseViewer(document.getElementById('viewer'), node, opts);
+	ViewerInit(document.body, DCase_Viewer);
 	// hide url bar for ipod touch
 	setTimeout(function(){
 		window.scrollTo(0, 0);
@@ -102,16 +99,19 @@ window.addEventListener("load",function() {
 </defs>
 </svg>
 
+<img id="ase_logo" src="img/assuranceDS.png">
 <div id="viewer"></div>
+<div id="timeline-control">▲</div>
+<div id="timeline"></div>
 
 <div id="toolbar" style="display: none;">
 	<a href="#" class="tool-new"><i class="icon-plus"></i></a>
-	<a href="#" class="tool-remove"><i class="icon-remove"></i></a>
 	<a href="#" class="tool-left"><i class="icon-arrow-left"></i></a>
 	<a href="#" class="tool-right"><i class="icon-arrow-right"></i></a>
 	<a href="#" class="tool-play"><i class="icon-play"></i></a>
 	<a href="#" class="tool-up"><i class="icon-circle-arrow-up"></i></a>
 	<a href="#" class="tool-down"><i class="icon-circle-arrow-down"></i></a>
+	<a href="#" class="tool-remove"><i class="icon-remove"></i></a>
 </div>
 
 <div id="menu">
@@ -119,6 +119,7 @@ window.addEventListener("load",function() {
 		<i class="icon-search"></i>
 	</div>
 	<div id="menu-search" class="menu-box">
+		<p>search query</p>
 		<input type="text"></input>
 		<ul style="list-style-type: none; overflow: auto;"></ul>
 	</div>
@@ -129,31 +130,59 @@ window.addEventListener("load",function() {
 	<div id="menu-export" class="menu-box">
 		<input id="menu-export-json" type="button" value="export json"></input>
 		<input id="menu-export-png"  type="button" value="export png"></input>
-		<input id="menu-export-script"  type="button" value="export script"></input>
+		<input id="menu-export-dscript"  type="button" value="export dscript"></input>
 	</div>
 
-	<div id="menu-info-i" class="menu-i" style="left: 80px;">
-		<i class="icon-info-sign"></i>
-	</div>
-	<div id="menu-info" class="menu-box">
-		<table id="menu-info-table"></table>
-	</div>
-
-	<div id="menu-tool-i" class="menu-i" style="left: 120px;">
-		<i class="icon-print"></i>
+	<div id="menu-tool-i" class="menu-i" style="left: 80px;">
+		<i class="icon-upload"></i>
 	</div>
 	<div id="menu-tool" class="menu-box">
+		<input id="menu-tool-commit" type="button" value="commit"></input>
 	</div>
 
-	<div id="menu-proc-i" class="menu-i" style="left: 160px;">
+	<div id="menu-create-i" class="menu-i" style="left: 120px;">
 		<i class="icon-plus"></i>
 	</div>
-	<div id="menu-proc" class="menu-box">
-		<input id="menu-proc-commit" type="button" value="commit"></input>
-		<input id="menu-proc-undo" type="button" value="undo"></input>
-		<input id="menu-proc-redo" type="button" value="redo"></input>
-		Arguments:<br>
-		<ul style="list-style-type: none; overflow: auto;"></ul>
+	<div id="menu-create" class="menu-box">
+		<p>committer name</p>
+		<input id="argument_committer"></input>
+		<p>descriptions</p>
+		<textarea id="argument_description" cols=20 rows=4>Enter new Argument descriptions.  </textarea>
+		<button id="menu-create-argument">Create</button>
+	</div>
+
+	<div id="menu-tool-i" class="menu-i-undeveloped" style="left: 160px;">
+		<i class="icon-print"></i>
+	</div>
+	<div id="menu-color-i" class="menu-i" style="left: 200px;">
+		<i class="icon-wrench"></i>
+	</div>
+	<div id="menu-color" class="menu-box">
+		<form action="#" method="post">
+			<div class="controlset">
+			<legend>Color Theme</legend>
+			<select id="theme-option">
+				<option value="b4d8df,dbf5f3,dbf5f3,b4d8df,dbf5f3,dbf5f3,cccccc">Tiffany Blue</option>
+				<option value="eeeeee,dddddd,cccccc,bbbbbb,aaaaaa,999999,888888">Monochrome</option>
+			</select>
+			<fieldset id="colorset">
+				<input class="colorpicker" type="text"
+				id="color-goal" name="dnode-goal" value="#b4d8df"/>
+				<input class="colorpicker" type=text"
+				id="color-strategy" name="dnode-strategy" value="#dbf5f3"/>
+				<input class="colorpicker" type=text"
+				id="color-context" name="dnode-context" value="#dbf5f3"/>
+				<input class="colorpicker" type=text"
+				id="color-evidence" name="dnode-evidence" value="#b4d8df"/>
+				<input class="colorpicker" type=text"
+				id="color-subject" name="dnode-subject" value="#dbf5f3"/>
+				<input class="colorpicker" type=text"
+				id="color-solution" name="dnode-solution" value="#dbf5f3"/>
+				<input class="colorpicker" type=text"
+				id="color-rebuttal" name="dnode-rebuttal" value="#cccccc"/>
+			</fieldset>
+			</div>
+		</form>
 	</div>
 </div>
 
